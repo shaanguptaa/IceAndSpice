@@ -3693,10 +3693,16 @@ tbody.collapse.show {
   border-radius: 0; }
 
 .alert {
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  /* margin-bottom: 1rem; */
   border: 1px solid transparent;
-  border-radius: 0.25rem; }
+  border-radius: 0.25rem; 
+  height: 50px;
+}
+
+.close {
+  border: none;
+}
 
 .alert-heading {
   color: inherit; }
@@ -3709,6 +3715,7 @@ tbody.collapse.show {
   top: -0.75rem;
   right: -1.25rem;
   padding: 0.75rem 1.25rem;
+  border: none;
   color: inherit; }
 
 .alert-primary {
