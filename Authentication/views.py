@@ -29,22 +29,22 @@ def handle_signup(request):
         return render(request, "Authentication/signup.html")
 
 
-def handle_login(request, redirect_loc = 'h'):
+def handle_login(request):
     # print('r' in request.GET)
     if request.method == 'POST' and request.POST['login-btn']:
         username = request.POST['username']
         password = request.POST['password']
 
         user = authenticate(username=username, password=password)
-        print(user)
         if user is not None:
             login(request, user)
             return redirect("administrator_index") if user.is_superuser else redirect("homepage")
         else:
-            return render(request, "Authentication/login.html", {'redirect': redirect_loc})
+            return render(request, "Authentication/login.html")
     else:
-        return render(request, "Authentication/login.html", {'redirect': redirect_loc})
+        return render(request, "Authentication/login.html")
 
 def handle_logout(request):
     logout(request)
     return redirect("login")
+ 
