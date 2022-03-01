@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-# from Reservation.models import Reservation
+from Reservation.models import Reservation
 from datetime import datetime
 
 # Create your views here.
@@ -21,9 +21,9 @@ def reserve_table(request):
 
             dor = datetime(dor[0], dor[1], dor[2], dor[3], dor[4])
 
-            # Reservation.objects.create(name=name, email=email, phone=phone, date_of_reservation=dor, persons=persons, user=request.user)
+            Reservation.objects.create(name=name, email=email, phone=phone, date_of_reservation=dor, persons=persons, user=request.user)
 
-            return JsonResponse({'status': 'Success'})
+            return JsonResponse({'status': 'Success', 'persons': persons, 'date': date, 'time': time})
 
         except Exception as e:
             return JsonResponse({'status': 'Failed', 'error': e})
@@ -34,10 +34,10 @@ def get_reservations(request):
     if not request.user.is_authenticated:
         reservations, status = None, False
     else:
-        # reservations = Reservation.objects.filter(user=request.user)
+        reservations = Reservation.objects.filter(user=request.user)
         print(reservations)
 
-        # reservations = [x for x in reservations.values()] or None
+        reservations = [x for x in reservations.values()] or None
         status = True
 
     return JsonResponse({'reservations': reservations, 'status': status})
