@@ -659,13 +659,15 @@
     <!-- Modal Section -->
 
     <!-- Show Login Modal -->
-    <div class="modal" id="showlogin">
+    <div class="modal fade" id="showlogin">
       <div class="modal-dialog">
         <div class="modal-content">
 
           <div class="modal-header">
             <h4 class="modal-title">Please Login</h4>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
 
           <div class="modal-body">
@@ -673,8 +675,8 @@
           </div>
 
           <div class="modal-footer">
-            <a href="authentication/login/r" role="button" class="btn btn-success rounded-0 btn-sm pb_font-13 pb_letter-spacing-2 p-3">Login</a>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+            <a href="authentication/login/r" role="button" class="btn btn-success rounded-0">Login</a>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
           </div>
 
         </div>
@@ -682,20 +684,21 @@
     </div>
 
     <!-- Notify Model -->
-    <div class="modal fade" id="notify" tabindex="-1" role="dialog" aria-labelledby="notifyTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" id="notify-modal">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
           <div class="modal-header">
-            <h5 class="modal-title" id="notifyLongTitle">Reserved</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h5 class="modal-title" id="notifyTitle">Reserved</h5>
+            <button type="button" class="close" data-dismiss="modal">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            ...
+            
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary">Save changes</button>
           </div>
         </div>
@@ -703,7 +706,6 @@
     </div>
 
     <!-- End Modal Section -->
-
 
 
 
@@ -733,30 +735,32 @@
 
     <script>
 
-      function showAlert(element, status) {
-        var timeout;
-        var text = status ? '<strong>Success!</strong> ' : '<strong>Failed!</strong> ';
-        if (element == 'load') {
-            text += 'Data Loading ';
-        } else  if (element == 'process') {
-            text += 'Data Pre-Processing ';
-        } else if (element == 'split') {
-            text += 'Data Splitting ';
-        } else if (element == 'train') {
-            text += 'Model Training ';
-        } else if (element == 'predict') {
-            text += 'Data Prediction ';
-        } else if (element == 'load-sent') {
-            text += 'Loading Sentence ';
-        }
-        text += status ? 'Successfull !!!' : 'Failed !!!';
-        var classesadd = status ? 'alert-success' : 'alert-danger';
-        var classesremove = status ? 'alert-danger' : 'alert-success';
-        $('.alert').addClass(classesadd).removeClass(classesremove).animate({opacity: '1'}, 'fast', function() {timeout = setTimeout(function() {$('.alert').animate({opacity: '0'}, 'fast');}, 2500);}).find('span').html(text);
-        $('.alert').find('button').click(function() {
-            $('.alert').animate({opacity: '0'}, 'fast', clearTimeout(timeout));
-        });
-      }
+      // $("#notify-modal").modal("show");
+
+      // function showAlert(element, status) {
+      //   var timeout;
+      //   var text = status ? '<strong>Success!</strong> ' : '<strong>Failed!</strong> ';
+      //   if (element == 'load') {
+      //       text += 'Data Loading ';
+      //   } else  if (element == 'process') {
+      //       text += 'Data Pre-Processing ';
+      //   } else if (element == 'split') {
+      //       text += 'Data Splitting ';
+      //   } else if (element == 'train') {
+      //       text += 'Model Training ';
+      //   } else if (element == 'predict') {
+      //       text += 'Data Prediction ';
+      //   } else if (element == 'load-sent') {
+      //       text += 'Loading Sentence ';
+      //   }
+      //   text += status ? 'Successfull !!!' : 'Failed !!!';
+      //   var classesadd = status ? 'alert-success' : 'alert-danger';
+      //   var classesremove = status ? 'alert-danger' : 'alert-success';
+      //   $('.alert').addClass(classesadd).removeClass(classesremove).animate({opacity: '1'}, 'fast', function() {timeout = setTimeout(function() {$('.alert').animate({opacity: '0'}, 'fast');}, 2500);}).find('span').html(text);
+      //   $('.alert').find('button').click(function() {
+      //       $('.alert').animate({opacity: '0'}, 'fast', clearTimeout(timeout));
+      //   });
+      // }
 
 
       window.CSRF_TOKEN = "{{ csrf_token }}"
@@ -788,7 +792,9 @@
               //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
                 $("#reserve-btn").html('<i class="fas fa-check"></i> BOOK A TABLE').css('color', 'white').removeAttr('disabled');
                 // alert('success');
-                $("#notify").modal("show");
+                $("#notify-modal #notifyTitle").html("Table Reserved");
+                $("#notify-modal .modal-body").html("Table for " + response.persons + " reserved for " + response.date + " at " + response.time);
+                $("#notify-modal").modal("show");
               //     showAlert('load', true);
               //     animate('.anim-after-load');
               //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
