@@ -409,7 +409,7 @@
                 </div>
 
                 <div class="form-group" style="float: right;">
-                  <input type="submit" name="reserve-btn" class="btn pb_outline-light pb_font-13 pb_letter-spacing-2  p-3 rounded-0" value="Book a Table" id="reserve-btn" style="margin-top: 30px;">
+                  <input type="submit" name="reserve-btn" class="btn pb_outline-light pb_font-13 pb_letter-spacing-2 p-3 rounded-0" value="Book a Table" id="reserve-btn" style="margin-top: 30px;">
                 </div>
                   
             </form>
@@ -770,7 +770,7 @@
         {% if user.is_anonymous %}
           $("#showlogin").modal("show");
         {% else %}
-          $('#reserve-btn').html('<i class="fas fa-circle-notch fa-spin"></i> Booking...').attr('disabled', 'disabled');
+          $('#reserve-table-form #reserve-btn').html('<i class="fas fa-circle-notch fa-spin"></i> Booking...').attr('disabled', 'disabled');
           $.ajax({
             type: "POST",
             url: "reservation/reserve_table/",
@@ -790,7 +790,7 @@
               // var element = $('#load-verify');
               if (response.status) {
               //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
-                $("#reserve-btn").html('<i class="fas fa-check"></i> BOOK A TABLE').css('color', 'white').removeAttr('disabled');
+                $("#reserve-table-form #reserve-btn").attr('value', ' book another table').css('color', 'white').removeAttr('disabled');
                 // alert('success');
                 $("#notify-modal #notifyTitle").html("Table Reserved");
                 $("#notify-modal .modal-body").html("Table for " + response.persons + " reserved for " + response.date + " at " + response.time);
