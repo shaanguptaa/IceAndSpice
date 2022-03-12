@@ -175,12 +175,12 @@
                                 <span class="price">&#x20B9; {{item.price}} /-</span>
                               </div>
                               <div class="col-lg-2 pb-2">
-                                <button onclick="decrement({{item.id}})" class="btn pb_outline-dark">-</button>&nbsp;
+                                <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
                                 <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value=0>&nbsp;
-                                <button onclick="increment({{item.id}})" class="btn pb_outline-dark">+</button>
+                                <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
                               </div>
                               <div class="col-lg-1">
-                                <button type="button" onclick="openModal({{item.id}}, '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark">Order</button>
+                                <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark">Order</button>
                               </div>
                             </div>
                           </li>
@@ -207,7 +207,7 @@
       </script>
 
 
-      <form action="" method="POST">
+      <form id="order-form" method="POST">
         {% csrf_token %}
         <div id="orderModal" class="modal fade" role="dialog">
           <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -801,6 +801,59 @@
               } else if (!response.status) {
               //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
                 $("#reserve-btn").html('<i class="fas fa-times"></i> Reservation Failed!!').css('color', 'red').removeAttr('disabled');
+              //     $('#load-data-block .data').html();
+              //     showAlert('load', false);
+              }
+            },
+
+            error: function (jqXHR, exception) {
+              // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+              // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
+              // $('#load-data-block .data').html();
+              // showAlert('load', false)
+            }
+          })
+        {% endif %}
+        return false;
+      });
+
+
+      // AJAX Script for Food Orders
+      $('#order-form').submit(function() {
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          $('#order-form #orderFood').html('<i class="fas fa-circle-notch fa-spin"></i> Ordering...').attr('disabled', 'disabled');
+          $.ajax({
+            type: "POST",
+            url: "menu/order/",
+            data: {
+              csrfmiddlewaretoken: window.CSRF_TOKEN,
+              itemName: $('#order-form #itemName').val(),
+              personName: $('#order-form #personName').val(),
+              // email: $('#order-form #email').val(),
+              phone: $('#order-form #phone').val(),
+              total: document.getElementById("total").innerHTML,
+              location: $('#order-form #location').val(),
+              order: "True"},
+            datatype: 'json',
+
+            success: function(response) {
+              console.log(response);
+              // var element = $('#load-verify');
+              if (response.status) {
+              //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
+                $("#order-form #orderFood").attr('value', ' Order Successfull').css('color', 'green').removeAttr('disabled');
+                // alert('success');
+                $("#notify-modal #notifyTitle").html("Order Successfull");
+                // $("#notify-modal .modal-body").html("Table for " + response.persons + " reserved for " + response.date + " at " + response.time);
+                $("#notify-modal").modal("show");
+              //     showAlert('load', true);
+              //     animate('.anim-after-load');
+              //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
+              } else if (!response.status) {
+              //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+                $("#orderFood").html('<i class="fas fa-times"></i> Order Failed!!').css('color', 'red').removeAttr('disabled');
               //     $('#load-data-block .data').html();
               //     showAlert('load', false);
               }

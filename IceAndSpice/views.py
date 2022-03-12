@@ -6,7 +6,8 @@ from Menu import views as menu
 def index(request):
     # if request.user.username == 'admin':
     #     return HttpResponse('<h4>You are logged in as: ' + request.user.username + '</h4> <br>Login to another account to continue')
-    context = menu.getmenu()
+    context = menu.getmenu(request.user)
+    # temp = menu.order_items(request.user)
     return render(request, 'IceAndSpice/index.html', context=context)
 
 def temp(request):
