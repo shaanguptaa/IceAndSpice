@@ -167,21 +167,46 @@
                         {% for item in items %}
                           <li>
                             <div class="row justify-content-center">
-                              <div class="col-lg-5">
+                              <div class="col-lg-4">
                                 <h3 class="pb_font-18 font-weight-bold">{{item.item_name}}</h3>
                                 {% if item.item_desc != "None" %}<p class="mb-0">{{item.item_desc}}</p>{% endif %}
                               </div>
                               <div class="col-lg-2">
                                 <span class="price">&#x20B9; {{item.price}} /-</span>
                               </div>
-                              <div class="col-lg-2 pb-2">
-                                <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
-                                <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value=0>&nbsp;
-                                <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
-                              </div>
-                              <div class="col-lg-1">
-                                <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark">Order</button>
-                              </div>
+                              {% if item.id in cartItems.items %}
+                              {% with id='O-8769' %}
+
+
+
+                              <!-- ==================== Get quantity from dict ========================= -->
+
+
+
+
+                              
+                                <div class="col-lg-2 pb-2">
+                                  <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
+                              {{cartItems.quantity.item.id}}
+                                  <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value="{{cartItems.quantity.item}}">&nbsp;
+                                  <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
+                                </div>
+                                <div class="col-lg-3">
+                                  <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
+                                  <button type="button" data="{{item.id}}" role="button" class="btn rounded-0 pb_outline-dark removeFromCart-btn text-success">Added To Cart</button>
+                                </div>
+                              {% endwith %}
+                              {% else %}
+                                <div class="col-lg-2 pb-2">
+                                  <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
+                                  <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value=0>&nbsp;
+                                  <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
+                                </div>
+                                <div class="col-lg-3">
+                                  <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
+                                  <button type="button" data="{{item.id}}" role="button" class="btn rounded-0 pb_outline-dark addToCart-btn">Add To Cart</button>
+                                </div>
+                              {% endif %}
                             </div>
                           </li>
                         {% endfor %}
@@ -207,9 +232,9 @@
       </script>
 
 
-      <form id="order-form" method="POST">
-        {% csrf_token %}
-        <div id="orderModal" class="modal fade" role="dialog">
+      <div id="orderModal" class="modal fade" role="dialog">
+        <form id="order-form" method="POST">
+          {% csrf_token %}
           <div class="modal-dialog modal-dialog-centered modal-lg">
     
             <!-- Modal content-->
@@ -294,15 +319,15 @@
             </div>
     
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
       <!-- END Order Modal -->
 
 
 
 
 
-      {% comment %} <?php
+      <!-- {% comment %} <?php
 
         if (isset($_POST['orderFood'])) {
           $itemName = $_POST['itemName'];
@@ -323,7 +348,7 @@
 
         }
 
-      ?> {% endcomment %}
+      ?> {% endcomment %} -->
 
 
 
@@ -336,6 +361,7 @@
           document.getElementById("quantity-modal").value = document.getElementById("quantity-" + id).value;
           document.getElementById("total").innerHTML = price * document.getElementById("quantity-" + id).value;
         };
+
       </script>
     </section>
     <!-- END Menu section -->
@@ -593,7 +619,7 @@
 
             </div>
             <div id="submit_form">
-              {% comment %} <?php
+              <!-- {% comment %} <?php
                 if (isset($_POST['submit'])) {
                   require 'connect.php';
                   $name = $_POST['name'];
@@ -605,7 +631,7 @@
 
                   $mysqli -> query($sql) or die("Cannot submit message");
                 }
-              ?> {% endcomment %}
+              ?> {% endcomment %} -->
             </div>
                       </div>
         </div>
@@ -684,22 +710,20 @@
     </div>
 
     <!-- Notify Model -->
-    <div class="modal fade" id="notify-modal">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+    <div class="modal fade" role="dialog" id="notify-modal">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content justify-content-center">
 
           <div class="modal-header">
             <h5 class="modal-title" id="notifyTitle">Reserved</h5>
-            <button type="button" class="close" data-dismiss="modal">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
-          <div class="modal-body">
-            
-          </div>
+
+          <div class="modal-body"></div>
+
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
           </div>
         </div>
       </div>
@@ -844,6 +868,8 @@
               if (response.status) {
               //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
                 $("#order-form #orderFood").attr('value', ' Order Successfull').css('color', 'green').removeAttr('disabled');
+                $("#orderModal").modal("toggle")
+                $("#order-form #orderFood").attr('value', ' Confirm Order').css('color', 'black').removeAttr('disabled');
                 // alert('success');
                 $("#notify-modal #notifyTitle").html("Order Successfull");
                 // $("#notify-modal .modal-body").html("Table for " + response.persons + " reserved for " + response.date + " at " + response.time);
@@ -869,6 +895,70 @@
         {% endif %}
         return false;
       });
+      
+
+      // AJAX Script for Adding to Cart
+      $('.addToCart-btn').click(function() {
+        // console.log('clicked')
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          if ($('#quantity-' + $(this).attr('data')).val() < 1) {
+            $("#notify-modal #notifyTitle").html("Quantity Invalid");
+            $("#notify-modal .modal-body").html("Quantity Should be Greater than 0");
+            $("#notify-modal").modal("show");
+          } else {
+
+            $(this).html('<i class="fas fa-circle-notch fa-spin"></i> Adding ...').attr('disabled', 'disabled');
+            var element = $(this);
+            $.ajax({
+              type: "POST",
+              url: "menu/addToCart/",
+              data: {
+                csrfmiddlewaretoken: window.CSRF_TOKEN,
+                item: $(this).attr('data'),
+                quantity: $('#quantity-' + $(this).attr('data')).val(),
+                addToCart: "True"},
+              datatype: 'json',
+  
+              success: function(response) {
+                // console.log(response);
+                // var element = $('#load-verify');
+                if (response.status) {
+                //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
+                  element.html('Added To Cart').css('color', 'green').removeAttr('disabled');
+                  // $("#orderModal").modal("toggle")
+                  // $("#order-form #orderFood").html('value', ' Confirm Order').css('color', 'black').removeAttr('disabled');
+                  // alert('success');
+                  $("#notify-modal #notifyTitle").html("Added To Cart");
+                  $("#notify-modal .modal-body").html(" ");
+                  $("#notify-modal").modal("show");
+                //     showAlert('load', true);
+                //     animate('.anim-after-load');
+                //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
+                } else if (!response.status) {
+                //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+                  element.html('<i class="fas fa-times"></i> Add To Cart!!').css('color', 'red').removeAttr('disabled');
+                //     $('#load-data-block .data').html();
+                //     showAlert('load', false);
+                }
+              },
+  
+              error: function (jqXHR, exception) {
+                // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+                // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
+                // $('#load-data-block .data').html();
+                // showAlert('load', false)
+              }
+            })
+            
+          }
+        {% endif %}
+        return false;
+      });
+
+
+      
 
 
       // set date and time scripts

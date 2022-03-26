@@ -16,15 +16,6 @@ class Menu(models.Model):
     def __str__(self):
         return self.item_name
 
-
-# def calc_total(items):
-#         total = 0
-#         for item in items:
-#             total += Menu.objects.get(id=item[0])['price'] * item[1]
-
-#         sum([Menu.objects.filter[id=items]])
-#         return total
-
 def calc_t():
         return 100.00
 
@@ -34,20 +25,28 @@ class Order(models.Model):
     address = models.CharField(max_length=200, default="")
     contact = models.CharField(max_length=20, default="")
     items = models.ManyToManyField(Menu)
-    total_amount = models.DecimalField(max_digits=7, decimal_places=2, default=calc_t) # change default to the total calculated
+    total_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00) # change default to the total calculated
     order_date = models.DateTimeField(default=get_datetime)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return "Order - " + str(self.id)
-    
-class Cart(models.Model):
-    items = models.ManyToManyField(Menu)
-    total_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00) # change default to the total calculated
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class CartItem(models.Model):
+    item = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00)
 
     def __str__(self):
-        return self.user
+        return self.item.item_name + ' - ' + str(self.quantity)
+
+class Cart(models.Model):
+    items = models.ManyToManyField(CartItem, blank=True)
+    total_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00) # change default to the total calculated
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)
     
     
 
