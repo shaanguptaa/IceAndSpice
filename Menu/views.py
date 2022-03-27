@@ -74,14 +74,32 @@ def add_to_cart(request):
     return JsonResponse({'status': True})
 
 
-def get_cart_items(user):
-    cart = Cart.objects.get(user=user)
+def remove_from_cart(request):
+    cart = Cart.objects.get_or_create(user=request.user)[0]
+    item = request.POST['item']
+    item = Menu.objects.get(id=item)
+    items = [item for item in cart.items.filter(item=item)]
+    # print(items)
+    items = tuple(items)
+    for item in items:
+        cart.items.remove(item.id)
+        item.delete()
+    cart.save()
+
+    return JsonResponse({'status': True})
+
+
+def get_cart_items(request):
+    cart = Cart.objects.get(user=request.user)
     data = {
-        'items': set([item.item.id for item in cart.items.all()]),
-        'quantity': dict(),
+        'items': dict(),
+        # 'status': True,
+        # 'quantity': dict(),
     }
 
     for item in cart.items.all():
-        data['quantity'][item.item.id] = item.quantity
+        data['items'][item.item.id] = item.quantity
 
-    return data
+    data['status'] = True
+
+    return JsonResponse(data)

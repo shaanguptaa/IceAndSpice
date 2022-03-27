@@ -174,29 +174,6 @@
                               <div class="col-lg-2">
                                 <span class="price">&#x20B9; {{item.price}} /-</span>
                               </div>
-                              {% if item.id in cartItems.items %}
-                              {% with id='O-8769' %}
-
-
-
-                              <!-- ==================== Get quantity from dict ========================= -->
-
-
-
-
-                              
-                                <div class="col-lg-2 pb-2">
-                                  <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
-                              {{cartItems.quantity.item.id}}
-                                  <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value="{{cartItems.quantity.item}}">&nbsp;
-                                  <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
-                                </div>
-                                <div class="col-lg-3">
-                                  <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
-                                  <button type="button" data="{{item.id}}" role="button" class="btn rounded-0 pb_outline-dark removeFromCart-btn text-success">Added To Cart</button>
-                                </div>
-                              {% endwith %}
-                              {% else %}
                                 <div class="col-lg-2 pb-2">
                                   <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
                                   <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value=0>&nbsp;
@@ -204,9 +181,13 @@
                                 </div>
                                 <div class="col-lg-3">
                                   <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
-                                  <button type="button" data="{{item.id}}" role="button" class="btn rounded-0 pb_outline-dark addToCart-btn">Add To Cart</button>
+                                  <button type="button" data="{{item.id}}" role="button" id="cart-btn-{{item.id}}" class="btn rounded-0 pb_outline-dark addToCart-btn">Add To Cart</button>
+                                  <!-- =============================================================
+
+                                                Buttons not working when changed using ajax do something
+                                  
+                                  =============================================================== -->
                                 </div>
-                              {% endif %}
                             </div>
                           </li>
                         {% endfor %}
@@ -229,6 +210,7 @@
         function decrement(id) {
             document.getElementById('quantity-' + id).stepDown();
         }
+
       </script>
 
 
@@ -752,215 +734,14 @@
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script src="{% static 'js/magnific-popup-options.js' %}"></script>
   
-
-  
-
     <script src="{% static 'js/main.js' %}"></script>
+
 
     <script>
 
-      // $("#notify-modal").modal("show");
-
-      // function showAlert(element, status) {
-      //   var timeout;
-      //   var text = status ? '<strong>Success!</strong> ' : '<strong>Failed!</strong> ';
-      //   if (element == 'load') {
-      //       text += 'Data Loading ';
-      //   } else  if (element == 'process') {
-      //       text += 'Data Pre-Processing ';
-      //   } else if (element == 'split') {
-      //       text += 'Data Splitting ';
-      //   } else if (element == 'train') {
-      //       text += 'Model Training ';
-      //   } else if (element == 'predict') {
-      //       text += 'Data Prediction ';
-      //   } else if (element == 'load-sent') {
-      //       text += 'Loading Sentence ';
-      //   }
-      //   text += status ? 'Successfull !!!' : 'Failed !!!';
-      //   var classesadd = status ? 'alert-success' : 'alert-danger';
-      //   var classesremove = status ? 'alert-danger' : 'alert-success';
-      //   $('.alert').addClass(classesadd).removeClass(classesremove).animate({opacity: '1'}, 'fast', function() {timeout = setTimeout(function() {$('.alert').animate({opacity: '0'}, 'fast');}, 2500);}).find('span').html(text);
-      //   $('.alert').find('button').click(function() {
-      //       $('.alert').animate({opacity: '0'}, 'fast', clearTimeout(timeout));
-      //   });
-      // }
-
-
       window.CSRF_TOKEN = "{{ csrf_token }}"
 
-      // AJAX Script for Table Reservation
-      $('#reserve-table-form').submit(function() {
-        {% if user.is_anonymous %}
-          $("#showlogin").modal("show");
-        {% else %}
-          $('#reserve-table-form #reserve-btn').html('<i class="fas fa-circle-notch fa-spin"></i> Booking...').attr('disabled', 'disabled');
-          $.ajax({
-            type: "POST",
-            url: "reservation/reserve_table/",
-            data: {
-              csrfmiddlewaretoken: window.CSRF_TOKEN,
-              name: $('#reserve-table-form #name').val(),
-              email: $('#reserve-table-form #email').val(),
-              phone: $('#reserve-table-form #phone').val(),
-              date: $('#reserve-table-form #date').val(),
-              time: $('#reserve-table-form #time').val(),
-              persons: $('#reserve-table-form #person').val(),
-              reserve: "True"},
-            datatype: 'json',
-
-            success: function(response) {
-              console.log(response);
-              // var element = $('#load-verify');
-              if (response.status) {
-              //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
-                $("#reserve-table-form #reserve-btn").attr('value', ' book another table').css('color', 'white').removeAttr('disabled');
-                // alert('success');
-                $("#notify-modal #notifyTitle").html("Table Reserved");
-                $("#notify-modal .modal-body").html("Table for " + response.persons + " reserved for " + response.date + " at " + response.time);
-                $("#notify-modal").modal("show");
-              //     showAlert('load', true);
-              //     animate('.anim-after-load');
-              //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
-              } else if (!response.status) {
-              //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-                $("#reserve-btn").html('<i class="fas fa-times"></i> Reservation Failed!!').css('color', 'red').removeAttr('disabled');
-              //     $('#load-data-block .data').html();
-              //     showAlert('load', false);
-              }
-            },
-
-            error: function (jqXHR, exception) {
-              // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-              // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
-              // $('#load-data-block .data').html();
-              // showAlert('load', false)
-            }
-          })
-        {% endif %}
-        return false;
-      });
-
-
-      // AJAX Script for Food Orders
-      $('#order-form').submit(function() {
-        {% if user.is_anonymous %}
-          $("#showlogin").modal("show");
-        {% else %}
-          $('#order-form #orderFood').html('<i class="fas fa-circle-notch fa-spin"></i> Ordering...').attr('disabled', 'disabled');
-          $.ajax({
-            type: "POST",
-            url: "menu/order/",
-            data: {
-              csrfmiddlewaretoken: window.CSRF_TOKEN,
-              itemName: $('#order-form #itemName').val(),
-              personName: $('#order-form #personName').val(),
-              // email: $('#order-form #email').val(),
-              phone: $('#order-form #phone').val(),
-              total: document.getElementById("total").innerHTML,
-              location: $('#order-form #location').val(),
-              order: "True"},
-            datatype: 'json',
-
-            success: function(response) {
-              console.log(response);
-              // var element = $('#load-verify');
-              if (response.status) {
-              //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
-                $("#order-form #orderFood").attr('value', ' Order Successfull').css('color', 'green').removeAttr('disabled');
-                $("#orderModal").modal("toggle")
-                $("#order-form #orderFood").attr('value', ' Confirm Order').css('color', 'black').removeAttr('disabled');
-                // alert('success');
-                $("#notify-modal #notifyTitle").html("Order Successfull");
-                // $("#notify-modal .modal-body").html("Table for " + response.persons + " reserved for " + response.date + " at " + response.time);
-                $("#notify-modal").modal("show");
-              //     showAlert('load', true);
-              //     animate('.anim-after-load');
-              //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
-              } else if (!response.status) {
-              //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-                $("#orderFood").html('<i class="fas fa-times"></i> Order Failed!!').css('color', 'red').removeAttr('disabled');
-              //     $('#load-data-block .data').html();
-              //     showAlert('load', false);
-              }
-            },
-
-            error: function (jqXHR, exception) {
-              // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-              // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
-              // $('#load-data-block .data').html();
-              // showAlert('load', false)
-            }
-          })
-        {% endif %}
-        return false;
-      });
       
-
-      // AJAX Script for Adding to Cart
-      $('.addToCart-btn').click(function() {
-        // console.log('clicked')
-        {% if user.is_anonymous %}
-          $("#showlogin").modal("show");
-        {% else %}
-          if ($('#quantity-' + $(this).attr('data')).val() < 1) {
-            $("#notify-modal #notifyTitle").html("Quantity Invalid");
-            $("#notify-modal .modal-body").html("Quantity Should be Greater than 0");
-            $("#notify-modal").modal("show");
-          } else {
-
-            $(this).html('<i class="fas fa-circle-notch fa-spin"></i> Adding ...').attr('disabled', 'disabled');
-            var element = $(this);
-            $.ajax({
-              type: "POST",
-              url: "menu/addToCart/",
-              data: {
-                csrfmiddlewaretoken: window.CSRF_TOKEN,
-                item: $(this).attr('data'),
-                quantity: $('#quantity-' + $(this).attr('data')).val(),
-                addToCart: "True"},
-              datatype: 'json',
-  
-              success: function(response) {
-                // console.log(response);
-                // var element = $('#load-verify');
-                if (response.status) {
-                //  $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
-                  element.html('Added To Cart').css('color', 'green').removeAttr('disabled');
-                  // $("#orderModal").modal("toggle")
-                  // $("#order-form #orderFood").html('value', ' Confirm Order').css('color', 'black').removeAttr('disabled');
-                  // alert('success');
-                  $("#notify-modal #notifyTitle").html("Added To Cart");
-                  $("#notify-modal .modal-body").html(" ");
-                  $("#notify-modal").modal("show");
-                //     showAlert('load', true);
-                //     animate('.anim-after-load');
-                //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
-                } else if (!response.status) {
-                //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-                  element.html('<i class="fas fa-times"></i> Add To Cart!!').css('color', 'red').removeAttr('disabled');
-                //     $('#load-data-block .data').html();
-                //     showAlert('load', false);
-                }
-              },
-  
-              error: function (jqXHR, exception) {
-                // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-                // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
-                // $('#load-data-block .data').html();
-                // showAlert('load', false)
-              }
-            })
-            
-          }
-        {% endif %}
-        return false;
-      });
-
-
-      
-
-
       // set date and time scripts
 
       // $("#datetime").val(getDate() + "T" + getTime(2)).attr('min', getDate() + "T" + getTime(1))
@@ -992,6 +773,217 @@
       // setting time input
       $('#reserve-table-form #time').val(getTime(1)).attr('min', getTime(MIN_TIME_DELAY));
 
+    </script>
+
+    <script>
+
+        $.ajax({
+          type: "POST",
+          url: "menu/getCartItems/",
+          data: {
+            csrfmiddlewaretoken: window.CSRF_TOKEN,
+            getCart: "True"},
+          datatype: 'json',
+
+          success: function(response) {
+            // console.log(response);
+            if (response.status) {
+              for (const id in response.items) {
+                $('#cart-btn-' + id).html('Added To Cart').removeClass("addToCart-btn").addClass("removeFromCart-btn").css("color", "green");
+                $("#quantity-" + id).attr('value', response.items[id]);
+              }
+
+            } else if (!response.status) {
+              $('#cart-btn-' + id).html(" Added To Cart").removeClass("removeFromCart-btn").addClass("addToCart-btn");
+              $("#quantity-" + id).attr('value', 0);
+            }
+          },
+
+          error: function (jqXHR, exception) {
+            // do something
+            $('#cart-btn-' + id).html(" Added To Cart").removeClass("removeFromCart-btn").addClass("addToCart-btn");
+            $("#quantity-" + id).attr('value', 0);
+
+          }
+        });
+
+      $(document).ready(function () {
+        // for checking items in the cart and updating buttons accordingly
+        
+      });
+
+
+      // AJAX Script for Table Reservation
+      $('#reserve-table-form').submit(function() {
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          $('#reserve-table-form #reserve-btn').html('<i class="fas fa-circle-notch fa-spin"></i> Booking...').attr('disabled', 'disabled');
+          $.ajax({
+            type: "POST",
+            url: "reservation/reserve_table/",
+            data: {
+              csrfmiddlewaretoken: window.CSRF_TOKEN,
+              name: $('#reserve-table-form #name').val(),
+              email: $('#reserve-table-form #email').val(),
+              phone: $('#reserve-table-form #phone').val(),
+              date: $('#reserve-table-form #date').val(),
+              time: $('#reserve-table-form #time').val(),
+              persons: $('#reserve-table-form #person').val(),
+              reserve: "True"},
+            datatype: 'json',
+
+            success: function(response) {
+              console.log(response);
+              if (response.status) {
+                $("#reserve-table-form #reserve-btn").attr('value', ' book another table').css('color', 'white').removeAttr('disabled');
+                $("#notify-modal #notifyTitle").html("Table Reserved");
+                $("#notify-modal .modal-body").html("Table for " + response.persons + " reserved for " + response.date + " at " + response.time);
+                $("#notify-modal").modal("show");
+              } else if (!response.status) {
+                $("#reserve-btn").html('<i class="fas fa-times"></i> Reservation Failed!!').css('color', 'red').removeAttr('disabled');
+              }
+            },
+
+            error: function (jqXHR, exception) {
+              
+            }
+          })
+        {% endif %}
+        return false;
+      });
+
+
+      // AJAX Script for Food Orders
+      $('#order-form').submit(function() {
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          $('#order-form #orderFood').html('<i class="fas fa-circle-notch fa-spin"></i> Ordering...').attr('disabled', 'disabled');
+          $.ajax({
+            type: "POST",
+            url: "menu/order/",
+            data: {
+              csrfmiddlewaretoken: window.CSRF_TOKEN,
+              itemName: $('#order-form #itemName').val(),
+              personName: $('#order-form #personName').val(),
+              phone: $('#order-form #phone').val(),
+              total: document.getElementById("total").innerHTML,
+              location: $('#order-form #location').val(),
+              order: "True"},
+            datatype: 'json',
+
+            success: function(response) {
+              console.log(response);
+              if (response.status) {
+                $("#order-form #orderFood").attr('value', ' Order Successfull').css('color', 'green').removeAttr('disabled');
+                $("#orderModal").modal("toggle")
+                $("#order-form #orderFood").attr('value', ' Confirm Order').css('color', 'black').removeAttr('disabled');
+                $("#notify-modal #notifyTitle").html("Order Successfull");
+                $("#notify-modal").modal("show");
+              } else if (!response.status) {
+                $("#orderFood").html('<i class="fas fa-times"></i> Order Failed!!').css('color', 'red').removeAttr('disabled');
+              }
+            },
+
+            error: function (jqXHR, exception) {
+
+            }
+          })
+        {% endif %}
+        return false;
+      });
+
+      $(".removeFromCart-btn").click(function() { console.log('hiii ccc')})
+
+
+       // AJAX Script for Removing from Cart
+       $('.removeFromCart-btn').click(function() {
+        console.log('clicked');
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          $(this).html('<i class="fas fa-circle-notch fa-spin"></i> Removing ...').attr('disabled', 'disabled');
+          var element = $(this);
+          $.ajax({
+            type: "POST",
+            url: "menu/removeFromCart/",
+            data: {
+              csrfmiddlewaretoken: window.CSRF_TOKEN,
+              item: $(this).attr('data'),
+              // quantity: $('#quantity-' + $(this).attr('data')).val(),
+              removeFromCart: "True"},
+            datatype: 'json',
+
+            success: function(response) {
+              if (response.status) {
+                element.html('Add To Cart').css('color', 'white').removeAttr('disabled');
+                $("#notify-modal #notifyTitle").html("Removed From Cart");
+                $("#notify-modal .modal-body").html("Removed Form Cart");
+                $("#notify-modal").modal("show");
+              } else if (!response.status) {
+                element.html('<i class="fas fa-times"></i> Remove From Cart!!').css('color', 'red').removeAttr('disabled');
+              }
+            },
+
+            error: function (jqXHR, exception) {
+
+            }
+          })
+
+        {% endif %}
+        return false;
+      });
+      
+
+      // AJAX Script for Adding to Cart
+      $('.addToCart-btn').click(function() {
+        // console.log('clicked')
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          if ($('#quantity-' + $(this).attr('data')).val() < 1) {
+            $("#notify-modal #notifyTitle").html("Quantity Invalid");
+            $("#notify-modal .modal-body").html("Quantity Should be Greater than 0");
+            $("#notify-modal").modal("show");
+          } else {
+
+            $(this).html('<i class="fas fa-circle-notch fa-spin"></i> Adding ...').attr('disabled', 'disabled');
+            var element = $(this);
+            $.ajax({
+              type: "POST",
+              url: "menu/addToCart/",
+              data: {
+                csrfmiddlewaretoken: window.CSRF_TOKEN,
+                item: $(this).attr('data'),
+                quantity: $('#quantity-' + $(this).attr('data')).val(),
+                addToCart: "True"},
+              datatype: 'json',
+  
+              success: function(response) {
+                if (response.status) {
+                  element.html('Added To Cart').css('color', 'green').removeAttr('disabled');
+                  $("#notify-modal #notifyTitle").html("Added To Cart");
+                  $("#notify-modal .modal-body").html(" ");
+                  $("#notify-modal").modal("show");
+                } else if (!response.status) {
+                  element.html('<i class="fas fa-times"></i> Add To Cart!!').css('color', 'red').removeAttr('disabled');
+                }
+              },
+  
+              error: function (jqXHR, exception) {
+
+              }
+            })
+            
+          }
+        {% endif %}
+        return false;
+      });
+      
+      
+     
+
 
       $('#reservations').click(function() {
         $.ajax({
@@ -999,41 +991,44 @@
           url: "reservation/get_reservations/",
           data: {
             csrfmiddlewaretoken: window.CSRF_TOKEN,
-            // name: $('#reserve-table-form #name').val(),
-            // email: $('#reserve-table-form #email').val(),
-            // phone: $('#reserve-table-form #phone').val(),
-            // date: $('#reserve-table-form #date').val(),
-            // time: $('#reserve-table-form #time').val(),
-            // persons: $('#reserve-table-form #person').val(),
-            // reserve: "True"
           },
           datatype: 'json',
 
           success: function(response) {
             console.log(response);
-            // var element = $('#load-verify');
-            // if (response.status) {
-            //     $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
-            //     // element.html('<i class="fas fa-check"></i> Dataset Loaded Successfully!').addClass('text-success');
-            //     showAlert('load', true);
-            //     animate('.anim-after-load');
-            //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
-            // } else if (!response.status) {
-            //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-            //     // element.html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger');
-            //     $('#load-data-block .data').html();
-            //     showAlert('load', false);
-            // }
           },
 
           error: function (jqXHR, exception) {
-            // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
-            // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
-            // $('#load-data-block .data').html();
-            // showAlert('load', false)
+
           }
         })
       });
+
+
+      // function showAlert(element, status) {
+      //   var timeout;
+      //   var text = status ? '<strong>Success!</strong> ' : '<strong>Failed!</strong> ';
+      //   if (element == 'load') {
+      //       text += 'Data Loading ';
+      //   } else  if (element == 'process') {
+      //       text += 'Data Pre-Processing ';
+      //   } else if (element == 'split') {
+      //       text += 'Data Splitting ';
+      //   } else if (element == 'train') {
+      //       text += 'Model Training ';
+      //   } else if (element == 'predict') {
+      //       text += 'Data Prediction ';
+      //   } else if (element == 'load-sent') {
+      //       text += 'Loading Sentence ';
+      //   }
+      //   text += status ? 'Successfull !!!' : 'Failed !!!';
+      //   var classesadd = status ? 'alert-success' : 'alert-danger';
+      //   var classesremove = status ? 'alert-danger' : 'alert-success';
+      //   $('.alert').addClass(classesadd).removeClass(classesremove).animate({opacity: '1'}, 'fast', function() {timeout = setTimeout(function() {$('.alert').animate({opacity: '0'}, 'fast');}, 2500);}).find('span').html(text);
+      //   $('.alert').find('button').click(function() {
+      //       $('.alert').animate({opacity: '0'}, 'fast', clearTimeout(timeout));
+      //   });
+      // }
 
     </script>
 
