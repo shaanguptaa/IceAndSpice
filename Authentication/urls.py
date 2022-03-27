@@ -8,3 +8,4 @@ urlpatterns = [
     path('login/<redirect_loc>', views.handle_login, name='login_redirect'),
     path('logout', views.handle_logout, name='logout'),
 ]
+ 

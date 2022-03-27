@@ -6,7 +6,13 @@ from Menu import views as menu
 def index(request):
     # if request.user.username == 'admin':
     #     return HttpResponse('<h4>You are logged in as: ' + request.user.username + '</h4> <br>Login to another account to continue')
-    context = menu.getmenu()
+    context = {
+        'menu': menu.getmenu(),
+        # 'cartItems': menu.get_cart_items(request.user),
+    }
+
+    # print(context['cartItems']['quantity']['O-8769'])
+    # temp = menu.order_items(request.user)
     return render(request, 'IceAndSpice/index.html', context=context)
 
 def temp(request):
