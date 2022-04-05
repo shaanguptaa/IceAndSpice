@@ -88,6 +88,10 @@ def remove_from_cart(request):
 
     return JsonResponse({'status': True})
 
+def get_cart(user):
+    cart = Cart.objects.get(user=user)
+    data = [item.item.id for item in cart.items.all()]
+    return data
 
 def get_cart_items(request):
     cart = Cart.objects.get(user=request.user)

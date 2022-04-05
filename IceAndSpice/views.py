@@ -8,7 +8,7 @@ def index(request):
     #     return HttpResponse('<h4>You are logged in as: ' + request.user.username + '</h4> <br>Login to another account to continue')
     context = {
         'menu': menu.getmenu(),
-        # 'cartItems': menu.get_cart_items(request.user),
+        'cartItems': menu.get_cart(request.user),
     }
 
     # print(context['cartItems']['quantity']['O-8769'])
