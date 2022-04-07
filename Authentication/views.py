@@ -20,11 +20,12 @@ def handle_signup(request):
     if request.method == 'POST' and request.POST['signup-btn']:
         username = request.POST['username']
         password = request.POST['password']
+        email = request.POST['email']
 
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(username=username, password=password, email=email)
         user.save()
         login(request, user)
-        return redirect("user_profile")
+        return redirect("homepage") # later change it to user profile page .................................
     else:
         return render(request, "Authentication/signup.html")
 
@@ -40,9 +41,9 @@ def handle_login(request):
             login(request, user)
             return redirect("administrator_index") if user.is_superuser else redirect("homepage")
         else:
-            return render(request, "Authentication/login.html")
+            return render(request, "Authentication/index.html")
     else:
-        return render(request, "Authentication/login.html")
+        return render(request, "Authentication/index.html")
 
 def handle_logout(request):
     logout(request)
