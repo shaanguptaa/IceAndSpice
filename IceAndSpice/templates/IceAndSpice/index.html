@@ -174,20 +174,19 @@
                               <div class="col-lg-2">
                                 <span class="price">&#x20B9; {{item.price}} /-</span>
                               </div>
-                                <div class="col-lg-2 pb-2">
-                                  <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
-                                  <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value=0>&nbsp;
-                                  <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
-                                </div>
-                                <div class="col-lg-3">
-                                  <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
+                              <div class="col-lg-2 pb-2">
+                                <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
+                                <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value="0">&nbsp;
+                                <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
+                              </div>
+                              <div class="col-lg-4">
+                                <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
+                                {% if item.id in cartItems %}
+                                  <button type="button" data="{{item.id}}" role="button" id="cart-btn-{{item.id}}" class="btn rounded-0 pb_outline-dark removeFromCart-btn">Added To Cart</button>
+                                {% else %}
                                   <button type="button" data="{{item.id}}" role="button" id="cart-btn-{{item.id}}" class="btn rounded-0 pb_outline-dark addToCart-btn">Add To Cart</button>
-                                  <!-- =============================================================
-
-                                                Buttons not working when changed using ajax do something
-                                  
-                                  =============================================================== -->
-                                </div>
+                                {% endif %}
+                              </div>
                             </div>
                           </li>
                         {% endfor %}
@@ -776,41 +775,41 @@
     </script>
 
     <script>
+      // Getting cart items
+      // $.ajax({
+      //   type: "POST",
+      //   url: "menu/getCartItems/",
+      //   data: {
+      //     csrfmiddlewaretoken: window.CSRF_TOKEN,
+      //     getCart: "True"},
+      //   datatype: 'json',
 
-        $.ajax({
-          type: "POST",
-          url: "menu/getCartItems/",
-          data: {
-            csrfmiddlewaretoken: window.CSRF_TOKEN,
-            getCart: "True"},
-          datatype: 'json',
+      //   success: function(response) {
+      //     // console.log(response);
+      //     if (response.status) {
+      //       for (const id in response.items) {
+      //         $('#cart-btn-' + id).html('Added To Cart').removeClass("addToCart-btn").addClass("removeFromCart-btn").css("color", "green");
+      //         $("#quantity-" + id).attr('value', response.items[id]);
+      //       }
 
-          success: function(response) {
-            // console.log(response);
-            if (response.status) {
-              for (const id in response.items) {
-                $('#cart-btn-' + id).html('Added To Cart').removeClass("addToCart-btn").addClass("removeFromCart-btn").css("color", "green");
-                $("#quantity-" + id).attr('value', response.items[id]);
-              }
+      //     } else if (!response.status) {
+      //       $('#cart-btn-' + id).html(" Added To Cart").removeClass("removeFromCart-btn").addClass("addToCart-btn");
+      //       $("#quantity-" + id).attr('value', 0);
+      //     }
+      //   },
 
-            } else if (!response.status) {
-              $('#cart-btn-' + id).html(" Added To Cart").removeClass("removeFromCart-btn").addClass("addToCart-btn");
-              $("#quantity-" + id).attr('value', 0);
-            }
-          },
+      //   error: function (jqXHR, exception) {
+      //     // do something
+      //     $('#cart-btn-' + id).html(" Added To Cart").removeClass("removeFromCart-btn").addClass("addToCart-btn");
+      //     $("#quantity-" + id).attr('value', 0);
 
-          error: function (jqXHR, exception) {
-            // do something
-            $('#cart-btn-' + id).html(" Added To Cart").removeClass("removeFromCart-btn").addClass("addToCart-btn");
-            $("#quantity-" + id).attr('value', 0);
+      //   }
+      // });
 
-          }
-        });
-
-      $(document).ready(function () {
-        // for checking items in the cart and updating buttons accordingly
+      // $(document).ready(function () {
+      //   // for checking items in the cart and updating buttons accordingly
         
-      });
+      // });
 
 
       // AJAX Script for Table Reservation
@@ -893,9 +892,6 @@
         {% endif %}
         return false;
       });
-
-      $(".removeFromCart-btn").click(function() { console.log('hiii ccc')})
-
 
        // AJAX Script for Removing from Cart
        $('.removeFromCart-btn').click(function() {
