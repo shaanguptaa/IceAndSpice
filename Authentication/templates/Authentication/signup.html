@@ -10,7 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'auth/signup/css/opensans-font.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'auth/signup/fonts/line-awesome/css/line-awesome.min.css' %}">
 	<!-- Jquery -->
-	<link rel="stylesheet" href="https://jqueryvalidation.org/files/demo/site-demos.css">
+	{% comment %} <link rel="stylesheet" href="https://jqueryvalidation.org/files/demo/site-demos.css"> {% endcomment %}
 	<!-- Main Style Css -->
     <link rel="stylesheet" href="{% static 'auth/signup/css/style.css' %}"/>
 </head>
@@ -42,50 +42,19 @@
 				</div>
 				<div class="form-row-last">
                     {% comment %} <button type="submit" name="signup-btn">Register</button> {% endcomment %}
-					<input type="submit" name="signup-btn" class="register" id="signup-btn" value="Register">
+					<input type="submit" style="margin-bottom: 0;" name="signup-btn" class="register" id="signup-btn" value="Register">
 					<p>Or<a href="login">Sign in</a></p>
 				</div>
+
+				<p style="color: red; padding-top: 22px; padding-bottom: 0; margin-top: 21px; margin-bottom: 0; width: inherit; letter-spacing: 1px; text-align: left;"> &nbsp;
+					{% if error %}
+						Account Already Exists!!!
+					{% endif %}
+				</p>
+
 			</form>
 		</div>
 	</div>
 	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-	<script>
-		// // just for the demos, avoids form submit
-		// jQuery.validator.setDefaults({
-		//   	debug: true,
-		//   	success:  function(label){
-        // 		label.attr('id', 'valid');
-   		//  	},
-		// });
-		// $( "#myform" ).validate({
-		//   	rules: {
-		// 	    your_email: {
-		// 	      	required: true,
-		// 	      	email: true
-		// 	    },
-		// 	    password: "required",
-		//     	comfirm_password: {
-		//       		equalTo: "#password"
-		//     	}
-		//   	},
-		//   	messages: {
-		//   		username: {
-		//   			required: "Please enter an username"
-		//   		},
-		//   		your_email: {
-		//   			required: "Please provide an email"
-		//   		},
-		//   		password: {
-	  	// 			required: "Please provide a password"
-		//   		},
-		//   		comfirm_password: {
-		//   			required: "Please provide a password",
-		//       		equalTo: "Wrong Password"
-		//     	}
-		//   	}
-		// });
-	</script>
 </body>
 </html>
