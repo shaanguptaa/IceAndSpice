@@ -1,4 +1,4 @@
-{% comment %} <?php
+<?php
   session_start();
   error_reporting(0);
   
@@ -11,8 +11,8 @@
   }
  
   require 'connect.php';
-?> {% endcomment %}
-{% load static %}
+?>
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -22,25 +22,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta http-equiv="x-ua-compatible" content="ie=edge" />
   <title>Admin &ndash; Restaurant</title>
-  <link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.css' %}">
+  <link rel="stylesheet" href="../assets/css/bootstrap/bootstrap.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
   <!-- Google Fonts Roboto -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
 
-    <link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="assets/fonts/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/magnific-popup.css">
 
-    <link rel="stylesheet" href="{% static 'fonts/fontawesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="assets/fonts/fontawesome/css/font-awesome.min.css">
     
     
-    <link rel="stylesheet" href="{% static 'css/slick.css' %}">
+    <link rel="stylesheet" href="assets/css/slick.css">
 
-    <link rel="stylesheet" href="{% static 'css/helpers.css' %}">
+    <link rel="stylesheet" href="assets/css/helpers.css">
   <!-- MDB -->
-  <link rel="stylesheet" href="{% static 'admin/css/mdb.min.css' %}" />
+  <link rel="stylesheet" href="css/mdb.min.css" />
   <!-- Custom styles -->
-  <link rel="stylesheet" href="{% static 'css/admin.css' %}" />
+  <link rel="stylesheet" href="css/admin.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
     crossorigin="anonymous"></script>
     </script>
@@ -136,7 +136,7 @@
         <div class="list-group list-group-flush mx-3 mt-4">
           <!-- Brand -->
           <a class="navbar-brand" href="index.php" style="justify-content: center;">
-            <img src="{% static 'images/restaurant/logo.png' %}" height="30" alt="logo" loading="lazy" />
+            <img src="../assets/images/restaurant/logo.png" height="30" alt="logo" loading="lazy" />
           </a>
           <hr>
           <a href="#" class="list-group-item list-group-item-action py-2 ripple" style="margin-top: -15px !important;" aria-current="true">
@@ -157,21 +157,26 @@
           <a href="#" id="profile" class="list-group-item list-group-item-action py-2 ripple">
             <i class="fas fa-user-circle fa-fw me-3"></i><span>Profile</span></a>
 
-          <form method="POST" action="logout">
-            {% csrf_token %}
+          <form method="POST">
             <input href="#" type="submit" name="signout" value="Sign Out" class=" signout list-group-item list-group-item-action py-2 ripple">
             <i class="icon-signout fas fa-sign-out-alt fa-fw me-3"></i>
+            
           </form>
 
-          {% comment %} <?php 
+          <?php 
 
             if (isset($_POST['signout'])) {
               session_destroy();
               header("Refresh:0; url=login/");
             }
 
-          ?> {% endcomment %}
+          ?>
 
+        </div>
+      </div>
+    </nav>
+    <!-- Sidebar -->
+          
         </div>
       </div>
     </nav>
@@ -205,7 +210,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% comment %} <?php 
+                  <?php 
                       $tbl_name = 'bookings';
                       $sql = "SELECT * FROM `$tbl_name`";
                       $result = $mysqli -> query($sql);
@@ -223,7 +228,7 @@
                         <td><?php echo $booking['time'] ?></td>
                         <td><?php echo $booking['person'] ?></td>
                       </tr>
-                <?php } }?> {% endcomment %}
+                <?php } }?>
                 </tbody>
               </table>
             </div>
@@ -255,7 +260,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% comment %} <?php 
+                  <?php 
                       $tbl_name = 'menu';
                       $sql = "SELECT * FROM `$tbl_name`";
                       $result = $mysqli -> query($sql);
@@ -270,7 +275,7 @@
 
                         <td>&#x20B9; <?php echo $food['price'] ?> &sol;&ndash;</td>
                       </tr>
-                <?php } ?> {% endcomment %}
+                <?php } ?>
                 </tbody>
               </table>
             </div>
@@ -408,7 +413,7 @@
       </div>
     </div>
 
-    {% comment %} <?php 
+    <?php 
 
       if (isset($_POST['add'])) {
         $id = $_POST['add_pid'];
@@ -449,7 +454,7 @@
         }
       }
 
-    ?> {% endcomment %}
+    ?>
 
       <script type="text/javascript">
         function editMenuItem(id, name, cat, status, price) {
@@ -489,14 +494,14 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% comment %} <?php 
+                  <?php 
                       $tbl_name = 'orders';
                       $sql = "SELECT * FROM `$tbl_name`";
                       $result = $mysqli -> query($sql);
 
                       while ($order = $result -> fetch_assoc()) {
-                    ?> {% endcomment %}
-                      {% comment %} <tr>
+                    ?>
+                      <tr>
                         <td><?php echo $order['item'] ?></td>
                         <td><?php echo $order['name'] ?></td>
                         <td><?php echo $order['email'] ?></td>
@@ -505,7 +510,7 @@
                         <td><?php echo $order['quantity'] ?></td>
                         <td>&#x20B9; <?php echo $order['amount'] ?> &sol;&ndash;</td>
                       </tr>
-                <?php } ?> {% endcomment %}
+                <?php } ?>
                 </tbody>
               </table>
             </div>
@@ -589,7 +594,7 @@
         </div>
       </section>
 
-      {% comment %} <?php
+      <?php
         if (isset($_POST['edit'])) {
           $email = $_POST['email'];
           $phone = $_POST['phone'];
@@ -611,7 +616,7 @@
           // header("Refresh:0;");  
 
         }
-      ?> {% endcomment %}
+      ?>
 
 
   </main>
