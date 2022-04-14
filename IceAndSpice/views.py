@@ -6,7 +6,7 @@ from UserProfile.models import Cart
 
 # Create your views here.
 def index(request):
-    init_carts()
+    # init_carts()
     context = {
         'menu': getmenu(),
         'cartItems': get_cart_for_homepage(request.user) if not request.user.is_anonymous else None,

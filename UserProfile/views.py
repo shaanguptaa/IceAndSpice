@@ -16,10 +16,7 @@ def index(request):
     # for i in range(len(orders)):
     #     orders[i].items = orders[i].items.all()
     context = {
-        'user': {
-            'username': request.user.username,
-            # add other details
-        },
+        'user': request.user,
         'orders': orders,
         'cart': get_cart(request),
         'reservations': get_reservations(request),
@@ -67,17 +64,18 @@ def get_cart_for_homepage(user):
     data = [item.item.id for item in cart.items.all()]
     return data
 
-def get_cart_items(request):
-    cart = Cart.objects.get(user=request.user)
-    data = {
-        'items': dict(),
-        # 'status': True,
-        # 'quantity': dict(),
-    }
+# Commented in IceAndSpice/index.html AJAX Code for getting cart items also commented on urls of this app
+# def get_cart_items(request):
+#     cart = Cart.objects.get(user=request.user)
+#     data = {
+#         'items': dict(),
+#         # 'status': True,
+#         # 'quantity': dict(),
+#     }
 
-    for item in cart.items.all():
-        data['items'][item.item.id] = item.quantity
+#     for item in cart.items.all():
+#         data['items'][item.item.id] = item.quantity
 
-    data['status'] = True
+#     data['status'] = True
 
-    return JsonResponse(data)
+#     return JsonResponse(data)
