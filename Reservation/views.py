@@ -1,5 +1,4 @@
 from django.http import JsonResponse
-from django.shortcuts import render
 from Reservation.models import Reservation
 from datetime import datetime
 
@@ -32,12 +31,8 @@ def reserve_table(request):
 
 def get_reservations(request):
     if not request.user.is_authenticated:
-        reservations, status = None, False
+        reservations = None
     else:
         reservations = Reservation.objects.filter(user=request.user)
-        print(reservations)
 
-        reservations = [x for x in reservations.values()] or None
-        status = True
-
-    return JsonResponse({'reservations': reservations, 'status': status})
+    return reservations

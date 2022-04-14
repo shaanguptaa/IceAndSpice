@@ -1,6 +1,4 @@
-# from random import randint
 from django.db import models
-from datetime import datetime
 from django.contrib.auth.models import User
 from Reservation import generate_reservation_id
 from IceAndSpice import get_datetime

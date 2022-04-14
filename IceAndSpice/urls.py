@@ -23,6 +23,8 @@ urlpatterns = [
     path('', views.index, name='homepage'),
     path('authentication/', include('Authentication.urls'), name='Authentication'),
     path('reservation/', include('Reservation.urls'), name='Reservation'),
+    path('user/', include('UserProfile.urls'), name='User'),
+    path('order/', include('Order.urls'), name='Order'),
     path('menu/', include('Menu.urls'), name='Menu'),
     path('temp/', views.temp),
     # path('menu/', include('Menu.urls'), name='menu'),

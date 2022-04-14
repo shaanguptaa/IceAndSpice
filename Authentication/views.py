@@ -1,29 +1,34 @@
 from django.db import IntegrityError
-from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
-from Menu.models import Cart, Order
+from UserProfile.models import Cart
 
 # Create your views here.
 def index(request):
     # show user details if logged in
     if request.user.is_anonymous:
         return redirect("login")
+    elif request.user.is_superuser:
+        return redirect("administrator_index")
+    else:
+        return redirect("homepage")
 
-    orders = get_orders(request)
-    # for i in range(len(orders)):
-    #     orders[i].items = orders[i].items.all()
-    context = {
-        'user': {
-            'username': request.user.username,
-            # add other details
-        },
-        'orders': orders,
-    }
     # orders = get_orders(request)
-    return render(request, "authentication/index.html", context)
+    # # for i in range(len(orders)):
+    # #     orders[i].items = orders[i].items.all()
+    # context = {
+    #     'user': {
+    #         'username': request.user.username,
+    #         # add other details
+    #     },
+    #     'orders': orders,
+    #     'cart': get_cart(request),
+    #     'reservations': get_reservations(request),
+    # }
+    # # orders = get_orders(request)
+    # return render(request, "authentication/index.html", context)
 
 def handle_signup(request):
     if request.method == 'POST' and request.POST['signup-btn']:
@@ -61,14 +66,3 @@ def handle_login(request):
 def handle_logout(request):
     logout(request)
     return redirect("login")
-
-def get_orders(request):
-    orders = Order.objects.filter(user=request.user)
-    # print(orders)
-    # orders = [{'id': order.id, }for order in orders.all()]
-    # orders = [order for order in orders.all()]
-    # print(orders)
-    return orders
-    # orders = {}
-    # return JsonResponse({'status': True, 'orders': orders})
- 

@@ -180,7 +180,7 @@
                                 <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
                               </div>
                               <div class="col-lg-4">
-                                <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
+                                <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
                                 {% if item.id in cartItems %}
                                   <button type="button" data="{{item.id}}" role="button" id="cart-btn-{{item.id}}" class="btn rounded-0 pb_outline-dark removeFromCart-btn text-success">Added To Cart</button>
                                 {% else %}
@@ -304,18 +304,6 @@
       </div>
       <!-- END Order Modal -->
 
-
-      <script type="text/javascript">
-
-        function openModal(id, name, price) {
-          // document.getElementById("id").innerHTML = id;
-          document.getElementById("itemName").value = name;
-          document.getElementById("price").value = price;
-          document.getElementById("quantity-modal").value = document.getElementById("quantity-" + id).value;
-          document.getElementById("total").innerHTML = price * document.getElementById("quantity-" + id).value;
-        };
-
-      </script>
     </section>
     <!-- END Menu section -->
 
@@ -656,7 +644,7 @@
           </div>
 
           <div class="modal-footer">
-            <a href="authentication/login/r" role="button" class="btn btn-success rounded-0">Login</a>
+            <a href="/authentication/login" role="button" class="btn btn-success rounded-0">Login</a>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
           </div>
 
@@ -748,11 +736,30 @@
 
     </script>
 
+    
+
+    <script type="text/javascript">
+
+      function openModal(id, name, price) {
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          // document.getElementById("id").innerHTML = id;
+          document.getElementById("itemName").value = name;
+          document.getElementById("price").value = price;
+          document.getElementById("quantity-modal").value = document.getElementById("quantity-" + id).value;
+          document.getElementById("total").innerHTML = price * document.getElementById("quantity-" + id).value;
+          $("#orderModal").modal('show');
+        {% endif %}
+      };
+
+    </script>
+
     <script>
       // Getting cart items
       // $.ajax({
       //   type: "POST",
-      //   url: "menu/getCartItems/",
+      //   url: "user/getCartItems/",
       //   data: {
       //     csrfmiddlewaretoken: window.CSRF_TOKEN,
       //     getCart: "True"},
@@ -835,7 +842,7 @@
           $('#order-form #orderFood').html('<i class="fas fa-circle-notch fa-spin"></i> Ordering...').attr('disabled', 'disabled');
           $.ajax({
             type: "POST",
-            url: "menu/order/",
+            url: "order/order/",
             data: {
               csrfmiddlewaretoken: window.CSRF_TOKEN,
               itemName: $('#order-form #itemName').val(),
@@ -879,7 +886,7 @@
           var element = $(this);
           $.ajax({
             type: "POST",
-            url: "menu/removeFromCart/",
+            url: "user/removeFromCart/",
             data: {
               csrfmiddlewaretoken: window.CSRF_TOKEN,
               item: $(this).attr('data'),
@@ -924,7 +931,7 @@
             var element = $(this);
             $.ajax({
               type: "POST",
-              url: "menu/addToCart/",
+              url: "user/addToCart/",
               data: {
                 csrfmiddlewaretoken: window.CSRF_TOKEN,
                 item: $(this).attr('data'),

@@ -1,19 +1,22 @@
-from django.http import HttpResponse
 from django.shortcuts import render
-from Menu import views as menu
+from Menu.views import getmenu
+from UserProfile.views import get_cart_for_homepage
+from django.contrib.auth.models import User
+from UserProfile.models import Cart
 
 # Create your views here.
 def index(request):
-    # if request.user.username == 'admin':
-    #     return HttpResponse('<h4>You are logged in as: ' + request.user.username + '</h4> <br>Login to another account to continue')
+    init_carts()
     context = {
-        'menu': menu.getmenu(),
-        'cartItems': menu.get_cart(request.user) if not request.user.is_anonymous else None,
+        'menu': getmenu(),
+        'cartItems': get_cart_for_homepage(request.user) if not request.user.is_anonymous else None,
     }
-
-    # print(context['cartItems']['quantity']['O-8769'])
-    # temp = menu.order_items(request.user)
     return render(request, 'IceAndSpice/index.html', context=context)
 
+def init_carts():
+    for user in User.objects.all():
+        cart = Cart.objects.get_or_create(user=user)
+        print(cart)
+
 def temp(request):
-    return render(request, 'IceAndSpice/temp.html', context=menu.getmenu())
+    return render(request, 'IceAndSpice/temp.html', context=getmenu())
