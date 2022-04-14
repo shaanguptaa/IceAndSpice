@@ -644,7 +644,7 @@
           </div>
 
           <div class="modal-footer">
-            <a href="authentication/login/r" role="button" class="btn btn-success rounded-0">Login</a>
+            <a href="/authentication/login" role="button" class="btn btn-success rounded-0">Login</a>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
           </div>
 
@@ -759,7 +759,7 @@
       // Getting cart items
       // $.ajax({
       //   type: "POST",
-      //   url: "menu/getCartItems/",
+      //   url: "user/getCartItems/",
       //   data: {
       //     csrfmiddlewaretoken: window.CSRF_TOKEN,
       //     getCart: "True"},
@@ -842,7 +842,7 @@
           $('#order-form #orderFood').html('<i class="fas fa-circle-notch fa-spin"></i> Ordering...').attr('disabled', 'disabled');
           $.ajax({
             type: "POST",
-            url: "menu/order/",
+            url: "order/order/",
             data: {
               csrfmiddlewaretoken: window.CSRF_TOKEN,
               itemName: $('#order-form #itemName').val(),
@@ -886,7 +886,7 @@
           var element = $(this);
           $.ajax({
             type: "POST",
-            url: "menu/removeFromCart/",
+            url: "user/removeFromCart/",
             data: {
               csrfmiddlewaretoken: window.CSRF_TOKEN,
               item: $(this).attr('data'),
@@ -931,7 +931,7 @@
             var element = $(this);
             $.ajax({
               type: "POST",
-              url: "menu/addToCart/",
+              url: "user/addToCart/",
               data: {
                 csrfmiddlewaretoken: window.CSRF_TOKEN,
                 item: $(this).attr('data'),
