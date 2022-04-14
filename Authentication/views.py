@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
 from Menu.models import Cart, Order
+from Reservation.models import Reservation
 
 # Create your views here.
 def index(request):
@@ -21,6 +22,8 @@ def index(request):
             # add other details
         },
         'orders': orders,
+        'cart': get_cart(request),
+        'reservations': get_reservations(request),
     }
     # orders = get_orders(request)
     return render(request, "authentication/index.html", context)
@@ -64,11 +67,29 @@ def handle_logout(request):
 
 def get_orders(request):
     orders = Order.objects.filter(user=request.user)
-    # print(orders)
-    # orders = [{'id': order.id, }for order in orders.all()]
-    # orders = [order for order in orders.all()]
-    # print(orders)
+
+    orders = [{'id': order.id, 'items': [item for item in order.items.all()]} for order in orders.all()]
+
     return orders
-    # orders = {}
-    # return JsonResponse({'status': True, 'orders': orders})
+
+def get_cart(request):
+    cart = Cart.objects.get(user=request.user)
+    cart_items = {'items': [item for item in cart.items.all()], 'total': cart.total_amount}
+
+    return cart_items
+
  
+def get_reservations(request):
+    if not request.user.is_authenticated:
+        reservations, status = None, False
+    else:
+        reservations = Reservation.objects.filter(user=request.user)
+        # print(reservations)
+
+        # reservations = [x for x in reservations.values()] or None
+        # print(reservations)
+    #     status = True
+
+    return reservations
+
+    # return JsonResponse({'reservations': reservations, 'status': status})

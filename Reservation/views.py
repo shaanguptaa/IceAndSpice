@@ -29,15 +29,3 @@ def reserve_table(request):
             return JsonResponse({'status': 'Failed', 'error': e})
 
     return JsonResponse({})
-
-def get_reservations(request):
-    if not request.user.is_authenticated:
-        reservations, status = None, False
-    else:
-        reservations = Reservation.objects.filter(user=request.user)
-        print(reservations)
-
-        reservations = [x for x in reservations.values()] or None
-        status = True
-
-    return JsonResponse({'reservations': reservations, 'status': status})

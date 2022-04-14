@@ -142,7 +142,33 @@
 	</style>
 </head>
 <body>
-	hii {{user.username}}
+	hii {{user.username}} <br>
+	Orders : <br>
+	{% for order in orders %}
+		id: {{order.id}} <br>
+		items: {% for item in order.items %}
+					{{item}}, 
+					 {% comment %}................ Change items in order table to cart items reference...............  {% endcomment %}
+			   {% endfor %}
+		<br>
+		<br>
+	{% endfor %}
+	<br><br>
+
+	Cart : <br>
+	items : {% for item in cart.items %}
+				name: {{item.item.id}}, quantity: {{item.quantity}}, amount: {{item.amount}} <br>
+			{% endfor %}
+	<br>
+	total amount : {{cart.total}}
+	<br><br><br>
+
+	Reservations : 
+	{% for reservation in reservations %}
+		{{reservation.name}}<br>
+	{% endfor %}
+	{% comment %} orders: {{orders}} {% endcomment %}
+	{% comment %} cart: {{cart}} {% endcomment %}
 {% comment %} 
 	<div class="page-content page-container" id="page-content">
 		<div class="">

@@ -180,7 +180,7 @@
                                 <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
                               </div>
                               <div class="col-lg-4">
-                                <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" data-toggle="modal" data-target="#orderModal" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
+                                <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
                                 {% if item.id in cartItems %}
                                   <button type="button" data="{{item.id}}" role="button" id="cart-btn-{{item.id}}" class="btn rounded-0 pb_outline-dark removeFromCart-btn text-success">Added To Cart</button>
                                 {% else %}
@@ -304,18 +304,6 @@
       </div>
       <!-- END Order Modal -->
 
-
-      <script type="text/javascript">
-
-        function openModal(id, name, price) {
-          // document.getElementById("id").innerHTML = id;
-          document.getElementById("itemName").value = name;
-          document.getElementById("price").value = price;
-          document.getElementById("quantity-modal").value = document.getElementById("quantity-" + id).value;
-          document.getElementById("total").innerHTML = price * document.getElementById("quantity-" + id).value;
-        };
-
-      </script>
     </section>
     <!-- END Menu section -->
 
@@ -745,6 +733,25 @@
       
       // setting time input
       $('#reserve-table-form #time').val(getTime(1)).attr('min', getTime(MIN_TIME_DELAY));
+
+    </script>
+
+    
+
+    <script type="text/javascript">
+
+      function openModal(id, name, price) {
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          // document.getElementById("id").innerHTML = id;
+          document.getElementById("itemName").value = name;
+          document.getElementById("price").value = price;
+          document.getElementById("quantity-modal").value = document.getElementById("quantity-" + id).value;
+          document.getElementById("total").innerHTML = price * document.getElementById("quantity-" + id).value;
+          $("#orderModal").modal('show');
+        {% endif %}
+      };
 
     </script>
 
