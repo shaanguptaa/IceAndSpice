@@ -175,9 +175,9 @@
                                 <span class="price">&#x20B9; {{item.price}} /-</span>
                               </div>
                               <div class="col-lg-2 pb-2">
-                                <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
+                                <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">&minus;</button>&nbsp;
                                 <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value="0">&nbsp;
-                                <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
+                                <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">&plus;</button>
                               </div>
                               <div class="col-lg-4">
                                 <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
@@ -650,7 +650,7 @@
         <div class="modal-content justify-content-center">
 
           <div class="modal-header">
-            <h5 class="modal-title" id="notifyTitle">Reserved</h5>
+            <h5 class="modal-title" id="notifyTitle"></h5>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
 

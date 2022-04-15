@@ -14,6 +14,7 @@ class Order(models.Model):
     items = models.ManyToManyField(Menu)
     total_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00) # change default to the total calculated
     order_date = models.DateTimeField(default=get_datetime)
+    delivered = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
