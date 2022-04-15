@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -207,14 +208,19 @@
 		<div class="card" id="order">
 			<div class="card-body">
 				<h5 class="card-title">Orders</h5>
-				<p class="card-text">
-					<div class="list-group">
-						<a href="#" class="list-group-item">First item</a>
-						<a href="#" class="list-group-item">Second item</a>
-						<a href="#" class="list-group-item">Third item</a>
+				<div class="card-columns">
+					{% for order in orders %}
+					  <div class="card">
+						<!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+						<div class="card-body">
+						  <h5 class="card-title">{{order.id}}</h5>
+						  <p class="text-dark">Samosa, Vada Pav</p>
+						  <p class="text-dark">Price : &#8377; 200</p>
+						  <p class="card-text"><small class="text-muted">Ordered {{ order.order_date|naturaltime }}</small></p>
+						</div>
 					  </div>
-				</p>
-				<a href="#" class="btn btn-primary">Button</a>
+					{% endfor %}
+				</div>
 			</div>
 		</div>		
 
@@ -250,13 +256,13 @@
 									<button class="btn btn-sm btn-light inc-btn" data="{{item.id}}">&plus;</button>
 								</div></td>
 								<td>{{item.quantity}} &times; {{item.item.price}}</td>
-								<td>{{item.amount}}</td>
+								<td>{{item.amount|intcomma}}</td>
 								<td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td>
 							</tr>	
 						{% endfor %}
 						<tr align="center">
 							<td colspan="3" align="right" class="pr-5">Total Amount :</td>
-							<td id="total-amount-cart">{{cart.total}}</td>
+							<td id="total-amount-cart">{{cart.total|intcomma}}</td>
 							<td><button class="btn btn-success">Checkout</button></td>
 						</tr>
 					</tbody>
@@ -361,7 +367,8 @@
 			</div>
 		  </div>
 		</div>
-	  </div>
+	</div>
+	
 	
 	<script src="{% static 'js/jquery.min.js' %}"></script>
 	<script src="{% static 'js/popper.min.js' %}"></script>

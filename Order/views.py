@@ -19,6 +19,6 @@ def order(request):
 
 def get_orders(request):
     orders = Order.objects.filter(user=request.user)
-    orders = [{'id': order.id, 'items': [item for item in order.items.all()]} for order in orders.all()]
+    orders = [{'id': order.id, 'items': [item for item in order.items.all()], 'order_date': order.order_date} for order in orders.all()]
 
     return orders
