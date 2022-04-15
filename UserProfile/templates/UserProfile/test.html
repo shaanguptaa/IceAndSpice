@@ -8,6 +8,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>User Profile - IceAndSpice</title>
 	<link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.css' %}">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+    <link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/fontawesome/css/font-awesome.min.css' %}">
+
 	<style>
 		html {
 			scroll-behavior: smooth !important;
@@ -207,18 +211,24 @@
 
 		<div class="card" id="order">
 			<div class="card-body">
-				<h5 class="card-title">Orders</h5>
-				<div class="card-columns">
+				<h5 class="card-title mb-5">Orders</h5>
+				<div class="container card-deck">
 					{% for order in orders %}
-					  <div class="card">
-						<!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
-						<div class="card-body">
-						  <h5 class="card-title">{{order.id}}</h5>
-						  <p class="text-dark">Samosa, Vada Pav</p>
-						  <p class="text-dark">Price : &#8377; 200</p>
-						  <p class="card-text"><small class="text-muted">Ordered {{ order.order_date|naturaltime }}</small></p>
-						</div>
-					  </div>
+					 <div style="width: fit-content;">
+						<div class="card" style="cursor: pointer;" onclick="openOrderModal('{{order.id}}')" id="order-card-{{order.id}}">
+							<!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+							<div class="card-body">
+							  {% if order.delivered %}
+							  	<h5 class="card-title text-success"><span><i class="fa fa-check-circle"></i></span> Delivered </h5>
+							  {% else %}
+							  	<h5 class="card-title text-danger"><span><i class="far fa-times-circle"></i></span> Not Yet Delivered </h5>
+							  {% endif %}
+							  <p class="text-dark">{{order.items}}</p>
+							  <p class="text-dark">Total Amount : &#8377; {{order.total_amount|intcomma}}</p>
+							  <p class="card-text"><small class="text-muted">Ordered {{ order.order_date|naturaltime }}</small></p>
+							</div>
+						  </div>
+					 </div>
 					{% endfor %}
 				</div>
 			</div>
@@ -274,6 +284,7 @@
 	</div>
 
 	<!-- order model -->
+	<!-- ...........edit model...................... -->
 	<div id="orderModal" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-dialog-centered modal-lg">
   
@@ -310,7 +321,8 @@
   
 			  <hr>
 			  <div class="container">
-				<label>Delivery Details :</label>
+					<h4 class="modal-title pl-1">Delivery Details</h4>
+					<hr>
 
   
 				  <div class="row">
@@ -337,8 +349,9 @@
 			  </div>
 			</div>
 			<div class="modal-footer">
-			  <div class="container form-group">
+			  <div class="container">
 				<!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
+				<h4 id="delivery-status" style="float: left;"></h4>
 				<button style="float: right;" id="cancel-order-btn" class="btn btn-danger">Cancel Order</button>
 			  </div>
 			</div>
@@ -517,6 +530,76 @@
 			});
 			return false;
 		});
+	
+		// function for getting particular order and showing in modal
+		function openOrderModal(id) {
+			$.ajax({
+				type: "POST",
+				url: "/order/get-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: id,
+					getOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						if (response.order.delivered) {
+							$('#orderModal #cancel-order-btn').hide();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-check-circle"></i></span> Delivered').addClass("text-success").removeClass('text-secondary');
+						} else {
+							$('#orderModal #cancel-order-btn').removeAttr('disabled').show();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Not Yet Delivered').addClass("text-secondary").removeClass('text-success');
+						}
+						
+						
+
+						$('#orderModal #personName').text(response.order.name);
+						$('#orderModal #order-phone').text(response.order.contact);
+						$('#orderModal #order-email').text('{{ request.user.email }}');
+						$('#orderModal #order-address').text(response.order.address);
+
+
+						$("#orderModal #cancel-order-btn").attr('data', response.order.id);
+						
+						$("#orderModal").modal('show');
+					} else {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+		}
+
+
+		// ajax for cancelling order
+		$("#orderModal #cancel-order-btn").click(function () {
+			$.ajax({
+				type: "POST",
+				url: "/order/cancel-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: $(this).attr('data'),
+					cancelOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						$("#orderModal").modal('hide');
+						$("#order-card-" + response.order_id).remove();
+					} else {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
+
 	</script>
 </body>
 </html>

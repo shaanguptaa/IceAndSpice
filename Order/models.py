@@ -14,6 +14,7 @@ class OrderItem(models.Model):
     def __str__(self):
         return self.item.item_name + ' - ' + str(self.quantity)
 
+
 class Order(models.Model):
     id = models.CharField(max_length=6, default=generate_order_id, primary_key=True, editable=False)
     name = models.CharField(max_length=20, default="")

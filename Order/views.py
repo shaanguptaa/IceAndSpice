@@ -19,6 +19,47 @@ def order(request):
 
 def get_orders(request):
     orders = Order.objects.filter(user=request.user)
-    orders = [{'id': order.id, 'items': [item for item in order.items.all()], 'order_date': order.order_date} for order in orders.all()]
+    orders = [{
+        'id': order.id,
+        'items': ", ".join([item.item.item_name + ' x ' + str(item.quantity) for item in order.items.all()]),
+        'order_date': order.order_date,
+        'total_amount': order.total_amount,
+        'delivered': order.delivered
+        } for order in orders.all()]
 
     return orders
+
+def get_order(request):
+    if request.method == 'POST' and request.POST['getOrder']:
+        order = Order.objects.get(id=request.POST['order_id'])
+        order = {
+            'id': order.id,
+            'name': order.name,
+            'address': order.address,
+            'contact': order.contact,
+            'total_amount': order.total_amount,
+            'order_date': order.order_date,
+            'delivered': order.delivered,
+            'items': [{
+                'quantity': item.quantity,
+                'amount': item.amount,
+                'item': item.item.item_name,
+                } for item in order.items.all()]
+        }
+        return JsonResponse({'status': True, 'order': order})
+
+
+    return JsonResponse({})
+
+def cancel_order(request):
+    if request.method == 'POST' and request.POST['cancelOrder']:
+        order = Order.objects.get(id=request.POST['order_id'])
+        order_id = order.id
+        for item in order.items.all():
+            order.items.remove(item.id)
+            item.delete()
+        order.save()
+        order.delete()
+
+        return JsonResponse({'status': True, 'order_id': order_id})
+    return JsonResponse({})
