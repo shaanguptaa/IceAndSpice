@@ -1,12 +1,14 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from Menu.views import getmenu
 from UserProfile.views import get_cart_for_homepage
 from django.contrib.auth.models import User
 from UserProfile.models import Cart
+from administrator.models import Feedback
 
 # Create your views here.
 def index(request):
-    init_carts()
+    # init_carts()
     context = {
         'menu': getmenu(),
         'cartItems': get_cart_for_homepage(request.user) if not request.user.is_anonymous else None,
@@ -20,3 +22,22 @@ def init_carts():
 
 def temp(request):
     return render(request, 'IceAndSpice/temp.html', context=getmenu())
+
+def add_feedback(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({})
+    elif request.method == 'POST' and request.POST['feedback']:
+        try:
+            name = request.POST['name']
+            email = request.POST['email']
+            message = request.POST['message']
+
+            Feedback.objects.create(user=request.user, name=name, email=email, message=message)
+            
+            return JsonResponse({'status': 'Success'})
+
+        except Exception as e:
+            return JsonResponse({'status': 'Failed', 'error': e})
+    
+    return JsonResponse({})
+    

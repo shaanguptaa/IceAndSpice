@@ -1,3 +1,5 @@
+{% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,194 +7,599 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>User Profile - IceAndSpice</title>
+	<link rel="stylesheet" href="{% static 'css/bootstrap/bootstrap.css' %}">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+    <link rel="stylesheet" href="{% static 'fonts/ionicons/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/fontawesome/css/font-awesome.min.css' %}">
+
 	<style>
+		html {
+			scroll-behavior: smooth !important;
+		}
+
 		body {
-			background-color: #f9f9fa
+			background-color: #f9f9fa;
 		}
 
-		.padding {
-			padding: 3rem !important
+		#notify-modal {
+			top: 30vh;
 		}
-
-		.user-card-full {
-			overflow: hidden
-		}
-
+		
 		.card {
 			border-radius: 5px;
 			-webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
 			box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08);
 			border: none;
-			margin-bottom: 30px
+			margin-bottom: 30px;
 		}
 
-		.m-r-0 {
-			margin-right: 0px
+
+		/* The side navigation menu */
+		.sidebar {
+		margin: 0;
+		padding: 20px;
+		width: 20%;
+		background-color: #f29263;
+		background: -webkit-gradient(linear, left top, right top, from(#f29263), to(#ee5a6f));
+		background: linear-gradient(to right, #ee5a6f, #f29263);
+		position: fixed;
+		height: 100%;
+		overflow: none;
 		}
 
-		.m-l-0 {
-			margin-left: 0px
+		/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+		.content {
+		margin-left: 20%;
+		padding: 30px 50px;
+		/* height: 1000px; */
+		
 		}
 
-		.user-card-full .user-profile {
-			border-radius: 5px 0 0 5px
+		/* On screens that are less than 700px wide, make the sidebar into a topbar */
+		@media screen and (max-width: 700px) {
+			.sidebar {
+				width: 100%;
+				height: auto;
+				position: relative;
+			}
+			.sidebar a {float: left;}
+			div.content {margin-left: 0;}
 		}
 
-		.bg-c-lite-green {
-			background: -webkit-gradient(linear, left top, right top, from(#f29263), to(#ee5a6f));
-			background: linear-gradient(to right, #ee5a6f, #f29263)
-		}
-
-		.user-profile {
-			padding: 20px 0
-		}
-
-		.card-block {
-			padding: 1.25rem
-		}
-
-		.m-b-25 {
-			margin-bottom: 25px
-		}
-
-		.img-radius {
-			border-radius: 5px
-		}
-
-		h6 {
-			font-size: 14px
-		}
-
-		.card .card-block p {
-			line-height: 25px
-		}
-
-		@media only screen and (min-width: 1400px) {
-			p {
-				font-size: 14px
+		/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+		@media screen and (max-width: 400px) {
+			.sidebar a {
+				text-align: center;
+				float: none;
 			}
 		}
 
-		.card-block {
-			padding: 1.25rem
+		.sidebar .container {
+			position: relative;
+			top: 50%;
+			-webkit-transform: translateY(-50%);
+			-ms-transform: translateY(-50%);
+			transform: translateY(-50%);
 		}
 
-		.b-b-default {
-			border-bottom: 1px solid #e0e0e0
+		.profile-pic {
+			border-radius: 50%;
+			border: 1px solid black;
+			width: 100px;
+			height: 100px;
+			margin: 50px auto;
+			margin-top: 0;
+			padding: 0;
+		}
+		.profile-pic img {
+			border-radius: 50%;
 		}
 
-		.m-b-20 {
-			margin-bottom: 20px
+		.username, .cng-pass, .logout {
+			text-align: center;
+			margin: 20px auto;
 		}
 
-		.p-b-5 {
-			padding-bottom: 5px !important
+		.cng-pass {
+			color: navy;
+			text-decoration: underline;
 		}
 
-		.card .card-block p {
-			line-height: 25px
+		.info-header {
+			padding-bottom: 10px;
+			border-bottom: 1px solid gray;
+			margin-bottom: 10px;
 		}
 
-		.m-b-10 {
-			margin-bottom: 10px
+		#user-details-form {
+			margin: 30px auto;
 		}
 
-		.text-muted {
-			color: #919aa3 !important
+		#save-btn, #reset-btn {
+			float: right;
+			margin-bottom: 25px;
+			margin-top: 15px;
+			margin-left: 20px;
+			/* display: none; */
+			visibility: hidden;
 		}
 
-		.b-b-default {
-			border-bottom: 1px solid #e0e0e0
+		.counters {
+			text-align: center;
+			margin: 60px auto;
 		}
 
-		.f-w-600 {
-			font-weight: 600
+		.counters .count {
+			font-size: 40px;
+			font-weight: 700;
+			margin-bottom: 0;
 		}
 
-		.m-b-20 {
-			margin-bottom: 20px
-		}
-
-		.m-t-40 {
-			margin-top: 20px
-		}
-
-		.p-b-5 {
-			padding-bottom: 5px !important
-		}
-
-		.m-b-10 {
-			margin-bottom: 10px
-		}
-
-		.m-t-40 {
-			margin-top: 20px
-		}
-
-		.user-card-full .social-link li {
-			display: inline-block
-		}
-
-		.user-card-full .social-link li a {
+		.counters .txt {
+			margin: auto;
+			margin-top: 0;
 			font-size: 20px;
-			margin: 0 10px 0 0;
-			-webkit-transition: all 0.3s ease-in-out;
-			transition: all 0.3s ease-in-out
+			color: #898E89;
+			line-height: 1.5rem;
+			width: 50%;
 		}
 	</style>
 </head>
 <body>
 
-	<div class="page-content page-container" id="page-content">
-		<div class="padding">
-			<div class="row container d-flex justify-content-center">
-				<div class="col-xl-6 col-md-12">
-					<div class="card user-card-full">
-						<div class="row m-l-0 m-r-0">
-							<div class="col-sm-4 bg-c-lite-green user-profile">
-								<div class="card-block text-center text-white">
-									<div class="m-b-25"> <img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius" alt="User-Profile-Image"> </div>
-									<h6 class="f-w-600">Hembo Tingor</h6>
-									<p>Web Designer</p> <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
-								</div>
-							</div>
-							<div class="col-sm-8">
-								<div class="card-block">
-									<h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
-									<div class="row">
-										<div class="col-sm-6">
-											<p class="m-b-10 f-w-600">Email</p>
-											<h6 class="text-muted f-w-400">rntng@gmail.com</h6>
-										</div>
-										<div class="col-sm-6">
-											<p class="m-b-10 f-w-600">Phone</p>
-											<h6 class="text-muted f-w-400">98979989898</h6>
-										</div>
-									</div>
-									<h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Projects</h6>
-									<div class="row">
-										<div class="col-sm-6">
-											<p class="m-b-10 f-w-600">Recent</p>
-											<h6 class="text-muted f-w-400">Sam Disuja</h6>
-										</div>
-										<div class="col-sm-6">
-											<p class="m-b-10 f-w-600">Most Viewed</p>
-											<h6 class="text-muted f-w-400">Dinoter husainm</h6>
-										</div>
-									</div>
-									<ul class="social-link list-unstyled m-t-40 m-b-10">
-										<li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="facebook" data-abc="true"><i class="mdi mdi-facebook feather icon-facebook facebook" aria-hidden="true"></i></a></li>
-										<li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="twitter" data-abc="true"><i class="mdi mdi-twitter feather icon-twitter twitter" aria-hidden="true"></i></a></li>
-										<li><a href="#!" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="instagram" data-abc="true"><i class="mdi mdi-instagram feather icon-instagram instagram" aria-hidden="true"></i></a></li>
-									</ul>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+	<!-- The sidebar -->
+	<div class="sidebar">
+		<div class="container">
+			<div class="profile-pic">
+				<!-- ...... implement uploading profile pic from user and save to media ref google upload image in django models....... -->
+				<img src="https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg" alt="profile picture" height="100%" width="100%">
+			</div>
+			<div class="username">
+				<h3>{% if user.first_name %} {{user.first_name}} {{user.last_name}} {% else %} {{user.username}} {% endif %}</h3>
+			</div>
+			<div class="cng-pass">
+				<a href="#" target="_blank">Change Password</a>
+				<!-- .......implement later ......... -->
+			</div>
+			<div class="logout">
+				<a role="button" href="/authentication/logout" class="btn btn-dark">Logout</a>
 			</div>
 		</div>
 	</div>
 	
+	<!-- Page content -->
+	<div class="content">
+		<div class="user-details">
+			<h4 class="info-header">Information</h4>
+			<form id="user-details-form" method="POST">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="email">Email : </label>
+					<input type="email" class="form-control" name="email" id="email" value="{{user.email}}" placeholder="Email Address">
+				</div>
+				<div class="form-group">
+					<label for="contact">Contact : </label>
+					<input type="number" class="form-control" name="contact" id="contact" placeholder="Contact Number" value="{{user.profile.phone}}">
+				</div>
+				<div class="form-group">
+					<label for="address">Address : </label>
+					<textarea name="address" class="form-control" id="address" cols="30" rows="5" placeholder="Address" >{{user.profile.address}}</textarea>
+				</div>
+				<div class="form-group">
+					<input type="button" name="save" id="save-btn" value="Save Changes" class="btn btn-success">
+					<input type="reset" value="Reset" class="btn btn-secondary" id="reset-btn">
+					<!-- only enable if changes are made -->
+				</div>
+			</form>
+		</div>
+
+		<div class="container row counters">
+			<!-- .....implement smooth scroll....... -->
+			<a href="#order" class="col-md-4 col-sm-4 order-count">
+				<h2 class="count">{{order_count}}</h2>
+				<p class="txt">Orders to be Delivered</p>
+			</a>
+			<a href="#reservations" class="col-md-4 col-sm-4 reservation-count">
+				<h2 class="count">{{reservations_count}}</h2>
+				<p class="txt">Upcoming Reservations</p>
+			</a>
+			<a href="#cart" class="col-md-4 col-sm-4 cart-count">
+				<h2 class="count">{{cart_count}}</h2>
+				<p class="txt">Items in Cart</p>
+			</a>
+		</div>
+
+		<div class="card" id="order">
+			<div class="card-body">
+				<h5 class="card-title mb-5">Orders</h5>
+				<div class="container card-deck">
+					{% for order in orders %}
+					 <div style="width: fit-content;">
+						<div class="card" style="cursor: pointer;" onclick="openOrderModal('{{order.id}}')" id="order-card-{{order.id}}">
+							<!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+							<div class="card-body">
+							  {% if order.delivered %}
+							  	<h5 class="card-title text-success"><span><i class="fa fa-check-circle"></i></span> Delivered </h5>
+							  {% else %}
+							  	<h5 class="card-title text-danger"><span><i class="far fa-times-circle"></i></span> Not Yet Delivered </h5>
+							  {% endif %}
+							  <p class="text-dark">{{order.items}}</p>
+							  <p class="text-dark">Total Amount : &#8377; {{order.total_amount|intcomma}}</p>
+							  <p class="card-text"><small class="text-muted">Ordered {{ order.order_date|naturaltime }}</small></p>
+							</div>
+						  </div>
+					 </div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>		
+
+		<div class="card" id="reservations">
+			<div class="card-body">
+				<h5 class="card-title">Reservations</h5>
+				<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+				<a href="#" class="btn btn-primary">Button</a>
+			</div>
+		</div>
+
+		<div class="card" id="cart">
+			<div class="card-body">
+				<h5 class="card-title mb-5">Cart</h5>
+
+				<table class="table table-hover table-sm" style="width: 100%;">
+					<thead>
+					  <tr>
+						<th style="text-align: center;">Item Name</th>
+						<th style="text-align: center;">Quantity</th>
+						<th style="text-align: center;"></th>
+						<th style="text-align: center;">Price</th>
+						<th style="text-align: center;"></th>
+					  </tr>
+					</thead>
+					<tbody>
+						{% for item in cart.items %}
+							<tr align="center" id="{{item.id}}">
+								<td>{{item.item.item_name}}</td>
+								<td><div>
+									<button class="btn btn-sm btn-light dec-btn" data="{{item.id}}">&minus;</button> &nbsp;
+									<span>{{item.quantity}} &nbsp;</span>
+									<button class="btn btn-sm btn-light inc-btn" data="{{item.id}}">&plus;</button>
+								</div></td>
+								<td>{{item.quantity}} &times; {{item.item.price}}</td>
+								<td>{{item.amount|intcomma}}</td>
+								<td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td>
+							</tr>	
+						{% endfor %}
+						<tr align="center">
+							<td colspan="3" align="right" class="pr-5">Total Amount :</td>
+							<td id="total-amount-cart">{{cart.total|intcomma}}</td>
+							<td><button class="btn btn-success">Checkout</button></td>
+						</tr>
+					</tbody>
+				  </table>
+				  
+			</div>
+		</div>
+
+	</div>
+
+	<!-- order model -->
+	<!-- ...........edit model...................... -->
+	<div id="orderModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg">
+  
+		  <!-- Modal content-->
+		  <div class="modal-content justify-content-center">
+			<div class="modal-header">
+			  <h4 class="modal-title pl-1">Order Details</h4>
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+  
+			<div class="modal-body">
+			  <div class="row">
+				<div class="col-lg-8">
+				  <b class="pl-5">Item: </b>
+				  <input type="text" name="itemName" id="itemName" class="pl-3" style="outline: none; border: none;" readonly>
+				</div>
+				<div class="col-lg-4">
+				  <b>Price: </b>
+				  <label class="pl-3">&#x20B9;  <input type="number" name="price" id="price" class="pl-0" style="outline: none; border: none; width: 23px;" readonly> /-</label>
+				</div>
+			  </div>
+  
+			  <div class="row">
+				<div class="col-lg-7 pb-2">
+				  <label for="quantity-modal" class="pl-5">Quantity: </label>
+				  <input id="quantity-modal" name="quantity-modal" class="pb_outline-dark text-center" type="number" min=1 max=20 style="height: 38px; width: 36px;">&nbsp;					   
+				</div>
+  
+				<div class="col-lg-5 pb-2">
+				  <b class="pl-4">Total Price: </b>
+				  <label class="pl-3">&#x20B9; <span id="total"></span> /-</label>
+				</div>
+			  </div>
+  
+			  <hr>
+			  <div class="container">
+					<h4 class="modal-title pl-1">Delivery Details</h4>
+					<hr>
+
+  
+				  <div class="row">
+					  <div class="col-md-6 justify-content-center form-group" style="float: left;">
+						  <label for="personName">Name: &nbsp;</label>
+						  <label id="personName" class="pl-3">Test</label>
+					  </div>
+					  <div class="col-md-6 justify-content-center form-group" style="float: right;">
+						  <label for="order-phone">Contact: &nbsp;</label>
+						  <label id="order-phone" class="pl-3">9876543210</label>
+					  </div>
+				  </div>
+	  
+				  <div class="row">
+					  <div class="col-md-6 justify-content-center form-group" style="float: left;">
+						  <label for="order-email">Email: &nbsp;</label>
+						  <label id="order-email" class="pl-3">test@test.com</label>
+					  </div>
+					  <div class="col-md-6 justify-content-center form-group" style="float: right;">
+						  <label for="order-address">Address: &nbsp;</label>
+						  <label id="order-address" class="pl-3">Panvel</label>
+					  </div>
+				  </div>
+			  </div>
+			</div>
+			<div class="modal-footer">
+			  <div class="container">
+				<!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
+				<h4 id="delivery-status" style="float: left;"></h4>
+				<button style="float: right;" id="cancel-order-btn" class="btn btn-danger">Cancel Order</button>
+			  </div>
+			</div>
+		  </div>
+  
+		</div>
+	</div>
+	<!-- END Order Modal -->
+
+
+	<!-- Notify Model -->
+    <div class="modal fade" role="dialog" id="notify-modal">
+		<div class="modal-dialog modal-dialog-centered modal-md">
+		  <div class="modal-content justify-content-center">
+  
+			<div class="modal-header">
+			  <h5 class="modal-title" id="notifyTitle">Reserved</h5>
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+  
+			<div class="modal-body"></div>
+  
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+			  <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+			</div>
+		  </div>
+		</div>
+	</div>
+	
+	
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/popper.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+	<script>
+		window.CSRF_TOKEN = "{{ csrf_token }}"
+
+		// $("#orderModal").modal("show");
+
+		// toggle the save chnges btn
+		$("#email, #contact, #address").change(function () {
+			$("#save-btn, #reset-btn").css('visibility', 'visible');
+		});
+		$("#reset-btn").click(function () {
+			$("#save-btn, #reset-btn").css('visibility', 'hidden');
+		});
+
+
+		// ajax for updating profile
+		$("#save-btn").click(function () {
+			$("#save-btn").html('<i class="fas fa-circle-notch fa-spin"></i> Updating ...').attr('disabled', 'disabled');
+			$.ajax({
+				type: "POST",
+				url: "/user/save-changes/",
+				// change the url when updting in index from test......................................................
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					email: $("#email").val(),
+					phone: $('#contact').val(),
+					address: $("#address").val(),
+					update_profile: true },
+				datatype: 'json',
+
+				success: function(response) {
+					console.log(response)
+					if (response.status) {
+						$("#save-btn").html('Save Changes').removeAttr('disabled').css('visibility', 'hidden');
+						$("#notify-modal #notifyTitle").html("Profile Updated");
+						$("#notify-modal .modal-body").html("Profile Updated Successfully . . .");
+						$("#notify-modal").modal("show");
+					} else if (!response.status) {
+						$("#save-btn").html('Save Changes').removeAttr('disabled').css('visibility', 'hidden');
+						$("#notify-modal #notifyTitle").html("Error");
+						$("#notify-modal .modal-body").html("Cannot Update Profile . . .");
+						$("#notify-modal").modal("show");
+					}
+				},
+
+				error: function (jqXHR, exception) {
+
+				}
+			})
+     	});
+
+		// ajax for removing from cart
+		$(".remove-from-cart-btn").click(function () {
+			$(this).html('<i class="fas fa-circle-notch fa-spin"></i> Removing ...').attr('disabled', 'disabled');
+			var element = $(this);
+			console.log('removing ' + element.attr('data'))
+			$.ajax({
+				type: "POST",
+				url: "/user/removeFromCart/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					item: element.attr('data'),
+					removeFromCart: "True"
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						element.closest("tr").remove();
+						$("#total-amount-cart").text(response.total);
+					} else {
+						element.html('Remove Item').removeAttr('disabled')
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
+
+		// ajax for incrementing the quantity in cart
+		$(".inc-btn").click(function () {
+			$(this).attr('disabled', 'disabled');
+			var element = $(this);
+			$.ajax({
+				type: "POST",
+				url: "/user/changeItemQuantity/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					item: element.attr('data'),
+					changeQuantity: "True",
+					changeBy: 1
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						element.removeAttr('disabled');
+						element.prev('span').html(response.quantity + " &nbsp;");
+						element.closest('td').next('td').html(response.quantity + " &times; " + response.price).next('td').html(response.amount);
+						$("#total-amount-cart").text(response.total);
+					} else {
+						element.removeAttr('disabled');
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
+		
+		// ajax for decrementing the quantity in cart
+		$(".dec-btn").click(function () {
+			$(this).attr('disabled', 'disabled');
+			var element = $(this);
+			$.ajax({
+				type: "POST",
+				url: "/user/changeItemQuantity/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					item: element.attr('data'),
+					changeQuantity: "True",
+					changeBy: -1
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						element.removeAttr('disabled');
+						element.next('span').html(response.quantity + " &nbsp;");
+						element.closest('td').next('td').html(response.quantity + " &times; " + response.price).next('td').html(response.amount);
+						$("#total-amount-cart").text(response.total);
+					} else {
+						elementr.emoveAttr('disabled');
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
+	
+		// function for getting particular order and showing in modal
+		function openOrderModal(id) {
+			$.ajax({
+				type: "POST",
+				url: "/order/get-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: id,
+					getOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						if (response.order.delivered) {
+							$('#orderModal #cancel-order-btn').hide();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-check-circle"></i></span> Delivered').addClass("text-success").removeClass('text-secondary');
+						} else {
+							$('#orderModal #cancel-order-btn').removeAttr('disabled').show();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Not Yet Delivered').addClass("text-secondary").removeClass('text-success');
+						}
+						
+						
+
+						$('#orderModal #personName').text(response.order.name);
+						$('#orderModal #order-phone').text(response.order.contact);
+						$('#orderModal #order-email').text('{{ request.user.email }}');
+						$('#orderModal #order-address').text(response.order.address);
+
+
+						$("#orderModal #cancel-order-btn").attr('data', response.order.id);
+						
+						$("#orderModal").modal('show');
+					} else {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+		}
+
+
+		// ajax for cancelling order
+		$("#orderModal #cancel-order-btn").click(function () {
+			$.ajax({
+				type: "POST",
+				url: "/order/cancel-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: $(this).attr('data'),
+					cancelOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						$("#orderModal").modal('hide');
+						$("#order-card-" + response.order_id).remove();
+					} else {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
+
+	</script>
 </body>
 </html>

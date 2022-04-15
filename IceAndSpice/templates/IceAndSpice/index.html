@@ -89,7 +89,25 @@
             <li class="nav-item"><a class="nav-link text-uppercase pb_letter-spacing-2" href="#section-gallery">Gallery</a></li>
             <li class="nav-item"><a class="nav-link text-uppercase pb_letter-spacing-2" href="#section-events">Events</a></li>
             <li class="nav-item"><a class="nav-link text-uppercase pb_letter-spacing-2" href="#section-contact">Contact</a></li>
+
+            <li class="dropdown nav-item">
+              <a class="btn nav-link dropdown-toggle" href="" role="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span style="font-size: 20px;"><i class="fa fa-user-circle-o"></i></span>
+              </a>
+            
+              <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                {% if user.is_anonymous %}
+                  <a class="dropdown-item" href="/authentication/login"><span style="font-size: larger;"><i class="fa fa-sign-in"></i>&nbsp;</span>Login</a>
+                  <a class="dropdown-item" href="/authentication/signup"><span style="font-size: larger;"><i class="fa fa-user-plus"></i>&nbsp;</span>Signup</a>
+                {% else %}
+                  <a class="dropdown-item" href="/user/"><span style="font-size: larger;"><i class="fa fa-user-circle-o"></i>&nbsp;</span>Account</a>
+                  <a class="dropdown-item" href="/user/test#cart"><span style="font-size: larger;"><i class="fa fa-shopping-cart"></i>&nbsp;</span>Cart</a>
+                  <a class="dropdown-item" href="/authentication/logout"><span style="font-size: larger;"><i class="fa fa-sign-out"></i>&nbsp;</span>Logout</a>
+                {% endif %}
+              </div>
+            </li>
           </ul>
+            
         </div>
       </div>
     </nav>
@@ -175,9 +193,9 @@
                                 <span class="price">&#x20B9; {{item.price}} /-</span>
                               </div>
                               <div class="col-lg-2 pb-2">
-                                <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">-</button>&nbsp;
+                                <button onclick="decrement('{{item.id}}')" class="btn pb_outline-dark">&minus;</button>&nbsp;
                                 <input id="quantity-{{item.id}}" name="quantity" class="pb_outline-dark text-center" type="number" min=0 max=20 style="height: 38px; width: 36px;" value="0">&nbsp;
-                                <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">+</button>
+                                <button onclick="increment('{{item.id}}')" class="btn pb_outline-dark">&plus;</button>
                               </div>
                               <div class="col-lg-4">
                                 <button type="button" onclick="openModal('{{item.id}}', '{{item.item_name}}', '{{item.price}}')" class="btn rounded-0 pb_outline-dark mr-2">Order</button>
@@ -529,7 +547,7 @@
           </div>
           <div class="row justify-content-md-center">
             <div class="col-md-7">
-              <form action="#submit_form" method="POST">
+              <form id="feedback-form" method="POST">
                 <div class="row">
                   <div class="col-md">
                     <div class="form-group">
@@ -547,10 +565,10 @@
                 
                 <div class="form-group">
                   <label for="message">Message</label>
-                  <textarea cols="30" rows="8" name="msg" class="form-control  p-3 rounded-0" id="message" required></textarea>
+                  <textarea cols="30" rows="8" name="message" class="form-control  p-3 rounded-0" id="message" required></textarea>
                 </div>
                 <div class="form-group">
-                  <input type="submit" name="submit" class="btn pb_outline-dark pb_font-13 pb_letter-spacing-2 p-3 rounded-0" value="Send Message" id="submit">
+                  <input type="submit" name="feedback" class="btn pb_outline-dark pb_font-13 pb_letter-spacing-2 p-3 rounded-0" value="Send Message" id="submit-feedback-btn">
                 </div>
               </form>
               <div class="text-center" style="margin-left: 0px; width: 100%;">
@@ -559,26 +577,18 @@
             </div>
 
             </div>
-            <div id="submit_form">
-              {% comment %} ....................... DO Feedback ................................ {% endcomment %}
-              <!-- {% comment %} <?php
-                if (isset($_POST['submit'])) {
-                  require 'connect.php';
-                  $name = $_POST['name'];
-                  $email = $_POST['email'];
-                  $msg = $_POST['msg'];
-
-                  $tbl_name = 'feedbacks';
-                  $sql = "INSERT INTO `feedbacks`(`name`, `email`, `msg`) VALUES ('$name', '$email', '$msg')";
-
-                  $mysqli -> query($sql) or die("Cannot submit message");
-                }
-              ?> {% endcomment %} -->
-            </div>
-                      </div>
+          </div>
         </div>
 
-        <div class="mapouter pb_half" id="map" style="margin-top: 80px"><div class="gmap_canvas"><iframe width="600" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=pillai%20college%20of%20engineering&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><br><style>.mapouter{position:relative;text-align:right;height:500px;width:600px;}</style><a href="https://www.embedgooglemap.net">embedgooglemap.net</a><style>.gmap_canvas {overflow:hidden;background:none!important;height:500px;width:600px;}</style></div></div>
+        <div class="mapouter pb_half" id="map" style="margin-top: 80px">
+          <div class="gmap_canvas">
+            <iframe width="600" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=pillai%20college%20of%20engineering&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+            <br>
+            <style>.mapouter{position:relative;text-align:right;height:500px;width:600px;}</style>
+            <a href="https://www.embedgooglemap.net">embedgooglemap.net</a>
+            <style>.gmap_canvas {overflow:hidden;background:none!important;height:500px;width:600px;}</style>
+          </div>
+        </div>
       </div>
       
     </section>
@@ -614,7 +624,7 @@
         </div>
         <div class="row">
           <div class="col text-center">
-            <p><a href="#">IceAndSpice</a> &copy; 2022 | Designed and Developed by Group --</p>
+            <p><a href="#">IceAndSpice</a> &copy; 2022 | Designed and Developed by TE / Comps, Group 18</p>
           </div>
         </div>
       </div>
@@ -658,7 +668,7 @@
         <div class="modal-content justify-content-center">
 
           <div class="modal-header">
-            <h5 class="modal-title" id="notifyTitle">Reserved</h5>
+            <h5 class="modal-title" id="notifyTitle"></h5>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
 
@@ -960,7 +970,42 @@
         return false;
       });
       
-      
+      // AJAX Script for Table Reservation
+      $('#feedback-form').submit(function() {
+        {% if user.is_anonymous %}
+          $("#showlogin").modal("show");
+        {% else %}
+          $('#feedback-form #submit-feedback-btn').html('<i class="fas fa-circle-notch fa-spin"></i> Submitting...').attr('disabled', 'disabled');
+          $.ajax({
+            type: "POST",
+            url: "feedback/",
+            data: {
+              csrfmiddlewaretoken: window.CSRF_TOKEN,
+              name: $('#feedback-form #name').val(),
+              email: $('#feedback-form #email').val(),
+              message: $('#feedback-form #message').val(),
+              feedback: "True"},
+            datatype: 'json',
+
+            success: function(response) {
+              console.log(response);
+              if (response.status) {
+                $("#feedback-form #submit-feedback-btn").attr('value', 'Send Message').removeAttr('disabled');
+                $("#notify-modal #notifyTitle").html("Feedback Submitted");
+                $("#notify-modal .modal-body").html("Your feedback has been submitted Successfully . . .");
+                $("#notify-modal").modal("show");
+              } else if (!response.status) {
+                $("#submit-feedback-btn").html('<i class="fas fa-times"></i> Cannot Send!!').css('color', 'red').removeAttr('disabled');
+              }
+            },
+
+            error: function (jqXHR, exception) {
+              
+            }
+          })
+        {% endif %}
+        return false;
+      });
      
 
 

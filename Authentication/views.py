@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
-from UserProfile.models import Cart
+from UserProfile.models import Cart, Profile
 
 # Create your views here.
 def index(request):
@@ -42,7 +42,9 @@ def handle_signup(request):
             login(request, user)
             cart = Cart.objects.create(user=user)
             cart.save()
-            return redirect("homepage") # later change it to user profile page .................................
+            profile = Profile.objects.create(user=user)
+            profile.save()
+            return redirect("user-profile") # later change it to user profile page .................................
         except IntegrityError:
             return render(request, "Authentication/signup.html", context={'error': True})
     else:
