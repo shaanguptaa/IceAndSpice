@@ -218,10 +218,12 @@
 						<div class="card" style="cursor: pointer;" onclick="openOrderModal('{{order.id}}')" id="order-card-{{order.id}}">
 							<!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
 							<div class="card-body">
-							  {% if order.delivered %}
+							  {% if order.status == "D" %}
 							  	<h5 class="card-title text-success"><span><i class="fa fa-check-circle"></i></span> Delivered </h5>
-							  {% else %}
+							  {% elif order.status == "N" %}
 							  	<h5 class="card-title text-danger"><span><i class="far fa-times-circle"></i></span> Not Yet Delivered </h5>
+							  {% else %}
+							  	<h5 class="card-title text-secondary"><span><i class="far fa-times-circle"></i></span> Cancelled </h5>
 							  {% endif %}
 							  <p class="text-dark">{{order.items}}</p>
 							  <p class="text-dark">Total Amount : &#8377; {{order.total_amount|intcomma}}</p>
@@ -392,7 +394,7 @@
 
 		// $("#orderModal").modal("show");
 
-		// toggle the save chnges btn
+		// toggle the save changes and reset btn
 		$("#email, #contact, #address").change(function () {
 			$("#save-btn, #reset-btn").css('visibility', 'visible');
 		});
@@ -589,7 +591,7 @@
 				success: function (response) {
 					if (response.status) {
 						$("#orderModal").modal('hide');
-						$("#order-card-" + response.order_id).remove();
+						$("#order-card-" + response.order_id + " h5").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass('text-secondary').removeClass('text-danger').removeClass('text-success');
 					} else {
 					}
 				},
