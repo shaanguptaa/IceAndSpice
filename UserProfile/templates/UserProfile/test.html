@@ -33,6 +33,16 @@
 			margin-bottom: 30px;
 		}
 
+		.card .card {
+			border-radius: 20px;
+		}
+
+		.card .card:hover {
+			border-radius: 5px;
+			-webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.25);
+			box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.25);
+			border: none;
+		}
 
 		/* The side navigation menu */
 		.sidebar {
@@ -143,6 +153,12 @@
 			line-height: 1.5rem;
 			width: 50%;
 		}
+
+		.remove-from-cart-btn {
+			visibility: hidden;
+			cursor: pointer;
+		}
+
 	</style>
 </head>
 <body>
@@ -211,10 +227,9 @@
 
 		<div class="card" id="order">
 			<div class="card-body">
-				<h5 class="card-title mb-5">Orders</h5>
-				<div class="container card-deck">
+				<h5 class="card-title mb-3">Orders</h5>
+				<div class="container card-columns">
 					{% for order in orders %}
-					 <div style="width: fit-content;">
 						<div class="card" style="cursor: pointer;" onclick="openOrderModal('{{order.id}}')" id="order-card-{{order.id}}">
 							<!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
 							<div class="card-body">
@@ -229,8 +244,7 @@
 							  <p class="text-dark">Total Amount : &#8377; {{order.total_amount|intcomma}}</p>
 							  <p class="card-text"><small class="text-muted">Ordered {{ order.order_date|naturaltime }}</small></p>
 							</div>
-						  </div>
-					 </div>
+						</div>
 					{% endfor %}
 				</div>
 			</div>
@@ -246,39 +260,52 @@
 
 		<div class="card" id="cart">
 			<div class="card-body">
-				<h5 class="card-title mb-5">Cart</h5>
+				<h5 class="card-title mb-3">Cart</h5>
 
-				<table class="table table-hover table-sm" style="width: 100%;">
-					<thead>
-					  <tr>
-						<th style="text-align: center;">Item Name</th>
-						<th style="text-align: center;">Quantity</th>
-						<th style="text-align: center;"></th>
-						<th style="text-align: center;">Price</th>
-						<th style="text-align: center;"></th>
-					  </tr>
-					</thead>
-					<tbody>
-						{% for item in cart.items %}
-							<tr align="center" id="{{item.id}}">
-								<td>{{item.item.item_name}}</td>
-								<td><div>
-									<button class="btn btn-sm btn-light dec-btn" data="{{item.id}}">&minus;</button> &nbsp;
-									<span>{{item.quantity}} &nbsp;</span>
-									<button class="btn btn-sm btn-light inc-btn" data="{{item.id}}">&plus;</button>
-								</div></td>
-								<td>{{item.quantity}} &times; {{item.item.price}}</td>
-								<td>{{item.amount|intcomma}}</td>
-								<td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td>
-							</tr>	
-						{% endfor %}
-						<tr align="center">
-							<td colspan="3" align="right" class="pr-5">Total Amount :</td>
-							<td id="total-amount-cart">{{cart.total|intcomma}}</td>
-							<td><button class="btn btn-success">Checkout</button></td>
+				<div class="cart-content">
+					{% if cart.items %}
+					<table class="table table-hover table-sm" id="table-cart" style="width: 100%;">
+						<thead>
+						<tr>
+							<th style="text-align: center;">Item Name</th>
+							<th style="text-align: center;">Quantity</th>
+							<th style="text-align: center;"></th>
+							<th style="text-align: center;">Price</th>
+							<th style="text-align: center;"></th>
 						</tr>
-					</tbody>
-				  </table>
+						</thead>
+						<tbody>
+							{% for item in cart.items %}
+								<tr align="center" id="{{item.id}}">
+									<td>{{item.item.item_name}}</td>
+									<td><div>
+										<button class="btn btn-sm btn-light dec-btn" data="{{item.id}}">&minus;</button> &nbsp;
+										<span>{{item.quantity}} &nbsp;</span>
+										<button class="btn btn-sm btn-light inc-btn" data="{{item.id}}">&plus;</button>
+									</div></td>
+									<td>{{item.quantity}} &times; {{item.item.price}}</td>
+									<td>{{item.amount|intcomma}}</td>
+									<!-- <td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td> -->
+									<td width="20px" class="py-0">
+										<h3 class="text-danger remove-from-cart-btn p-0 pr-5 my-0" data="{{item.item.id}}">&times;</h3>
+									</td>
+								</tr>	
+							{% endfor %}
+							<tr align="center">
+								<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>
+								<td id="total-amount-cart">{{cart.total|intcomma}}</td>
+								<td></td>
+							</tr>
+							
+						</tbody>
+						
+					</table>
+					<button class="btn btn-success checkout-btn" style="float: right; margin-right: 100px">Checkout</button>
+					{% else %}
+					Your cart is empty . . . <br>
+					Try adding something to the cart from the <a href="/#section-menu">Menu</a>
+					{% endif %}
+				</div>
 				  
 			</div>
 		</div>
@@ -330,22 +357,22 @@
 				  <div class="row">
 					  <div class="col-md-6 justify-content-center form-group" style="float: left;">
 						  <label for="personName">Name: &nbsp;</label>
-						  <label id="personName" class="pl-3">Test</label>
+						  <label id="personName" class="pl-3"></label>
 					  </div>
 					  <div class="col-md-6 justify-content-center form-group" style="float: right;">
 						  <label for="order-phone">Contact: &nbsp;</label>
-						  <label id="order-phone" class="pl-3">9876543210</label>
+						  <label id="order-phone" class="pl-3"></label>
 					  </div>
 				  </div>
 	  
 				  <div class="row">
 					  <div class="col-md-6 justify-content-center form-group" style="float: left;">
 						  <label for="order-email">Email: &nbsp;</label>
-						  <label id="order-email" class="pl-3">test@test.com</label>
+						  <label id="order-email" class="pl-3"></label>
 					  </div>
 					  <div class="col-md-6 justify-content-center form-group" style="float: right;">
 						  <label for="order-address">Address: &nbsp;</label>
-						  <label id="order-address" class="pl-3">Panvel</label>
+						  <label id="order-address" class="pl-3"></label>
 					  </div>
 				  </div>
 			  </div>
@@ -355,6 +382,7 @@
 				<!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
 				<h4 id="delivery-status" style="float: left;"></h4>
 				<button style="float: right;" id="cancel-order-btn" class="btn btn-danger">Cancel Order</button>
+				<button style="float: right;" id="repeat-order-btn" class="btn btn-primary mr-3">Repeat Order</button>
 			  </div>
 			</div>
 		  </div>
@@ -362,6 +390,102 @@
 		</div>
 	</div>
 	<!-- END Order Modal -->
+
+
+	<!-- ............ create another model for order confirmation for checkout and repeat order............... -->
+
+	<div id="orderConfirmModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg">
+  
+		  <!-- Modal content-->
+		  <div class="modal-content justify-content-center">
+			<div class="modal-header">
+			  <h4 class="modal-title pl-1">Order Details</h4>
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<form method="POST" id="confirm-order-form">
+
+				<div class="modal-body">
+					<table class="table table-hover table-sm" id="table-cart" style="width: 100%;">
+						<thead>
+						<tr>
+							<th style="text-align: center;">Item Name</th>
+							<th style="text-align: center;">Quantity</th>
+							<th style="text-align: center;"></th>
+							<th style="text-align: center;">Price</th>
+							<th style="text-align: center;"></th>
+						</tr>
+						</thead>
+						<tbody>
+							{% for item in order.items %}
+								<tr align="center" id="{{item.id}}">
+									<td>{{item.item.item_name}}</td>
+									<td><div>
+										<button class="btn btn-sm btn-light confirm-modal-dec-btn" data="{{item.id}}">&minus;</button>
+										<input type="number" step="1" min="1" value="{{item.quantity}}">
+										<button class="btn btn-sm btn-light confirm-modal-inc-btn" data="{{item.id}}">&plus;</button>
+									</div></td>
+									<td>{{item.quantity}} &times; {{item.item.price}}</td>
+									<td>{{item.amount|intcomma}}</td>
+									<!-- <td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td> -->
+									<td width="20px" class="py-0">
+										<h3 class="text-danger remove-from-cart-btn p-0 pr-5 my-0" data="{{item.item.id}}">&times;</h3>
+									</td>
+								</tr>	
+							{% endfor %}
+							<tr align="center">
+								<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>
+								<td id="total-amount-cart">{{cart.total|intcomma}}</td>
+								<td></td>
+							</tr>
+							
+						</tbody>
+						
+					</table>
+				</div>
+	  
+				  <hr>
+				  <div class="container">
+						<h4 class="modal-title pl-1">Delivery Details</h4>
+						<hr>
+	
+	  
+					  <div class="row">
+						  <div class="col-md-6 justify-content-center form-group" style="float: left;">
+							  <label for="confirm-name">Name: &nbsp;</label>
+							  <input id="confirm-name" name="confirm-name" class="pl-3 form-control"></input>
+						  </div>
+						  <div class="col-md-6 justify-content-center form-group" style="float: right;">
+							  <label for="order-phone">Contact: &nbsp;</label>
+							  <input id="order-phone" class="pl-3 form-control"></input>
+						  </div>
+					  </div>
+		  
+					  <div class="row">
+						  <div class="col-md-6 justify-content-center form-group" style="float: left;">
+							  <label for="confirm-email">Email: &nbsp;</label>
+							  <input id="confirm-email" name="confirm-email" class="pl-3 form-control"></input>
+						  </div>
+						  <div class="col-md-6 justify-content-center form-group" style="float: right;">
+							  <label for="confirm-address">Address: &nbsp;</label>
+							  <input id="confirm-address" name="confirm-address" class="pl-3 form-control"></input>
+						  </div>
+					  </div>
+				  </div>
+				</div>
+				<div class="modal-footer">
+				  <div class="container">
+					<!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
+					<h4 id="delivery-status" style="float: left;"></h4>
+					<button style="float: right;" type="submit" id="confirm-order-btn" class="btn btn-success">Confirm Order</button>
+					<button style="float: right;" data-dismiss="modal" class="btn btn-danger mr-3">Cancel</button>
+				  </div>
+				</div>
+			</form>
+		</div>
+  
+	</div>
+	</div>
 
 
 	<!-- Notify Model -->
@@ -392,7 +516,19 @@
 	<script>
 		window.CSRF_TOKEN = "{{ csrf_token }}"
 
-		// $("#orderModal").modal("show");
+		// show / hide the remove from cart btn
+		$("#cart .table tbody tr").mouseenter(function () {
+			$(this).children('td').last().children('.remove-from-cart-btn').first().css('visibility', 'visible');
+		}).mouseleave(function () {
+			$(this).children('td').last().children('.remove-from-cart-btn').first().css('visibility', 'hidden');			
+		});
+
+		$('.confirm-modal-inc-btn').click(function () {
+			$(this).prev('span').stepUp(1);
+		});
+		$('.confirm-modal-dec-btn').click(function () {
+			$(this).prev('span').stepDown(1);
+		});
 
 		// toggle the save changes and reset btn
 		$("#email, #contact, #address").change(function () {
@@ -441,9 +577,9 @@
 
 		// ajax for removing from cart
 		$(".remove-from-cart-btn").click(function () {
-			$(this).html('<i class="fas fa-circle-notch fa-spin"></i> Removing ...').attr('disabled', 'disabled');
+			$(this).html('<i class="fas fa-circle-notch fa-spin"></i>').attr('disabled', 'disabled').css('font-size', '20px');
 			var element = $(this);
-			console.log('removing ' + element.attr('data'))
+			// console.log('removing ' + element.attr('data'))
 			$.ajax({
 				type: "POST",
 				url: "/user/removeFromCart/",
@@ -458,8 +594,11 @@
 					if (response.status) {
 						element.closest("tr").remove();
 						$("#total-amount-cart").text(response.total);
+						if(response.total == 0) {
+							$('.cart-content').html('Your cart is empty . . . <br>Try adding something to the cart from the <a href="/#section-menu">Menu</a>');
+						}
 					} else {
-						element.html('Remove Item').removeAttr('disabled')
+						element.html('&times;').removeAttr('disabled')
 					}
 				},
 
@@ -547,12 +686,15 @@
 
 				success: function (response) {
 					if (response.status) {
-						if (response.order.delivered) {
+						if (response.order.status == "D") {
 							$('#orderModal #cancel-order-btn').hide();
 							$("#orderModal #delivery-status").html('<span><i class="far fa-check-circle"></i></span> Delivered').addClass("text-success").removeClass('text-secondary');
-						} else {
+						} else if (response.order.status == "N") {
 							$('#orderModal #cancel-order-btn').removeAttr('disabled').show();
 							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Not Yet Delivered').addClass("text-secondary").removeClass('text-success');
+						} else {
+							$('#orderModal #cancel-order-btn').hide();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass("text-secondary").removeClass('text-success');
 						}
 						
 						
@@ -563,7 +705,7 @@
 						$('#orderModal #order-address').text(response.order.address);
 
 
-						$("#orderModal #cancel-order-btn").attr('data', response.order.id);
+						$("#orderModal #cancel-order-btn, #orderModal #repeat-order-btn").attr('data', response.order.id);
 						
 						$("#orderModal").modal('show');
 					} else {
@@ -574,7 +716,6 @@
 				}
 			});
 		}
-
 
 		// ajax for cancelling order
 		$("#orderModal #cancel-order-btn").click(function () {
@@ -601,6 +742,37 @@
 			});
 			return false;
 		});
+
+		$("#repeat-order-btn").click(function () {
+			$("#orderConfirmModal").modal('show');
+		})
+
+		// function for repeating order
+		// $('#repeat-order-btn').click(function () {
+		// 	console.log("repeat");
+		// 	$.ajax({
+		// 		type: "POST",
+		// 		url: "/user/repeat-order/",
+		// 		data: {
+		// 			csrfmiddlewaretoken: window.CSRF_TOKEN,
+		// 			order_id: $(this).attr('data'),
+		// 			repeatOrder: "True",
+		// 		},
+		// 		dataType: 'json',
+
+		// 		success: function (response) {
+		// 			if (response.status) {
+		// 				$("#orderModal").modal('hide');
+		// 				// $("#order-card-" + response.order_id + " h5").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass('text-secondary').removeClass('text-danger').removeClass('text-success');
+		// 			} else {
+		// 			}
+		// 		},
+
+		// 		error: function (jqXHR, exception) {
+		// 		}
+		// 	});
+		// 	return false;
+		// });
 
 	</script>
 </body>

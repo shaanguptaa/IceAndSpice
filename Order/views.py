@@ -17,6 +17,7 @@ def order(request):
     order = Order.objects.create(name=name, contact=contact, total_amount=total, address=address, user=request.user)
     try:
         order.items.set([orderItem])
+        update_order_total(order)
     except Exception as e:
         order.delete()
         # deleting order if any error occurs
@@ -66,3 +67,20 @@ def cancel_order(request):
         return JsonResponse({'status': True, 'order_id': order.id})
     
     return JsonResponse({})
+
+def repeat_order(request):
+    if request.method == 'POST' and request.POST['repeatOrder']:
+        order = Order.objects.get(id=request.POST['order_id'])
+        # order.status = "C"
+        # order.save()
+
+        return JsonResponse({'status': True, 'order_id': order.id})
+    
+    return JsonResponse({})
+
+
+def update_order_total(order):
+    total = sum([item.quantity * item.item.price for item in order.items.all()])
+    order.total = total
+    order.save()
+    return total
