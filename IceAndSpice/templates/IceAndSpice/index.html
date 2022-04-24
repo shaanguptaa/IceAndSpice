@@ -343,13 +343,13 @@
                   <div class="col-md">
                     <div class="form-group">
                       <label for="name">Name</label>
-                      <input type="text" name="name" class="form-control p-3 pb_outline-r-light rounded-0" id="name" required>
+                      <input type="text" name="name" class="form-control p-3 pb_outline-r-light rounded-0" id="name" value="{% if request.user.first_name %} {{ request.user.first_name }} {{request.user.last_name}} {% else %} {{request.user.username}} {% endif %}" required>
                     </div>
                   </div>
                   <div class="col-md">
                     <div class="form-group">
                       <label for="email">Email</label>
-                      <input type="text" name="email" class="form-control p-3 pb_outline-r-light rounded-0" id="email" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[.][a-zA-Z0-9+_.-]+$" title="Enter Valid Email" required>
+                      <input type="text" name="email" class="form-control p-3 pb_outline-r-light rounded-0" id="email" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[.][a-zA-Z0-9+_.-]+$" title="Enter Valid Email" value="{{request.user.email}}" required>
                     </div>
                   </div>
                 </div>
@@ -358,7 +358,7 @@
                   <div class="col-md">
                     <div class="form-group">
                       <label for="phone">Phone</label>
-                      <input type="number" name="phone" class="form-control p-3 pb_outline-r-light rounded-0" id="phone" pattern="^\d{10}$" required>
+                      <input type="number" name="phone" class="form-control p-3 pb_outline-r-light rounded-0" id="phone" pattern="^\d{10}$" value="{{request.user.profile.phone}}" required>
                     </div>
                   </div>
 
@@ -888,7 +888,7 @@
       });
 
        // AJAX Script for Removing from Cart
-       $('.removeFromCart-btn').click(function() {
+       $('#section-menu').on('click', '.removeFromCart-btn', function() {
         // console.log('clicked');
         {% if user.is_anonymous %}
           $("#showlogin").modal("show");
@@ -907,7 +907,7 @@
 
             success: function(response) {
               if (response.status) {
-                element.html('Add To Cart').removeAttr('disabled').addClass('removeFromCart-btn').removeClass('addToCart-btn').removeClass('text-success');
+                element.html('Add To Cart').removeAttr('disabled').addClass('addToCart-btn').removeClass('removeFromCart-btn').removeClass('text-success');
                 $("#notify-modal #notifyTitle").html("Removed From Cart");
                 $("#notify-modal .modal-body").html("Item Removed Form Cart Successfully . . .");
                 $("#notify-modal").modal("show");
@@ -927,7 +927,7 @@
       
 
       // AJAX Script for Adding to Cart
-      $('.addToCart-btn').click(function() {
+      $("#section-menu").on('click', '.addToCart-btn', function() {
         // console.log('clicked')
         {% if user.is_anonymous %}
           $("#showlogin").modal("show");
@@ -952,7 +952,7 @@
   
               success: function(response) {
                 if (response.status) {
-                  element.html('Added To Cart').css('color', 'green').removeAttr('disabled').addClass('removeFromCart-btn').removeClass('addToCart-btn');
+                  element.html('Added To Cart').removeAttr('disabled').addClass('removeFromCart-btn text-success').removeClass('addToCart-btn');
                   $("#notify-modal #notifyTitle").html("Added To Cart");
                   $("#notify-modal .modal-body").html("Item Added To Cart Successfully . . .");
                   $("#notify-modal").modal("show");
