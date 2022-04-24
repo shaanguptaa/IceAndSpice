@@ -159,6 +159,20 @@
 			cursor: pointer;
 		}
 
+		.remove-from-order-btn {
+			cursor: pointer;
+		}
+
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+
+		input[type=number] {
+			-moz-appearance: textfield;
+		}
+
 	</style>
 </head>
 <body>
@@ -228,25 +242,30 @@
 		<div class="card" id="order">
 			<div class="card-body">
 				<h5 class="card-title mb-3">Orders</h5>
-				<div class="container card-columns">
-					{% for order in orders %}
+				{% if orders %}
+					<div class="container card-columns">
+						{% for order in orders %}
 						<div class="card" style="cursor: pointer;" onclick="openOrderModal('{{order.id}}')" id="order-card-{{order.id}}">
 							<!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
 							<div class="card-body">
-							  {% if order.status == "D" %}
-							  	<h5 class="card-title text-success"><span><i class="fa fa-check-circle"></i></span> Delivered </h5>
-							  {% elif order.status == "N" %}
-							  	<h5 class="card-title text-danger"><span><i class="far fa-times-circle"></i></span> Not Yet Delivered </h5>
-							  {% else %}
-							  	<h5 class="card-title text-secondary"><span><i class="far fa-times-circle"></i></span> Cancelled </h5>
-							  {% endif %}
-							  <p class="text-dark">{{order.items}}</p>
-							  <p class="text-dark">Total Amount : &#8377; {{order.total_amount|intcomma}}</p>
-							  <p class="card-text"><small class="text-muted">Ordered {{ order.order_date|naturaltime }}</small></p>
+								{% if order.status == "D" %}
+								<h5 class="card-title text-success"><span><i class="fa fa-check-circle"></i></span> Delivered </h5>
+								{% elif order.status == "N" %}
+								<h5 class="card-title text-danger"><span><i class="far fa-times-circle"></i></span> Not Yet Delivered </h5>
+								{% else %}
+								<h5 class="card-title text-secondary"><span><i class="far fa-times-circle"></i></span> Cancelled </h5>
+								{% endif %}
+								<p class="text-dark">{{order.items}}</p>
+								<p class="text-dark">Total Amount : &#8377; {{order.total_amount|intcomma}}</p>
+								<p class="card-text"><small class="text-muted">Ordered {{ order.order_date|naturaltime }}</small></p>
 							</div>
-						</div>
-					{% endfor %}
-				</div>
+						</div>						
+						{% endfor %}
+					</div>
+				{% else %}
+					<span class="card-text">You have No Orders Currently . . . </span><br>
+					<span class="card-text">Try ordering something from the <a href="/#section-menu">Menu</a> or your <a href="#cart">cart</a> !!!</span>
+				{% endif %}
 			</div>
 		</div>		
 
@@ -264,46 +283,46 @@
 
 				<div class="cart-content">
 					{% if cart.items %}
-					<table class="table table-hover table-sm" id="table-cart" style="width: 100%;">
-						<thead>
-						<tr>
-							<th style="text-align: center;">Item Name</th>
-							<th style="text-align: center;">Quantity</th>
-							<th style="text-align: center;"></th>
-							<th style="text-align: center;">Price</th>
-							<th style="text-align: center;"></th>
-						</tr>
-						</thead>
-						<tbody>
-							{% for item in cart.items %}
-								<tr align="center" id="{{item.id}}">
-									<td>{{item.item.item_name}}</td>
-									<td><div>
-										<button class="btn btn-sm btn-light dec-btn" data="{{item.id}}">&minus;</button> &nbsp;
-										<span>{{item.quantity}} &nbsp;</span>
-										<button class="btn btn-sm btn-light inc-btn" data="{{item.id}}">&plus;</button>
-									</div></td>
-									<td>{{item.quantity}} &times; {{item.item.price}}</td>
-									<td>{{item.amount|intcomma}}</td>
-									<!-- <td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td> -->
-									<td width="20px" class="py-0">
-										<h3 class="text-danger remove-from-cart-btn p-0 pr-5 my-0" data="{{item.item.id}}">&times;</h3>
-									</td>
-								</tr>	
-							{% endfor %}
-							<tr align="center">
-								<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>
-								<td id="total-amount-cart">{{cart.total|intcomma}}</td>
-								<td></td>
+						<table class="table table-hover table-sm" id="table-cart" style="width: 100%;">
+							<thead>
+							<tr>
+								<th style="text-align: center;">Item Name</th>
+								<th style="text-align: center;">Quantity</th>
+								<th style="text-align: center;"></th>
+								<th style="text-align: center;">Price</th>
+								<th style="text-align: center;"></th>
 							</tr>
+							</thead>
+							<tbody>
+								{% for item in cart.items %}
+									<tr align="center" id="{{item.id}}">
+										<td>{{item.item.item_name}}</td>
+										<td><div>
+											<button class="btn btn-sm btn-light dec-btn" data="{{item.id}}">&minus;</button> &nbsp;
+											<span>{{item.quantity}} &nbsp;</span>
+											<button class="btn btn-sm btn-light inc-btn" data="{{item.id}}">&plus;</button>
+										</div></td>
+										<td>{{item.quantity}} &times; {{item.item.price}}</td>
+										<td>{{item.amount|intcomma}}</td>
+										<!-- <td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td> -->
+										<td width="20px" class="py-0">
+											<h3 class="text-danger remove-from-cart-btn p-0 pr-5 my-0" data="{{item.item.id}}">&times;</h3>
+										</td>
+									</tr>	
+								{% endfor %}
+								<tr align="center">
+									<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>
+									<td id="total-amount-cart">{{cart.total|intcomma}}</td>
+									<td></td>
+								</tr>
+								
+							</tbody>
 							
-						</tbody>
-						
-					</table>
-					<button class="btn btn-success checkout-btn" style="float: right; margin-right: 100px">Checkout</button>
+						</table>
+						<button class="btn btn-success checkout-btn" style="float: right; margin-right: 100px">Checkout</button>
 					{% else %}
-					Your cart is empty . . . <br>
-					Try adding something to the cart from the <a href="/#section-menu">Menu</a>
+						Your cart is empty . . . <br>
+						Try adding something to the cart from the <a href="/#section-menu">Menu</a>
 					{% endif %}
 				</div>
 				  
@@ -313,7 +332,6 @@
 	</div>
 
 	<!-- order model -->
-	<!-- ...........edit model...................... -->
 	<div id="orderModal" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-dialog-centered modal-lg">
   
@@ -325,58 +343,48 @@
 			</div>
   
 			<div class="modal-body">
-			  <div class="row">
-				<div class="col-lg-8">
-				  <b class="pl-5">Item: </b>
-				  <input type="text" name="itemName" id="itemName" class="pl-3" style="outline: none; border: none;" readonly>
-				</div>
-				<div class="col-lg-4">
-				  <b>Price: </b>
-				  <label class="pl-3">&#x20B9;  <input type="number" name="price" id="price" class="pl-0" style="outline: none; border: none; width: 23px;" readonly> /-</label>
-				</div>
-			  </div>
-  
-			  <div class="row">
-				<div class="col-lg-7 pb-2">
-				  <label for="quantity-modal" class="pl-5">Quantity: </label>
-				  <input id="quantity-modal" name="quantity-modal" class="pb_outline-dark text-center" type="number" min=1 max=20 style="height: 38px; width: 36px;">&nbsp;					   
-				</div>
-  
-				<div class="col-lg-5 pb-2">
-				  <b class="pl-4">Total Price: </b>
-				  <label class="pl-3">&#x20B9; <span id="total"></span> /-</label>
-				</div>
-			  </div>
-  
-			  <hr>
-			  <div class="container">
-					<h4 class="modal-title pl-1">Delivery Details</h4>
-					<hr>
-
-  
-				  <div class="row">
-					  <div class="col-md-6 justify-content-center form-group" style="float: left;">
-						  <label for="personName">Name: &nbsp;</label>
-						  <label id="personName" class="pl-3"></label>
-					  </div>
-					  <div class="col-md-6 justify-content-center form-group" style="float: right;">
-						  <label for="order-phone">Contact: &nbsp;</label>
-						  <label id="order-phone" class="pl-3"></label>
-					  </div>
-				  </div>
-	  
-				  <div class="row">
-					  <div class="col-md-6 justify-content-center form-group" style="float: left;">
-						  <label for="order-email">Email: &nbsp;</label>
-						  <label id="order-email" class="pl-3"></label>
-					  </div>
-					  <div class="col-md-6 justify-content-center form-group" style="float: right;">
-						  <label for="order-address">Address: &nbsp;</label>
-						  <label id="order-address" class="pl-3"></label>
-					  </div>
-				  </div>
-			  </div>
+				<table class="table table-hover table-sm" id="table-order">
+					<thead>
+					<tr>
+						<th style="text-align: center;">Item Name</th>
+						<th style="text-align: center;">Quantity</th>
+						<th style="text-align: center;"></th>
+						<th style="text-align: center;">Price</th>
+					</tr>
+					</thead>
+					<tbody>
+						<!-- Items list fetched from server using ajax -->
+					</tbody>
+				</table>
 			</div>
+			<hr style="margin-bottom: 0;">
+			<div class="modal-header">
+				<h4 class="modal-title pl-1">Delivery Details</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6 justify-content-center form-group" style="float: left;">
+						<label for="personName">Name: &nbsp;</label>
+						<input id="personName" name="personName" class="pl-3 form-control" value="" readonly></input>
+					</div>
+					<div class="col-md-6 justify-content-center form-group" style="float: right;">
+						<label for="order-phone">Contact: &nbsp;</label>
+						<input id="order-phone" name="order-phone" class="pl-3 form-control" value="" readonly></input>
+					</div>
+				</div>
+	
+				<div class="row">
+					<div class="col-md-6 justify-content-center form-group" style="float: left;">
+						<label for="order-email">Email: &nbsp;</label>
+						<input id="order-email" name="order-email" class="pl-3 form-control" value="" readonly></input>
+					</div>
+					<div class="col-md-6 justify-content-center form-group" style="float: right;">
+						<label for="order-address">Address: &nbsp;</label>
+						<input id="order-address" name="order-address" class="pl-3 form-control" value="" readonly></input>
+					</div>
+				</div>
+			</div>
+
 			<div class="modal-footer">
 			  <div class="container">
 				<!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
@@ -391,22 +399,20 @@
 	</div>
 	<!-- END Order Modal -->
 
-
-	<!-- ............ create another model for order confirmation for checkout and repeat order............... -->
-
+	<!-- another model for order confirmation for checkout and repeat order -->
 	<div id="orderConfirmModal" class="modal fade" role="dialog">
-		<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-dialog modal-dialog-centered modal-lg" style="max-height: 90vh; overflow-y:auto;">
   
 		  <!-- Modal content-->
-		  <div class="modal-content justify-content-center">
+		  <div class="modal-content justify-content-center"style="width: 100%;">
 			<div class="modal-header">
 			  <h4 class="modal-title pl-1">Order Details</h4>
 			  <button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<form method="POST" id="confirm-order-form">
-
+				{% csrf_token %}
 				<div class="modal-body">
-					<table class="table table-hover table-sm" id="table-cart" style="width: 100%;">
+					<table class="table table-hover table-sm" id="table-order">
 						<thead>
 						<tr>
 							<th style="text-align: center;">Item Name</th>
@@ -417,66 +423,39 @@
 						</tr>
 						</thead>
 						<tbody>
-							{% for item in order.items %}
-								<tr align="center" id="{{item.id}}">
-									<td>{{item.item.item_name}}</td>
-									<td><div>
-										<button class="btn btn-sm btn-light confirm-modal-dec-btn" data="{{item.id}}">&minus;</button>
-										<input type="number" step="1" min="1" value="{{item.quantity}}">
-										<button class="btn btn-sm btn-light confirm-modal-inc-btn" data="{{item.id}}">&plus;</button>
-									</div></td>
-									<td>{{item.quantity}} &times; {{item.item.price}}</td>
-									<td>{{item.amount|intcomma}}</td>
-									<!-- <td><button class="btn btn-sm btn-danger remove-from-cart-btn" data="{{item.item.id}}">Remove Item</button></td> -->
-									<td width="20px" class="py-0">
-										<h3 class="text-danger remove-from-cart-btn p-0 pr-5 my-0" data="{{item.item.id}}">&times;</h3>
-									</td>
-								</tr>	
-							{% endfor %}
-							<tr align="center">
-								<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>
-								<td id="total-amount-cart">{{cart.total|intcomma}}</td>
-								<td></td>
-							</tr>
-							
+							<!-- Items list fetched from server using ajax -->
 						</tbody>
-						
 					</table>
 				</div>
-	  
-				  <hr>
-				  <div class="container">
-						<h4 class="modal-title pl-1">Delivery Details</h4>
-						<hr>
-	
-	  
-					  <div class="row">
-						  <div class="col-md-6 justify-content-center form-group" style="float: left;">
-							  <label for="confirm-name">Name: &nbsp;</label>
-							  <input id="confirm-name" name="confirm-name" class="pl-3 form-control"></input>
-						  </div>
-						  <div class="col-md-6 justify-content-center form-group" style="float: right;">
-							  <label for="order-phone">Contact: &nbsp;</label>
-							  <input id="order-phone" class="pl-3 form-control"></input>
-						  </div>
-					  </div>
-		  
-					  <div class="row">
-						  <div class="col-md-6 justify-content-center form-group" style="float: left;">
-							  <label for="confirm-email">Email: &nbsp;</label>
-							  <input id="confirm-email" name="confirm-email" class="pl-3 form-control"></input>
-						  </div>
-						  <div class="col-md-6 justify-content-center form-group" style="float: right;">
-							  <label for="confirm-address">Address: &nbsp;</label>
-							  <input id="confirm-address" name="confirm-address" class="pl-3 form-control"></input>
-						  </div>
-					  </div>
-				  </div>
+				<hr style="margin-bottom: 0;">
+				<div class="modal-header">
+					<h4 class="modal-title pl-1">Delivery Details</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-6 justify-content-center form-group" style="float: left;">
+							<label for="confirm-name">Name: &nbsp;</label>
+							<input id="confirm-name" name="confirm-name" class="pl-3 form-control" value="{% if request.user.first_name %} {{ request.user.first_name }} {{request.user.last_name}} {% else %} {{request.user.username}} {% endif %}"></input>
+						</div>
+						<div class="col-md-6 justify-content-center form-group" style="float: right;">
+							<label for="confirm-phone">Contact: &nbsp;</label>
+							<input id="confirm-phone" name="confirm-phone" class="pl-3 form-control" value="{{ request.user.profile.phone }}"></input>
+						</div>
+					</div>
+		
+					<div class="row">
+						<div class="col-md-6 justify-content-center form-group" style="float: left;">
+							<label for="confirm-email">Email: &nbsp;</label>
+							<input id="confirm-email" name="confirm-email" class="pl-3 form-control" value="{{ request.user.email }}"></input>
+						</div>
+						<div class="col-md-6 justify-content-center form-group" style="float: right;">
+							<label for="confirm-address">Address: &nbsp;</label>
+							<input id="confirm-address" name="confirm-address" class="pl-3 form-control" value="{{ request.user.profile.address }}"></input>
+						</div>
+					</div>
 				</div>
 				<div class="modal-footer">
 				  <div class="container">
-					<!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
-					<h4 id="delivery-status" style="float: left;"></h4>
 					<button style="float: right;" type="submit" id="confirm-order-btn" class="btn btn-success">Confirm Order</button>
 					<button style="float: right;" data-dismiss="modal" class="btn btn-danger mr-3">Cancel</button>
 				  </div>
@@ -514,22 +493,39 @@
 	<script src="{% static 'js/bootstrap.min.js' %}"></script>
 
 	<script>
+		var order;
 		window.CSRF_TOKEN = "{{ csrf_token }}"
 
 		// show / hide the remove from cart btn
 		$("#cart .table tbody tr").mouseenter(function () {
 			$(this).children('td').last().children('.remove-from-cart-btn').first().css('visibility', 'visible');
-		}).mouseleave(function () {
+		})
+		.mouseleave(function () {
 			$(this).children('td').last().children('.remove-from-cart-btn').first().css('visibility', 'hidden');			
 		});
 
-		$('.confirm-modal-inc-btn').click(function () {
-			$(this).prev('span').stepUp(1);
+		// inc / dec quantity in confirm modal
+		$('#orderConfirmModal').on('click', '.confirm-modal-inc-btn', function () {
+			$(this).prev('input')[0].stepUp(1);
+			uQ($(this).prev('input'));
+		})
+		.on('click', '.confirm-modal-dec-btn', function () {
+			$(this).next('input')[0].stepDown(1);
+			uQ($(this).next('input'));
 		});
-		$('.confirm-modal-dec-btn').click(function () {
-			$(this).prev('span').stepDown(1);
-		});
-
+		// updating quantity and amount when inc or dec on confirm modal
+		function uQ(elem) {
+			var tr = $(elem).closest('tr');
+			var q = $(elem).val();
+			$('#quantity', tr).text(q);
+			var p = parseFloat($('#price', tr).text());
+			$('#amount', tr).text((p * q).toFixed(2));
+			var total = 0;
+			$('#orderConfirmModal table tbody').children('tr[id]').each(function () {
+				total += parseFloat($('td#amount', this).text());
+			});
+			$('#orderConfirmModal #total-amount-order').html('&#8377; ' + total.toFixed(2));
+		};
 		// toggle the save changes and reset btn
 		$("#email, #contact, #address").change(function () {
 			$("#save-btn, #reset-btn").css('visibility', 'visible');
@@ -537,7 +533,6 @@
 		$("#reset-btn").click(function () {
 			$("#save-btn, #reset-btn").css('visibility', 'hidden');
 		});
-
 
 		// ajax for updating profile
 		$("#save-btn").click(function () {
@@ -686,10 +681,11 @@
 
 				success: function (response) {
 					if (response.status) {
-						if (response.order.status == "D") {
+						order = response.order;
+						if (order.status == "D") {
 							$('#orderModal #cancel-order-btn').hide();
 							$("#orderModal #delivery-status").html('<span><i class="far fa-check-circle"></i></span> Delivered').addClass("text-success").removeClass('text-secondary');
-						} else if (response.order.status == "N") {
+						} else if (order.status == "N") {
 							$('#orderModal #cancel-order-btn').removeAttr('disabled').show();
 							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Not Yet Delivered').addClass("text-secondary").removeClass('text-success');
 						} else {
@@ -697,12 +693,31 @@
 							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass("text-secondary").removeClass('text-success');
 						}
 						
-						
+						// order details section of order modal
+						$('#orderModal table tbody').html('');
+						order.items.forEach(item => {
+							var tr = '<tr align="center"> '+ 
+										'<td>' + item.name + '</td>' +
+										'<td><span>' + item.quantity + '</span></td>' +
+										'<td>' + item.quantity + '&times;' + item.price + '</td>' +
+										'<td>' + item.amount + '</td>' +
+									'</tr>'
+							$('#orderModal table tbody').prepend(tr);
+						});
 
-						$('#orderModal #personName').text(response.order.name);
-						$('#orderModal #order-phone').text(response.order.contact);
-						$('#orderModal #order-email').text('{{ request.user.email }}');
-						$('#orderModal #order-address').text(response.order.address);
+						$('#orderModal table tbody').append(
+							'<tr align="center">' + 
+								'<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>' +
+								'<td>&#8377; ' + order.amount + '</td>' +
+							'</tr>'
+						);
+
+
+						// delivery details section of order modal
+						$('#orderModal #personName').val(response.order.name);
+						$('#orderModal #order-phone').val(response.order.contact);
+						$('#orderModal #order-email').val('{{ request.user.email }}');
+						$('#orderModal #order-address').val(response.order.address);
 
 
 						$("#orderModal #cancel-order-btn, #orderModal #repeat-order-btn").attr('data', response.order.id);
@@ -743,36 +758,154 @@
 			return false;
 		});
 
+		// show the items in the confirm order modal
 		$("#repeat-order-btn").click(function () {
+			// order details
+			$('#orderConfirmModal table tbody').html('');
+			order.items.forEach(item => {
+				var tr = '<tr align="center" id="' + item.item_id + '" > '+ 
+							'<td>' + item.name + '</td>' +
+							'<td><div>' +
+								'<button type="button" class="btn btn-sm btn-light confirm-modal-dec-btn">&minus;</button>' +
+								'<input id="quantity-order" type="number" step="1" min="1" value="' + item.quantity + '" style="width: 36px; border: 0; position: relative; top: 2px; padding-left: 12px;">' +
+								'<button type="button" class="btn btn-sm btn-light confirm-modal-inc-btn">&plus;</button>' +
+							'</div></td>' +
+							'<td><span id="quantity">' + item.quantity + '</span> &times; <span id="price">' + item.price + '</span></td>' +
+							'<td id="amount">' + item.amount + '</td>' +
+							'<td width="20px" class="py-0">' +
+									'<h3 class="text-danger remove-from-order-btn p-0 pr-5 my-0">&times;</h3>' +
+							'</td>' +
+						 '</tr>'
+				$('#orderConfirmModal table tbody').prepend(tr);
+			});
+
+			$('#orderConfirmModal table tbody').append(
+				'<tr align="center">' + 
+					'<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>' +
+					'<td id="total-amount-order">&#8377; ' + order.amount + '</td>' +
+					'<td></td>' +
+				'</tr>'
+			);
+
+			$('#confirm-order-form').attr('origin', 'repeat_order');
 			$("#orderConfirmModal").modal('show');
 		})
 
+		// remove item from confirm order modal
+		$("#orderConfirmModal").on('click', '.remove-from-order-btn', function () {
+			$(this).closest('tr').remove();
+			var amt = parseFloat($(this).closest('td').prev('td').html());
+			$('#orderConfirmModal #total-amount-order').html('&#8377; ' + (order.amount - amt))
+		});
+
 		// function for repeating order
-		// $('#repeat-order-btn').click(function () {
-		// 	console.log("repeat");
-		// 	$.ajax({
-		// 		type: "POST",
-		// 		url: "/user/repeat-order/",
-		// 		data: {
-		// 			csrfmiddlewaretoken: window.CSRF_TOKEN,
-		// 			order_id: $(this).attr('data'),
-		// 			repeatOrder: "True",
-		// 		},
-		// 		dataType: 'json',
+		$('#confirm-order-form').submit(function() {
+          $('#confirm-order-form #confirm-order-btn').html('<i class="fas fa-circle-notch fa-spin"></i> Ordering...').attr('disabled', 'disabled');
+		  var itemlist = [];
+		  $('#orderConfirmModal table tbody').children('tr[id]').each(function () {
+			  var id = $(this).attr('id');
+			  var quantity = $('#quantity-order', this).val();
+			  itemlist.push({id: id, quantity: quantity})
+		  })
 
-		// 		success: function (response) {
-		// 			if (response.status) {
-		// 				$("#orderModal").modal('hide');
-		// 				// $("#order-card-" + response.order_id + " h5").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass('text-secondary').removeClass('text-danger').removeClass('text-success');
-		// 			} else {
-		// 			}
-		// 		},
+          $.ajax({
+            type: "POST",
+            url: "/order/repeat-order/",
+            data: {
+              csrfmiddlewaretoken: window.CSRF_TOKEN,
+			  items: JSON.stringify(itemlist),
+              personName: $('#confirm-order-form #confirm-name').val(),
+              phone: $('#confirm-order-form #confirm-phone').val(),
+              location: $('#confirm-order-form #confirm-address').val(),
+			  origin: $('#confirm-order-form').attr('origin'),
+              order: "True"},
+            datatype: 'json',
 
-		// 		error: function (jqXHR, exception) {
-		// 		}
-		// 	});
-		// 	return false;
-		// });
+            success: function(response) {
+              console.log(response);
+              if (response.status) {
+                $("#confirm-order-form #confirm-order-btn").html('Order Successfull').removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+                $("#orderModal").modal("hide")
+                $("#orderConfirmModal").modal("hide");
+
+                $("#confirm-order-form #confirm-order-btn").html('Confirm Order').removeClass('btn-danger').addClass('btn-success').removeAttr('disabled');
+                $("#notify-modal #notifyTitle").html("Order Successfull");
+                $("#notify-modal .modal-body").html("Order Placed Successfully . . .<br>You should receive a confirmation shortly on your email or phone.<br>Thank You!");
+                $("#notify-modal").modal("show");
+
+				// refresh page
+                $("#notify-modal").on('hidden.bs.modal', function () {
+					window.location.reload(true);
+				});
+
+              } else if (!response.status) {
+                $("#confirm-order-modal #confirm-order-btn").html('<i class="fas fa-times"></i> Order Failed!!').addClass('btn-danger').removeClass('btn-success').removeAttr('disabled');
+              }
+            },
+
+            error: function (jqXHR, exception) {
+
+            }
+          })
+        return false;
+      });
+
+	  	// display confirm modal for checkout button
+		  $("#cart .checkout-btn").click(function () {
+			$.ajax({
+            type: "POST",
+            url: "/user/getCartDetails/",
+            data: {
+              csrfmiddlewaretoken: window.CSRF_TOKEN,
+              get_details: "True"},
+            datatype: 'json',
+
+            success: function(response) {
+              console.log(response);
+              if (response.status) {
+                // item details
+				$('#orderConfirmModal table tbody').html('');
+				response.cart.items.forEach(item => {
+					var tr = '<tr align="center" id="' + item.item_id + '" > '+ 
+								'<td>' + item.name + '</td>' +
+								'<td><div>' +
+									'<button type="button" class="btn btn-sm btn-light confirm-modal-dec-btn">&minus;</button>' +
+									'<input id="quantity-order" class="quantity-order" type="number" step="1" min="1" value="' + item.quantity + '" style="width: 36px; border: 0; position: relative; top: 2px; padding-left: 12px;">' +
+									'<button type="button" class="btn btn-sm btn-light confirm-modal-inc-btn">&plus;</button>' +
+								'</div></td>' +
+								'<td><span id="quantity">' + item.quantity + '</span> &times; <span id="price">' + item.price + '</span></td>' +
+								'<td id="amount">' + item.amount + '</td>' +
+								'<td width="20px" class="py-0">' +
+										'<h3 class="text-danger remove-from-order-btn p-0 pr-5 my-0">&times;</h3>' +
+								'</td>' +
+							'</tr>'
+					$('#orderConfirmModal table tbody').prepend(tr);
+				});
+
+				$('#orderConfirmModal table tbody').append(
+					'<tr align="center">' + 
+						'<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>' +
+						'<td id="total-amount-order">&#8377; ' + response.cart.total_amount + '</td>' +
+						'<td></td>' +
+					'</tr>'
+				);
+
+				$('#confirm-order-form').attr('origin', 'checkout');
+				$("#orderConfirmModal").modal('show');
+
+              } else if (!response.status) {
+
+              }
+            },
+
+            error: function (jqXHR, exception) {
+
+            }
+          })
+
+
+			
+		})
 
 	</script>
 </body>

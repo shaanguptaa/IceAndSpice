@@ -151,6 +151,25 @@ def checkout(request):
 
     return JsonResponse({})
 
+def getCartAjax(request):
+    if request.method == "POST" and request.POST['get_details']:
+        cart = Cart.objects.get(user=request.user)
+        cart = {
+            'total_amount': cart.total_amount,
+            'items': [{
+                'quantity': item.quantity,
+                'amount': item.amount,
+                'name': item.item.item_name,
+                'id': item.id,
+                'item_id': item.item.id,
+                'price': item.item.price,
+            } for item in cart.items.all()]
+        }
+
+
+    return JsonResponse({'status': True, 'cart': cart})
+
+
 # Commented in IceAndSpice/index.html AJAX Code for getting cart items also commented on urls of this app
 # def get_cart_items(request):
 #     cart = Cart.objects.get(user=request.user)

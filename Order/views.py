@@ -1,3 +1,4 @@
+import json
 from django.http import JsonResponse
 from Menu.models import Menu
 from Order.models import Order, OrderItem
@@ -24,6 +25,44 @@ def order(request):
 
     return JsonResponse({"status": True})
 
+
+def repeat_order(request):
+    if request.method == 'POST' and request.POST['order']:
+        name = request.POST['personName']
+        contact = request.POST['phone']
+        address = request.POST['location']
+
+        total = 0
+        items = json.loads(request.POST['items'])
+        # print(items)
+        orderItems = []
+        for item in items:
+            menuitem = Menu.objects.get(id=item['id'])
+            orderItems.append(OrderItem.objects.create(item=menuitem, quantity=int(item['quantity']), amount=menuitem.price * int(item['quantity'])))
+            total += orderItems[-1].amount
+ 
+        order = Order.objects.create(name=name, contact=contact, total_amount=total, address=address, user=request.user)
+        try:
+            order.items.set(orderItems)
+            update_order_total(order)
+        except Exception as e:
+            # deleting order if any error occurs
+            order.delete()
+            for item in orderItems:
+                item.delete()
+        
+        if request.POST['origin'] == 'checkout':
+            # clear the cart
+            cart = request.user.cart
+            for item in cart.items.all():
+                cart.items.remove(item.id)
+                item.delete()
+            cart.total_amount = 0
+            cart.save()
+
+    return JsonResponse({"status": True})
+
+
 def get_orders(request):
     orders = Order.objects.filter(user=request.user)
     orders = [{
@@ -33,6 +72,7 @@ def get_orders(request):
         'total_amount': order.total_amount,
         'status': order.status
         } for order in orders.all()]
+        
 
     return orders
 
@@ -47,11 +87,15 @@ def get_order(request):
             'total_amount': order.total_amount,
             'order_date': order.order_date,
             'status': order.status,
+            'amount': order.total_amount,
             'items': [{
                 'quantity': item.quantity,
                 'amount': item.amount,
-                'item': item.item.item_name,
-                } for item in order.items.all()]
+                'name': item.item.item_name,
+                'id': item.id,
+                'item_id': item.item.id,
+                'price': item.item.price,
+            } for item in order.items.all()]
         }
         return JsonResponse({'status': True, 'order': order})
 
@@ -68,15 +112,15 @@ def cancel_order(request):
     
     return JsonResponse({})
 
-def repeat_order(request):
-    if request.method == 'POST' and request.POST['repeatOrder']:
-        order = Order.objects.get(id=request.POST['order_id'])
-        # order.status = "C"
-        # order.save()
+# def repeat_order(request):
+#     if request.method == 'POST' and request.POST['repeatOrder']:
+#         order = Order.objects.get(id=request.POST['order_id'])
+#         # order.status = "C"
+#         # order.save()
 
-        return JsonResponse({'status': True, 'order_id': order.id})
+#         return JsonResponse({'status': True, 'order_id': order.id})
     
-    return JsonResponse({})
+#     return JsonResponse({})
 
 
 def update_order_total(order):
