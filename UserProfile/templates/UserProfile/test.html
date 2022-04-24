@@ -589,7 +589,8 @@
 					if (response.status) {
 						element.closest("tr").remove();
 						$("#total-amount-cart").text(response.total);
-						if(response.total == 0) {
+						$('.counters .cart-count .count').text(response.num_items)
+						if(response.num_items == 0) {
 							$('.cart-content').html('Your cart is empty . . . <br>Try adding something to the cart from the <a href="/#section-menu">Menu</a>');
 						}
 					} else {
@@ -748,7 +749,9 @@
 					if (response.status) {
 						$("#orderModal").modal('hide');
 						$("#order-card-" + response.order_id + " h5").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass('text-secondary').removeClass('text-danger').removeClass('text-success');
-					} else {
+						// updating the counter
+						$('.counters .order-count .count').text(parseInt($('.counters .order-count .count')[0].innerHTML) - 1);
+					} else if (!response.status) {
 					}
 				},
 

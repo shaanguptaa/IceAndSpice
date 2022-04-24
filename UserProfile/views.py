@@ -119,10 +119,12 @@ def remove_from_cart(request):
         item.delete()
     cart.save()
 
+    num_items = cart.items.all().count()
+
     total = update_cart_total(cart)
 
 
-    return JsonResponse({'status': True, 'total': total})
+    return JsonResponse({'status': True, 'total': total, 'num_items': num_items})
 
 def get_cart_for_homepage(user):
     cart = Cart.objects.get(user=user)
