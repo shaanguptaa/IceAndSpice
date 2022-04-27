@@ -34,5 +34,32 @@ def get_reservations(request):
         reservations = None
     else:
         reservations = Reservation.objects.filter(user=request.user)
+        # print(reservations)
+        # reservations - [{
+        #     'id': reservation.id,
+        #     'reserve_date': reservation.date_of_reservation.date(),
+        #     'reserve_time': reservation.date_of_reservation.time(),
+        #     'booked': reservation.date_booked,
+        #     'persons': reservation.persons,
+        #     'status': reservation.status,
+        # } for reservation in reservations]
 
     return reservations
+
+def get_reservation_details(request):
+    if request.method == 'POST' and request.POST['get_details']:
+        id = request.POST['reservation_id']
+        reservation = Reservation.objects.get(id=id)
+        reservation = {
+            'id': reservation.id,
+            'name': reservation.name,
+            'email': reservation.email,
+            'phone': reservation.phone,
+            'date_booked': reservation.date_booked,
+            'date_of_reservation': reservation.date_of_reservation,
+            'persons': reservation.persons,
+            'status': reservation.status,
+        }
+        return JsonResponse({'status': True, 'reservation': reservation})
+    
+    return JsonResponse({'status': False})

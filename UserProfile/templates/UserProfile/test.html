@@ -271,9 +271,42 @@
 
 		<div class="card" id="reservations">
 			<div class="card-body">
-				<h5 class="card-title">Reservations</h5>
-				<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-				<a href="#" class="btn btn-primary">Button</a>
+				<h5 class="card-title mb-3">Reservations</h5>
+
+				<div class="container-fluid">
+					<table class="table table-hover table-sm " id="table-reservation" style="width: 100%;">
+						<thead>
+						<tr>
+							<th style="text-align: center;">Reservation Date</th>
+							<th style="text-align: center;">Reservation Time</th>
+							<th style="text-align: center;">Booked</th>
+							<th style="text-align: center;">No of Persons</th>
+							<th style="text-align: center;">Status</th>
+						</tr>
+						</thead>
+						<tbody>
+							{% for reservation in reservations %}
+								<tr align="center" id="{{reservation.id}}" style="cursor: pointer;">
+									<td>{{reservation.date_of_reservation|date:"SHORT_DATE_FORMAT"}}</td>
+									<td>{{reservation.date_of_reservation|time:"TIME_FORMAT"}}</td>
+									<td>{{reservation.date_booked|naturaltime}}</td>
+									<td>{{reservation.persons}}</td>
+									<td>{% if reservation.status == 'P' %}Pending{% elif reservation.status == "R" %}Reserved {% elif reservation.status == "C" %}Cancelled{% endif %}</td>
+								</tr>	
+							{% endfor %}
+							<!-- <tr align="center">
+								<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>
+								<td id="total-amount-cart">{{cart.total|intcomma}}</td>
+								<td></td>
+							</tr> -->
+							
+						</tbody>
+						
+					</table>
+				</div>
+
+				<!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+				<!-- <a href="#" class="btn btn-primary">Button</a> -->
 			</div>
 		</div>
 
@@ -465,6 +498,81 @@
   
 	</div>
 	</div>
+
+
+	<!-- reserve model -->
+	<div id="reserveModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg">
+  
+		  <!-- Modal content-->
+		  <div class="modal-content justify-content-center">
+			<div class="modal-header">
+			  <h4 class="modal-title pl-1">Reservation Details</h4>
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+  
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6 justify-content-center form-group" style="float: left;">
+						<label for="reserve-date">Reservation Date: &nbsp;</label>
+						<input id="reserve-date" name="reserve-date" type="date" class="pl-3 form-control" value="" readonly></input>
+					</div>
+					<div class="col-md-6 justify-content-center form-group" style="float: right;">
+						<label for="reserve-time">Reservation Time: &nbsp;</label>
+						<input id="reserve-time" name="reserve-time" type="time" class="pl-3 form-control" value="" readonly></input>
+					</div>
+				</div>
+	
+				<div class="row">
+					<div class="col-md-6 justify-content-center form-group" style="float: left;">
+						<label for="reserve-booking">Booking: &nbsp;</label>
+						<input id="reserve-booking" name="reserve-booking" type="datetime-local" class="pl-3 form-control" value="" readonly></input>
+					</div>
+					<div class="col-md-6 justify-content-center form-group" style="float: right;">
+						<label for="reserve-num-persons">Number of Persons: &nbsp;</label>
+						<input id="reserve-num-persons" name="reserve-num-persons" class="pl-3 form-control" value="" readonly></input>
+					</div>
+				</div>
+			</div>
+			<!-- <hr style="margin-bottom: 0;"> -->
+			<div class="modal-header" style="border-top: 1px solid #e9ecef;">
+				<h4 class="modal-title pl-1">Personal Details</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-6 justify-content-center form-group" style="float: left;">
+						<label for="reserve-name">Name: &nbsp;</label>
+						<input id="reserve-name" name="reserve-name" class="pl-3 form-control" value="" readonly></input>
+					</div>
+					<div class="col-md-6 justify-content-center form-group" style="float: right;">
+						<label for="reserve-phone">Contact: &nbsp;</label>
+						<input id="reserve-phone" name="reserve-phone" class="pl-3 form-control" value="" readonly></input>
+					</div>
+				</div>
+	
+				<div class="row">
+					<div class="col-md-6 justify-content-center form-group" style="float: left;">
+						<label for="reserve-email">Email: &nbsp;</label>
+						<input id="reserve-email" name="reserve-email" class="pl-3 form-control" value="" readonly></input>
+					</div>
+					<!-- <div class="col-md-6 justify-content-center form-group" style="float: right;">
+						<label for="reserve-address">Address: &nbsp;</label>
+						<input id="reserve-address" name="reserve-address" class="pl-3 form-control" value="" readonly></input>
+					</div> -->
+				</div>
+			</div>
+
+			<div class="modal-footer">
+			  <div class="container">
+				<h4 id="reserve-status" style="float: left;"></h4>
+				<button style="float: right;" id="cancel-order-btn" class="btn btn-danger">Cancel Reservation</button>
+			  </div>
+			</div>
+		  </div>
+  
+		</div>
+	</div>
+	<!-- END reserve Modal -->
 
 
 	<!-- Notify Model -->
@@ -850,23 +958,23 @@
 
             }
           })
-        return false;
-      });
+			return false;
+		});
 
-	  	// display confirm modal for checkout button
-		  $("#cart .checkout-btn").click(function () {
+		// display confirm modal for checkout button
+		$("#cart .checkout-btn").click(function () {
 			$.ajax({
-            type: "POST",
-            url: "/user/getCartDetails/",
-            data: {
-              csrfmiddlewaretoken: window.CSRF_TOKEN,
-              get_details: "True"},
-            datatype: 'json',
+			type: "POST",
+			url: "/user/getCartDetails/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+				get_details: "True"},
+			datatype: 'json',
 
-            success: function(response) {
-              console.log(response);
-              if (response.status) {
-                // item details
+			success: function(response) {
+				console.log(response);
+				if (response.status) {
+				// item details
 				$('#orderConfirmModal table tbody').html('');
 				response.cart.items.forEach(item => {
 					var tr = '<tr align="center" id="' + item.item_id + '" > '+ 
@@ -896,18 +1004,64 @@
 				$('#confirm-order-form').attr('origin', 'checkout');
 				$("#orderConfirmModal").modal('show');
 
-              } else if (!response.status) {
+				} else if (!response.status) {
 
-              }
-            },
+				}
+			},
 
-            error: function (jqXHR, exception) {
+			error: function (jqXHR, exception) {
 
-            }
-          })
+				}
+			})
 
 
 			
+		})
+
+		// show details of reservation when clicked on the row
+		$("#table-reservation tbody tr").on('click', function () {
+			$.ajax({
+			type: "POST",
+			url: "/reservation/getReservationDetails/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+				reservation_id: $(this).attr('id'),
+				get_details: "True"},
+			datatype: 'json',
+
+			success: function(response) {
+				if (response.status) {
+					d = new Date(response.reservation.date_booked);
+					$("#reserve-booking").val(d.toISOString().slice(0, 16));
+					d = new Date(response.reservation.date_of_reservation)
+					$("#reserve-date").val(d.toISOString().slice(0, 10));
+					$("#reserve-time").val(d.toISOString().slice(11, 16));
+
+					$("#reserve-num-persons").val(response.reservation.persons);
+
+					$("#reserve-name").val(response.reservation.name);
+					$("#reserve-phone").val(response.reservation.phone);
+					$("#reserve-email").val(response.reservation.email);
+					
+					if (response.reservation.status == "P") {
+						$("#reserve-status").html('<i class="fa fa-clock-o"></i> Pending').addClass('text-warning');
+					} else if (response.reservation.status == "R") {
+						$("#reserve-status").html('<i class="far fa-check-circle"></i> Reserved').addClass('text-success');
+					} else if (response.reservation.status == "C") {
+						$("#reserve-status").html('<i class="far fa-times-circle"></i> Cancelled').addClass('text-danger');
+					}
+					
+					$("#reserveModal").modal('show');
+
+				} else if (!response.status) {
+
+				}
+			},
+
+			error: function (jqXHR, exception) {
+
+				}
+			})
 		})
 
 	</script>
