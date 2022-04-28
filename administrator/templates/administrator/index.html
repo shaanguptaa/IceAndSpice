@@ -117,6 +117,26 @@
       cursor: pointer;
     }
 
+    .fractions {
+      letter-spacing: -.5ch;
+      /* display: inline-block !important; */
+      /* padding: 0px !important;
+      margin-left: 0px !important;
+      margin-right: 0px !important; */
+    }
+
+    .numerator {
+      vertical-align: top;
+    }
+
+    .divide-sign {
+      font-size: 2.7ch;
+    }
+
+    .denominator {
+      vertical-align: bottom;
+    }
+
   </style>
 </head>
 
@@ -162,25 +182,31 @@
   <!--Main layout-->
   <main >
     <div class="container pt-5" >
-      <h1 class="welcome">Welcome, {% if user.first_name %} {{user.first_name}} {{user.last_name}} {% else %} {{user.username}} {% endif %}</h1>
+      <h1 class="welcome text-muted">Welcome, {% if user.first_name %} {{user.first_name}} {% else %} {{user.username}} {% endif %}</h1>
+      
+      
       <!-- Overview section -->
       <section class="mb-4" id="section-overwiew">
         <div class="row mt-5">
           <div class="col-sm-6">
-            <div class="card">
+            <div class="card" id="orders-delivered">
               <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title text-muted">Orders Delivered</h5>
+                <div class="card-text m-3" style="font-size: 40px;">
+                  <span>0</span>
+                </div>
+                <p class="card-text text-muted" style="font-size: small;">Since Today Morning</p>
               </div>
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="card">
+            <div class="card" id="orders-pending">
               <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title text-muted">Orders Pending</h5>
+                <div class="card-text m-3" style="font-size: 40px;">
+                  <span>0</span>
+                </div>
+                <p class="card-text text-muted" style="font-size: small;">Since Today Morning</p>
               </div>
             </div>
           </div>
@@ -188,20 +214,24 @@
 
         <div class="row mt-5">
           <div class="col-sm-6">
-            <div class="card">
+            <div class="card" id="upcoming-reservations">
               <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title text-muted">Upcoming Reservations</h5>
+                <div class="card-text m-3" style="font-size: 40px;">
+                  <span>0</span>
+                </div>
+                <p class="card-text text-muted" style="font-size: small;">For Today</p>
               </div>
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="card">
+            <div class="card" id="tables-booked">
               <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title text-muted">Tables Booked</h5>
+                <div class="card-text m-3" style="font-size: 40px;">
+                  <span>0</span>
+                </div>
+                <p class="card-text text-muted" style="font-size: small;">Since Today Morning</p>
               </div>
             </div>
           </div>
@@ -1011,7 +1041,7 @@
 					$("#table-reservation tbody tr#" + response.reservation_id + " td:last-child").html('<span><i class="far fa-times-circle"></i></span> Cancelled').removeClass('text-success').removeClass('text-warning').addClass('text-danger');
 					
 					// updating the counter
-					// $('.counters .reservation-count .count').text(parseInt($('.counters .reservation-count .count')[0].innerHTML) - 1);
+          updateOverview();
 				} else if (!response.status) {
 					// showing notify modal
 					$("#notify-modal #notifyTitle").html("Cancellation Failed");
@@ -1044,7 +1074,7 @@
 					$("#table-reservation tbody tr#" + response.reservation_id + " td:last-child").html('<span><i class="far fa-check-circle"></i></span> Reserved').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
 					
 					// updating the counter
-					// $('.counters .reservation-count .count').text(parseInt($('.counters .reservation-count .count')[0].innerHTML) - 1);
+          updateOverview();
 				} else if (!response.status) {
 					// showing notify modal
 					$("#notify-modal #notifyTitle").html("Confirmation Failed");
@@ -1150,7 +1180,7 @@
 						$("#table-order tbody tr#" + response.order_id + " td:last-child").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass('text-danger').removeClass('text-warning').removeClass('text-success');
 						
             // updating the counter
-						// $('.counters .order-count .count').text(parseInt($('.counters .order-count .count')[0].innerHTML) - 1);
+            updateOverview();
 					} else if (!response.status) {
 					}
 				},
@@ -1180,8 +1210,8 @@
 						$("#table-order tbody tr#" + response.order_id + " td:last-child").html('<span><i class="far fa-check-circle"></i></span> Confirmed').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
 						
             // updating the counter
-						// $('.counters .order-count .count').text(parseInt($('.counters .order-count .count')[0].innerHTML) - 1);
-					} else if (!response.status) {
+            updateOverview();
+          } else if (!response.status) {
 					}
 				},
 
@@ -1209,8 +1239,8 @@
 						$("#table-order tbody tr#" + response.order_id + " td:last-child").html('<span><i class="far fa-check-circle"></i></span> Delivered').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
 						
             // updating the counter
-						// $('.counters .order-count .count').text(parseInt($('.counters .order-count .count')[0].innerHTML) - 1);
-					} else if (!response.status) {
+            updateOverview();
+          } else if (!response.status) {
 					}
 				},
 
@@ -1219,6 +1249,36 @@
 			});
 			return false;
 		});
+
+
+    function updateOverview() {
+      $.ajax({
+				type: "POST",
+				url: "get-counts/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					get_counts: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+            // updating the counter
+            $("#orders-delivered span").text(response.orders_delivered);
+            $("#orders-pending span").text(response.orders_pending);
+
+            $("#upcoming-reservations span").text(response.reservations_confirmed)
+            $("#tables-booked span").text(response.tables_booked)
+					} else if (!response.status) {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+    }
+
+    $(document).ready(updateOverview());
 
 
   </script>

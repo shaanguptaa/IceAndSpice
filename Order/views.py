@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from django.http import JsonResponse
 from Menu.models import Menu
@@ -120,6 +121,7 @@ def cancel_order(request):
     if request.method == 'POST' and request.POST['cancelOrder']:
         order = Order.objects.get(id=request.POST['order_id'])
         order.status = "C"
+        order.delivery_date = None
         order.save()
 
         return JsonResponse({'status': True, 'order_id': order.id})
@@ -140,6 +142,7 @@ def deliver_order(request):
     if request.method == 'POST' and request.POST['deliverOrder']:
         order = Order.objects.get(id=request.POST['order_id'])
         order.status = "D"
+        order.delivery_date = datetime.now()
         order.save()
 
         return JsonResponse({'status': True, 'order_id': order.id})

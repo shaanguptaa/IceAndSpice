@@ -1,10 +1,12 @@
+from datetime import date, datetime, timedelta
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
 from Menu.views import get_all_items
+from Order.models import Order
 from Order.views import get_all_orders
+from Reservation.models import Reservation
 from Reservation.views import get_all_reservations
 from administrator.models import Feedback
 
@@ -96,3 +98,19 @@ def update_profile(request):
             return JsonResponse({'status': True})
 
     return JsonResponse({})
+
+def get_counts(request):
+    
+    orders_delivered = Order.objects.filter(status="D", delivery_date__gte=date.today()).count()
+    orders_pending = Order.objects.filter(status="P", order_date__gte=date.today()).count()
+
+    reservations_confirmed = Reservation.objects.filter(status="R", date_of_reservation__gte=date.today(), date_of_reservation__lte=date.today() + timedelta(days=1)).count()
+    tables_booked = Reservation.objects.filter(date_booked__gte=date.today()).count()
+
+    return JsonResponse({
+        'status': True,
+        'orders_delivered': orders_delivered,
+        'orders_pending': orders_pending,
+        'reservations_confirmed': reservations_confirmed,
+        'tables_booked': tables_booked,
+    })
