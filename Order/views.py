@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from django.http import JsonResponse
 from Menu.models import Menu
@@ -64,7 +65,7 @@ def repeat_order(request):
 
 
 def get_orders(request):
-    orders = Order.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user).order_by('-order_date')
     orders = [{
         'id': order.id,
         'items': ", ".join([item.item.item_name + ' x ' + str(item.quantity) for item in order.items.all()]),
@@ -74,6 +75,20 @@ def get_orders(request):
         } for order in orders.all()]
         
 
+    return orders
+
+def get_all_orders():
+    orders = Order.objects.all().order_by('-order_date')
+    orders = [{
+        'id': order.id,
+        'name': order.name,
+        'location': order.address,
+        'items': ", ".join([item.item.item_name + ' x ' + str(item.quantity) for item in order.items.all()]),
+        'order_date': order.order_date,
+        'total_amount': order.total_amount,
+        'status': order.status
+        } for order in orders.all()]
+        
     return orders
 
 def get_order(request):
@@ -106,22 +121,33 @@ def cancel_order(request):
     if request.method == 'POST' and request.POST['cancelOrder']:
         order = Order.objects.get(id=request.POST['order_id'])
         order.status = "C"
+        order.delivery_date = None
         order.save()
 
         return JsonResponse({'status': True, 'order_id': order.id})
     
     return JsonResponse({})
 
-# def repeat_order(request):
-#     if request.method == 'POST' and request.POST['repeatOrder']:
-#         order = Order.objects.get(id=request.POST['order_id'])
-#         # order.status = "C"
-#         # order.save()
+def confirm_order(request):
+    if request.method == 'POST' and request.POST['confirmOrder']:
+        order = Order.objects.get(id=request.POST['order_id'])
+        order.status = "N"
+        order.save()
 
-#         return JsonResponse({'status': True, 'order_id': order.id})
+        return JsonResponse({'status': True, 'order_id': order.id})
     
-#     return JsonResponse({})
+    return JsonResponse({})
 
+def deliver_order(request):
+    if request.method == 'POST' and request.POST['deliverOrder']:
+        order = Order.objects.get(id=request.POST['order_id'])
+        order.status = "D"
+        order.delivery_date = datetime.now()
+        order.save()
+
+        return JsonResponse({'status': True, 'order_id': order.id})
+    
+    return JsonResponse({})
 
 def update_order_total(order):
     total = sum([item.quantity * item.item.price for item in order.items.all()])

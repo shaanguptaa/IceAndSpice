@@ -1,9 +1,9 @@
 body {
-  background-color: #fbfbfb;
+  background-color: #f7faff;
 }
 @media (min-width: 991.98px) {
   main {
-    padding-left: 240px;
+    padding-left: 290px;
     padding-right: 50px;
   }
 }

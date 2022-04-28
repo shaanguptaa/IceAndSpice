@@ -12,6 +12,7 @@ class Reservation(models.Model):
     date_booked = models.DateTimeField(default=get_datetime)
     date_of_reservation = models.DateTimeField(default=get_datetime)
     persons = models.IntegerField(default=1)
+    status = models.CharField(max_length=1, choices=[("R", "Reserved"), ("P", "Pending"), ('C', 'Cancelled')], default="P")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
