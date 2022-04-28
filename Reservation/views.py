@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from Reservation.models import Reservation
-from datetime import datetime
+from datetime import datetime, timedelta
+from pytz import UTC
 
 # Create your views here.
 def reserve_table(request):
@@ -33,7 +34,7 @@ def get_reservations(request):
     if not request.user.is_authenticated:
         reservations = None
     else:
-        reservations = Reservation.objects.filter(user=request.user)
+        reservations = Reservation.objects.filter(user=request.user).order_by('-date_booked')
         # print(reservations)
         # reservations - [{
         #     'id': reservation.id,
@@ -50,16 +51,30 @@ def get_reservation_details(request):
     if request.method == 'POST' and request.POST['get_details']:
         id = request.POST['reservation_id']
         reservation = Reservation.objects.get(id=id)
+        # print(reservation.date_booked + , '\n', reservation.date_of_reservation)
         reservation = {
             'id': reservation.id,
             'name': reservation.name,
             'email': reservation.email,
             'phone': reservation.phone,
-            'date_booked': reservation.date_booked,
-            'date_of_reservation': reservation.date_of_reservation,
+            'date_booked': reservation.date_booked + timedelta(hours=5, minutes=30),
+            'date_of_reservation': reservation.date_of_reservation + timedelta(hours=5, minutes=30),
             'persons': reservation.persons,
             'status': reservation.status,
         }
+
         return JsonResponse({'status': True, 'reservation': reservation})
     
+    return JsonResponse({'status': False})
+
+def cancel_reservation(request):
+    if request.method == 'POST' and request.POST['cancel_reservation']:
+        reservation = Reservation.objects.get(id=request.POST['reservation_id'])
+        if UTC.localize(datetime.now()) + timedelta(hours=1) <= reservation.date_of_reservation + timedelta(hours=5, minutes=30):
+            reservation.status = "C"
+            reservation.save()
+
+            return JsonResponse({'status': True, 'reservation_id': reservation.id})
+        else:
+            return JsonResponse({'status': False})
     return JsonResponse({'status': False})

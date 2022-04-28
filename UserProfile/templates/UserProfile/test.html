@@ -291,7 +291,13 @@
 									<td>{{reservation.date_of_reservation|time:"TIME_FORMAT"}}</td>
 									<td>{{reservation.date_booked|naturaltime}}</td>
 									<td>{{reservation.persons}}</td>
-									<td>{% if reservation.status == 'P' %}Pending{% elif reservation.status == "R" %}Reserved {% elif reservation.status == "C" %}Cancelled{% endif %}</td>
+									{% if reservation.status == "P" %}
+										<td class="text-warning"><span><i class="fa fa-clock-o"></i></span> Pending</td>
+									{% elif reservation.status == "R" %}
+										<td class="text-success"><span><i class="far fa-check-circle"></i></span> Reserved</td>
+									{% elif reservation.status == "C" %}
+										<td class="text-danger"><span><i class="far fa-times-circle"></i></span> Cancelled</td>
+									{% endif %}
 								</tr>	
 							{% endfor %}
 							<!-- <tr align="center">
@@ -305,8 +311,6 @@
 					</table>
 				</div>
 
-				<!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
-				<!-- <a href="#" class="btn btn-primary">Button</a> -->
 			</div>
 		</div>
 
@@ -525,7 +529,7 @@
 	
 				<div class="row">
 					<div class="col-md-6 justify-content-center form-group" style="float: left;">
-						<label for="reserve-booking">Booking: &nbsp;</label>
+						<label for="reserve-booking">Booked on: &nbsp;</label>
 						<input id="reserve-booking" name="reserve-booking" type="datetime-local" class="pl-3 form-control" value="" readonly></input>
 					</div>
 					<div class="col-md-6 justify-content-center form-group" style="float: right;">
@@ -565,7 +569,7 @@
 			<div class="modal-footer">
 			  <div class="container">
 				<h4 id="reserve-status" style="float: left;"></h4>
-				<button style="float: right;" id="cancel-order-btn" class="btn btn-danger">Cancel Reservation</button>
+				<button style="float: right;" id="cancel-reservation-btn" class="btn btn-danger">Cancel Reservation</button>
 			  </div>
 			</div>
 		  </div>
@@ -1031,6 +1035,8 @@
 
 			success: function(response) {
 				if (response.status) {
+					console.log(response.reservation.date_booked)
+					console.log(response.reservation.date_of_reservation)
 					d = new Date(response.reservation.date_booked);
 					$("#reserve-booking").val(d.toISOString().slice(0, 16));
 					d = new Date(response.reservation.date_of_reservation)
@@ -1050,6 +1056,8 @@
 					} else if (response.reservation.status == "C") {
 						$("#reserve-status").html('<i class="far fa-times-circle"></i> Cancelled').addClass('text-danger');
 					}
+
+					$("#cancel-reservation-btn").attr('reservation-id', response.reservation.id);
 					
 					$("#reserveModal").modal('show');
 
@@ -1063,6 +1071,38 @@
 				}
 			})
 		})
+
+		// cancel the reservation
+		$("#cancel-reservation-btn").click(function () {
+			$.ajax({
+			type: "POST",
+			url: "/reservation/cancelReservation/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+				reservation_id: $(this).attr('reservation-id'),
+				cancel_reservation: "True"},
+			datatype: 'json',
+
+			success: function(response) {
+				if (response.status) {
+					$("#reserveModal").modal('hide');
+					$("#reservations #table-reservation tbody tr#" + response.reservation_id + " td:last-child").html('<span><i class="far fa-times-circle"></i></span> Cancelled').removeClass('text-success').removeClass('text-warning').addClass('text-danger');
+					
+					// updating the counter
+					$('.counters .reservation-count .count').text(parseInt($('.counters .reservation-count .count')[0].innerHTML) - 1);
+				} else if (!response.status) {
+					// showing notify modal
+					$("#notify-modal #notifyTitle").html("Cancellation Failed");
+					$("#notify-modal .modal-body").html("Cannot Cancel Reservation . . .<br>The reservation can only be cancelled if there is more than 1 hour remaining for the reservation time.<br>Sorry for the inconvenience");
+					$("#notify-modal").modal("show");
+				}
+			},
+
+			error: function (jqXHR, exception) {
+
+				}
+			})
+		});
 
 	</script>
 </body>

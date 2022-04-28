@@ -64,7 +64,7 @@ def repeat_order(request):
 
 
 def get_orders(request):
-    orders = Order.objects.filter(user=request.user)
+    orders = Order.objects.filter(user=request.user).order_by('-order_date')
     orders = [{
         'id': order.id,
         'items': ", ".join([item.item.item_name + ' x ' + str(item.quantity) for item in order.items.all()]),
