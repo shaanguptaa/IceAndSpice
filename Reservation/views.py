@@ -47,6 +47,10 @@ def get_reservations(request):
 
     return reservations
 
+def get_all_reservations():
+    reservations = Reservation.objects.all().order_by('-date_booked')
+    return reservations
+
 def get_reservation_details(request):
     if request.method == 'POST' and request.POST['get_details']:
         id = request.POST['reservation_id']
@@ -77,4 +81,13 @@ def cancel_reservation(request):
             return JsonResponse({'status': True, 'reservation_id': reservation.id})
         else:
             return JsonResponse({'status': False})
+    return JsonResponse({'status': False})
+
+def confirm_reservation(request):
+    if request.method == 'POST' and request.POST['confirm_reservation']:
+        reservation = Reservation.objects.get(id=request.POST['reservation_id'])
+        reservation.status = "R"
+        reservation.save()
+
+        return JsonResponse({'status': True, 'reservation_id': reservation.id})
     return JsonResponse({'status': False})

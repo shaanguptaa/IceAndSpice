@@ -91,7 +91,7 @@
       right: 0px;
       width: 80%;
       height: 100% ;
-      background-color: #4f4f4f;
+      background-color: #f7faff;
     }
 
     .signout {
@@ -107,6 +107,15 @@
       cursor: pointer;
     }
 
+    .feedback-email {
+      font-size: medium;
+      font-weight: normal;
+      color: black;
+    }
+
+    #table-reservation tbody tr, #table-order tbody tr {
+      cursor: pointer;
+    }
 
   </style>
 </head>
@@ -154,7 +163,7 @@
   <main >
     <div class="container pt-5" >
       <h1 class="welcome">Welcome, {% if user.first_name %} {{user.first_name}} {{user.last_name}} {% else %} {{user.username}} {% endif %}</h1>
-      <!-- Section: Main chart -->
+      <!-- Overview section -->
       <section class="mb-4" id="section-overwiew">
         <div class="row mt-5">
           <div class="col-sm-6">
@@ -200,6 +209,8 @@
       </section>
       <!-- overview section end -->
 
+
+
       <!-- section menu -->
       <section class="mb-4 " id="section-menu" style="padding-top: 30px;">
         <div class="card">
@@ -237,139 +248,138 @@
           </div>
         </div>
       </section>
-
-    <div id="edit-menu-item" class="modal fade" role="popup">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-
-        <!-- Modal content-->
-        <div class="modal-content justify-content-center">
-          <div class="modal-header">
-            <h4 class="modal-title">Item Details:</h4>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            <form method="POST" id="edit-item-form">
-              {% csrf_token %}
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="pid">Item ID: </label>
-                    <input type="text" name="pid" id="pid" class="form-control" readonly>
-                  </div>
-                </div>
-                <div class="col-md-8">
-                  <div class="form-group">
-                    <label for="pname">Item Name: </label>
-                    <input type="text" name="pname" id="pname" class="form-control" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="pcat">Category: </label>
-                    <select name="pcat" id="pcat" class="form-control" required>
-                      <option class="form-control" value="Main">Main</option>
-                      <option class="form-control" value="Drinks">Drinks</option>
-                      <option class="form-control" value="Desserts">Desserts</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="pstat">Status: </label>
-                    <select name="pstat" id="pstat" class="form-control" required>
-                      <option class="form-control" value="IN">In Stock</option>
-                      <option class="form-control" value="OUT">Out of Stock</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="p_price">Price: </label>
-                    <input type="number" name="p_price" id="p_price" min="1" class="form-control" required>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group" style="float: right; padding-top: 10px;">
-                <input type="button" name="delete" id="delete" value="Delete" class="btn btn-danger" style=" margin-right: 20px;">
-                <input type="submit" name="save" id="save" value="Save" class="btn btn-success" style=" margin-right: 20px;">
-              </div>
-            </form>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-      <div id="add-menu-item" class="modal fade" role="popup">
-      <div class="modal-dialog modal-dialog-centered modal-md">
-
-        <!-- Modal content-->
-        <div class="modal-content justify-content-center">
-          <div class="modal-header" style="padding-bottom: 0px;">
-            <div>
-              <h4 class="modal-title">Add Item:</h4>
-              <p style="font-size: 15px;">Enter the details below to add a new item in the menu.</p>
-            </div>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            <form id="add-item-form" method="POST">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label for="pname">Item Name: </label>
-                    <input type="text" name="pname" id="pname" class="form-control" required>
-                  </div>
-                </div>
-                <!-- <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="add_pid">Product ID: </label>
-                    <input type="number" name="add_pid" id="add_pid" class="form-control" readonly>
-                  </div>
-                </div> -->
-              </div>
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="pcat">Category: </label>
-                    <select name="pcat" id="pcat" class="form-control" required>
-                      <option class="form-control" value="Main">Main</option>
-                      <option class="form-control" value="Drinks">Drinks</option>
-                      <option class="form-control" value="Desserts">Desserts</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="pstat">Status: </label>
-                    <select name="pstat" id="pstat" class="form-control" required>
-                      <option class="form-control" value="IN">In Stock</option>
-                      <option class="form-control" value="OUT">Out of Stock</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="p_price">Price: </label>
-                    <input type="number" name="p_price" id="p_price" min="1" class="form-control" required>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group" style="float: right; padding-top: 10px;">
-                <input type="button" value="Cancel" class="btn btn-danger" data-dismiss="modal" style=" margin-right: 20px;">
-                <input type="submit" name="add" id="add" value="Add Item" class="btn btn-success" style=" margin-right: 20px;">
-              </div>
-            </form>
-          </div>
-        </div>
-
-      </div>
-    </div>
       <!-- menu section end -->
 
-       <section class="mb-4 " id="section-reservations">
+      <!-- edit menu modal -->
+      <div id="edit-menu-item" class="modal fade" role="popup">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+
+          <!-- Modal content-->
+          <div class="modal-content justify-content-center">
+            <div class="modal-header">
+              <h4 class="modal-title">Item Details:</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form method="POST" id="edit-item-form">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="pid">Item ID: </label>
+                      <input type="text" name="pid" id="pid" class="form-control" readonly>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label for="pname">Item Name: </label>
+                      <input type="text" name="pname" id="pname" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="pcat">Category: </label>
+                      <select name="pcat" id="pcat" class="form-control" required>
+                        <option class="form-control" value="Main">Main</option>
+                        <option class="form-control" value="Drinks">Drinks</option>
+                        <option class="form-control" value="Desserts">Desserts</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="pstat">Status: </label>
+                      <select name="pstat" id="pstat" class="form-control" required>
+                        <option class="form-control" value="IN">In Stock</option>
+                        <option class="form-control" value="OUT">Out of Stock</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="p_price">Price: </label>
+                      <input type="number" name="p_price" id="p_price" min="1" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group" style="float: right; padding-top: 10px;">
+                  <input type="button" name="delete" id="delete" value="Delete" class="btn btn-danger" style=" margin-right: 20px;">
+                  <input type="submit" name="save" id="save" value="Save" class="btn btn-success" style=" margin-right: 20px;">
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- add menu modal -->
+      <div id="add-menu-item" class="modal fade" role="popup">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+
+          <!-- Modal content-->
+          <div class="modal-content justify-content-center">
+            <div class="modal-header" style="padding-bottom: 0px;">
+              <div>
+                <h4 class="modal-title">Add Item:</h4>
+                <p style="font-size: 15px;">Enter the details below to add a new item in the menu.</p>
+              </div>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form id="add-item-form" method="POST">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="pname">Item Name: </label>
+                      <input type="text" name="pname" id="pname" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="pcat">Category: </label>
+                      <select name="pcat" id="pcat" class="form-control" required>
+                        <option class="form-control" value="Main">Main</option>
+                        <option class="form-control" value="Drinks">Drinks</option>
+                        <option class="form-control" value="Desserts">Desserts</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="pstat">Status: </label>
+                      <select name="pstat" id="pstat" class="form-control" required>
+                        <option class="form-control" value="IN">In Stock</option>
+                        <option class="form-control" value="OUT">Out of Stock</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="p_price">Price: </label>
+                      <input type="number" name="p_price" id="p_price" min="1" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group" style="float: right; padding-top: 10px;">
+                  <input type="button" value="Cancel" class="btn btn-danger" data-dismiss="modal" style=" margin-right: 20px;">
+                  <input type="submit" name="add" id="add" value="Add Item" class="btn btn-success" style=" margin-right: 20px;">
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+
+      <!-- reservation section  -->
+      <section class="mb-4 " id="section-reservations">
         <div class="card">
           <div class="card-header text-center py-3">
             <h5 class="mb-0 text-center">
@@ -378,75 +388,118 @@
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-hover text-nowrap" style="margin-top: -20px;">
+              <table class="table table-hover text-nowrap" id="table-reservation" style="margin-top: -20px;">
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Email ID</th>
-                    <th scope="col">Phone</th>
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
                     <th scope="col">Persons</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  
+                  {% for reservation in reservations %}
+                    <tr id="{{reservation.id}}">
+                      <td>{{reservation.name}}</td>
+                      <td>{{reservation.date_of_reservation|date:"SHORT_DATE_FORMAT"}}</td>
+								    	<td>{{reservation.date_of_reservation|time:"TIME_FORMAT"}}</td>
+                      <td>{{reservation.persons}}</td>
+                      {% if reservation.status == "P" %}
+										    <td class="text-warning"><span><i class="fa fa-clock-o"></i></span> Pending</td>
+                      {% elif reservation.status == "R" %}
+                        <td class="text-success"><span><i class="far fa-check-circle"></i></span> Reserved</td>
+                      {% elif reservation.status == "C" %}
+                        <td class="text-danger"><span><i class="far fa-times-circle"></i></span> Cancelled</td>
+                      {% endif %}
+                    </tr>
+                  {% endfor %}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </section>
-      <!-- Section: Main chart -->
+      <!-- Reservation Section end -->
 
+      <!-- reserve model -->
+      <div id="reserveModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
       
+          <!-- Modal content-->
+          <div class="modal-content justify-content-center">
+          <div class="modal-header">
+            <h4 class="modal-title pl-1">Reservation Details <span id="r-id"></span></h4>
+            <button type="button" class="close close-btn" data-dismiss="modal">&times;</button>
+          </div>
+      
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6 justify-content-center form-group" style="float: left;">
+                <label for="reserve-date">Reservation Date: &nbsp;</label>
+                <input id="reserve-date" name="reserve-date" type="date" class="pl-3 form-control" value="" readonly></input>
+              </div>
+              <div class="col-md-6 justify-content-center form-group" style="float: right;">
+                <label for="reserve-time">Reservation Time: &nbsp;</label>
+                <input id="reserve-time" name="reserve-time" type="time" class="pl-3 form-control" value="" readonly></input>
+              </div>
+            </div>
+      
+            <div class="row">
+              <div class="col-md-6 justify-content-center form-group" style="float: left;">
+                <label for="reserve-booking">Booked on: &nbsp;</label>
+                <input id="reserve-booking" name="reserve-booking" type="datetime-local" class="pl-3 form-control" value="" readonly></input>
+              </div>
+              <div class="col-md-6 justify-content-center form-group" style="float: right;">
+                <label for="reserve-num-persons">Number of Persons: &nbsp;</label>
+                <input id="reserve-num-persons" name="reserve-num-persons" class="pl-3 form-control" value="" readonly></input>
+              </div>
+            </div>
+          </div>
+          <!-- <hr style="margin-bottom: 0;"> -->
+          <div class="modal-header" style="border-top: 1px solid #e9ecef;">
+            <h4 class="modal-title pl-1">Customer Details</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6 justify-content-center form-group" style="float: left;">
+                <label for="reserve-name">Name: &nbsp;</label>
+                <input id="reserve-name" name="reserve-name" class="pl-3 form-control" value="" readonly></input>
+              </div>
+              <div class="col-md-6 justify-content-center form-group" style="float: right;">
+                <label for="reserve-phone">Contact: &nbsp;</label>
+                <input id="reserve-phone" name="reserve-phone" class="pl-3 form-control" value="" readonly></input>
+              </div>
+            </div>
+      
+            <div class="row">
+              <div class="col-md-6 justify-content-center form-group" style="float: left;">
+                <label for="reserve-email">Email: &nbsp;</label>
+                <input id="reserve-email" name="reserve-email" class="pl-3 form-control" value="" readonly></input>
+              </div>
+              <!-- <div class="col-md-6 justify-content-center form-group" style="float: right;">
+                <label for="reserve-address">Address: &nbsp;</label>
+                <input id="reserve-address" name="reserve-address" class="pl-3 form-control" value="" readonly></input>
+              </div> -->
+            </div>
+          </div>
 
-    {% comment %} <?php 
-
-      if (isset($_POST['add'])) {
-        $id = $_POST['add_pid'];
-        $name = $_POST['pname'];
-        $category = $_POST['pcat'];
-        $status = $_POST['pstat'];
-        $price = $_POST['p_price'];
-
-        $sql = "INSERT INTO `menu` VALUES ($id, '$name', '$category', '$status', $price)";
-        if (!$mysqli -> query($sql)) {
-          die("Cannot add item");
-        } else {
-          header("Refresh:0;");
-        }
-      }
-
-      if (isset($_POST['save'])) {
-        $id = $_POST['pid'];
-        $name = $_POST['pname'];
-        $category = $_POST['pcat'];
-        $status = $_POST['pstat'];
-        $price = $_POST['p_price'];
-        
-        $sql = "UPDATE `menu` SET `name`='$name',`category`='$category',`status`='$status',`price`=$price WHERE `id`=$id";
-        if (!$mysqli -> query($sql)) {
-          die("Cannot update data");
-        } else { 
-          header("Refresh:0;");
-        }
-      }
-      elseif (isset($_POST['delete'])) {
-        $id = $_POST['pid'];
-        $sql = "DELETE FROM `menu` WHERE `id` = $id";
-        if (!$mysqli -> query($sql)) {
-          die("Couldn't delete product");
-        } else {
-          header("Refresh:0");
-        }
-      }
-
-    ?> {% endcomment %}
+          <div class="modal-footer">
+            <div class="container">
+            <h4 id="reserve-status" style="float: left;"></h4>
+            <button style="float: right;" id="confirm-reservation-btn" class="btn btn-success">Confirm Reservation</button>
+            <button style="float: right;" id="cancel-reservation-btn" class="btn btn-danger mr-3">Cancel Reservation</button>
+            </div>
+          </div>
+          </div>
+      
+        </div>
+      </div>
+      <!-- END reserve Modal -->
 
 
 
-      <!-- Section: Orders -->
+      <!-- Orders Section -->
       <section class="mb-4 " id="section-orders" style="padding-top: 30px;">
         <div class="card">
           <div class="card-header text-center py-3">
@@ -456,145 +509,205 @@
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-hover text-nowrap" style="margin-top: -20px;">
+              <table class="table table-hover text-nowrap" id="table-order" style="margin-top: -20px;">
                 <thead>
                   <tr>
-                    <th scope="col">Order</th>
-                    <th scope="col">Customer Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
+                    <!-- <th scope="col">Order</th> -->
+                    <th scope="col">Customer Name</th>  
                     <th scope="col">Location</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Amount</th>
+                    <th scope="col">Items</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% comment %} <?php 
-                      $tbl_name = 'orders';
-                      $sql = "SELECT * FROM `$tbl_name`";
-                      $result = $mysqli -> query($sql);
-
-                      while ($order = $result -> fetch_assoc()) {
-                    ?> {% endcomment %}
-                      {% comment %} <tr>
-                        <td><?php echo $order['item'] ?></td>
-                        <td><?php echo $order['name'] ?></td>
-                        <td><?php echo $order['email'] ?></td>
-                        <td><?php echo $order['phone'] ?></td>
-                        <td><?php echo $order['location'] ?></td>
-                        <td><?php echo $order['quantity'] ?></td>
-                        <td>&#x20B9; <?php echo $order['amount'] ?> &sol;&ndash;</td>
-                      </tr>
-                <?php } ?> {% endcomment %}
+                  {% for order in orders %}
+                    <tr id="{{order.id}}">
+                      <td>{{order.name}}</td>
+                      <td>{{order.location}}</td>
+                      <td>{{order.items|truncatewords:10}}</td>
+                      {% if order.status == "P" %}
+										    <td class="text-warning"><span><i class="fa fa-clock-o"></i></span> Pending</td>
+                      {% elif order.status == "D" %}
+                        <td class="text-success"><span><i class="far fa-check-circle"></i></span> Delivered</td>
+                      {% elif order.status == "N" %}
+                        <td class="text-success"><span><i class="far fa-check-circle"></i></span> Confirmed</td>
+                      {% elif order.status == "C" %}
+                        <td class="text-danger"><span><i class="far fa-times-circle"></i></span> Cancelled</td>
+                      {% endif %}
+                    </tr>
+                  {% endfor %}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </section>
+      <!-- orders section end -->
 
+      <!-- order model -->
+      <div id="orderModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+      
+          <!-- Modal content-->
+          <div class="modal-content justify-content-center">
+          <div class="modal-header">
+            <h4 class="modal-title pl-1">Order Details <span id="o-id"></span></h4>
+            <button type="button" class="close close-btn" data-dismiss="modal">&times;</button>
+          </div>
+      
+          <div class="modal-body">
+            <table class="table table-hover table-sm" id="table-order">
+              <thead>
+              <tr>
+                <th style="text-align: center;">Item Name</th>
+                <th style="text-align: center;">Quantity</th>
+                <th style="text-align: center;"></th>
+                <th style="text-align: center;">Price</th>
+              </tr>
+              </thead>
+              <tbody>
+                <!-- Items list fetched from server using ajax -->
+              </tbody>
+            </table>
+          </div>
+          <hr style="margin-bottom: 0;">
+          <div class="modal-header">
+            <h4 class="modal-title pl-1">Delivery Details</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6 justify-content-center form-group" style="float: left;">
+                <label for="personName">Name: &nbsp;</label>
+                <input id="personName" name="personName" class="pl-3 form-control" value="" readonly></input>
+              </div>
+              <div class="col-md-6 justify-content-center form-group" style="float: right;">
+                <label for="order-phone">Contact: &nbsp;</label>
+                <input id="order-phone" name="order-phone" class="pl-3 form-control" value="" readonly></input>
+              </div>
+            </div>
+      
+            <div class="row">
+              <div class="col-md-6 justify-content-center form-group" style="float: left;">
+                <label for="order-email">Email: &nbsp;</label>
+                <input id="order-email" name="order-email" class="pl-3 form-control" value="" readonly></input>
+              </div>
+              <div class="col-md-6 justify-content-center form-group" style="float: right;">
+                <label for="order-address">Address: &nbsp;</label>
+                <input id="order-address" name="order-address" class="pl-3 form-control" value="" readonly></input>
+              </div>
+            </div>
+          </div>
 
-      <!-- Section: Feedbacks -->
+          <div class="modal-footer">
+            <div class="container">
+            <!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
+            <h4 id="delivery-status" style="float: left;"></h4>
+            <button style="float: right;" id="confirm-order-btn" class="btn btn-success">Confirm Order</button>
+            <button style="float: right;" id="deliver-order-btn" class="btn btn-success">Deliver Order</button>
+            <button style="float: right;" id="cancel-order-btn" class="btn btn-danger mr-3">Cancel Order</button>
+            </div>
+          </div>
+          </div>
+      
+        </div>
+      </div>
+      <!-- END Order Modal -->
+
+      
+
+      <!-- Feedbacks section -->
       <section class="mb-4" id="section-feedback" style="padding-top: 30px;">
         <div class="card">
           <div class="card-header text-center py-3 "><h5 class="mb-0"><strong>Customer Feedbacks</strong></h5></div>
         </div>
 
-        <?php 
-          $tbl_name = 'feedbacks';
-          $sql = "SELECT * FROM `$tbl_name` LIMIT 10";
-          $result = $mysqli -> query($sql);
-          if ($mysqli -> affected_rows <= 0) {
-            echo '<div class="card py-3" style="padding-left: 10px;"> No feedbacks received till now</div>';
-          } else {
-
-          while ($feedback = $result -> fetch_assoc()) { ?>
-            <div class="card feedback-card" style="border-bottom: 1px solid gray;">
-              <div class="card-body" style="padding-left: 20px; padding-right: 20px;">
-                <div class="row" style="padding-bottom: 10px;">
-                  <span class="col-1" style="font-size: 15px; padding-left: 20px;"><i class="far fa-2x fa-user-circle"></i></span>
-                  <h5 class="col-8" style="padding-top: 5px;"><?php echo $feedback['name']; ?></h5>
-                <span class="col-3" style="padding-top: 5px;"><i class="far fa-calendar-alt"></i>&nbsp; <?php $date = new DateTime($feedback['time']); echo $date->format('Y-m-d') ?></span>
-                </div>
-                <div class="row">
-                  <p style="padding-left: 90px;"><?php echo $feedback['msg'] ?></p>
-                </div>
+        {% for feedback in feedbacks %}
+          <div class="card feedback-card my-3" style="border-bottom: 1px solid gray;">
+            <div class="card-body" style="padding-left: 20px; padding-right: 20px;">
+              <div class="row" style="padding-bottom: 10px;">
+                <span class="col-1" style="font-size: 15px; padding-left: 20px;"><i class="far fa-2x fa-user-circle"></i></span>
+                <h5 class="col-8" style="padding-top: 5px;">{{ feedback.name }} <a class="feedback-email" href="mailto:{{feedback.email}}?subject=Reply to your feedback on IceAndSpice.com">< {{feedback.email}} ></a></h5>
+                <span class="col-3 pr-5" style="padding-top: 5px; text-align: right;"><i class="far fa-calendar-alt"></i>&nbsp; {{ feedback.feedback_date|naturaltime }}</span>
+              </div>
+              <div class="row">
+                <p class="pr-5" style="padding-left: 90px; text-align: justify;">{{ feedback.message }}</p>
               </div>
             </div>
-   <?php  } } ?>
-
+          </div>
+        {% endfor %}
       </section>
+      <!-- feedbacks section end -->
 
+
+
+      <!-- profile section -->
       <section class="mb-4" id="section-profile" style="padding-top: 30px;">
-        <div class="container-fluid py-3">
-          <form action="" method="POST">
+        <div class="container p-3">
+          <form id="profile-form" method="POST">
+            {% csrf_token %}
             <div class="row py-3">
-              <div class="col-3">
-                <label style="float: right; font-size: 20px;">Email ID : </label>
-              </div>
-              <div class="col-5">
-                <input type="text" name="email" id="email" value="<?php echo $_SESSION['email'] ?>">
-              </div>
-            </div>
-            <div class="row py-3">
-              <div class="col-3">
-                <label style="float: right; font-size: 20px;">Name : </label>
-              </div>
-              <div class="col-5">
-                <input type="text" name="name" id="name" value="<?php echo $_SESSION['name'] ?>">
+              <div class="col-md-4 form-group">
+                <label for="username" style="font-size: larger;">Username :</label>
+                <input type="text" class="form-control" name="username" id="username" value="{{request.user.username}}">
               </div>
             </div>
             <div class="row py-3">
-              <div class="col-3">
-                <label style="float: right; font-size: 20px;">Phone : </label>
+              <div class="col-md-4 form-group">
+                <label for="fname" style="font-size: larger;">First Name :</label>
+                <input type="text" class="form-control" name="fname" id="fname" value="{{request.user.first_name}}">
               </div>
-              <div class="col-5">
-                <input type="number" name="phone" id="phone" value="<?php echo $_SESSION['phone'] ?>">
-              </div>
-            </div>
-            <div class="row py-3" id="pass">
-              <div class="form-group">
-                <label for="pwd" style="font-size: 20px;">Enter Current Password to Update Changes : </label>
-                <input type="password" name="pwd" id="pwd" value="" required>
+              <div class="col-md-4 form-group">
+                <label for="lname" style="font-size: larger;">Last Name :</label>
+                <input type="text" class="form-control" name="lname" id="lname" value="{{request.user.last_name}}">
               </div>
             </div>
+            <div class="row py-3">
+              <div class="col-md-4 form-group">
+                <label for="email" style="font-size: larger;">Email ID : </label>
+                <input type="email" class="form-control" name="email" id="email" value="{{request.user.email}}">
+              </div>
+              <div class="col-md-4 form-group">
+                <label for="phone" style="font-size: larger;">Phone : </label>
+                <input type="number" class="form-control" name="phone" id="phone" value="{{request.user.profile.phone}}">
+              </div>
+            </div>
+            <div class="row py-3">
+              <div class="col-md-4 form-group">
+                <a href="">Change Password</a>
+              </div>
+            </div>
+            
             <div class="row py-3">
               <div class="col-8">
-                <center>
-                  <input type="submit" name="edit" id="edit"  class="btn btn-success" value="Save Changes">
-                </center>
+                <input type="submit" name="update" id="update-btn"  class="btn btn-success" style="float: right;" value="Save Changes">
+                <input type="reset" name="reset" id="reset-btn"  class="btn btn-danger mr-3" style="float: right;" value="Reset">
               </div>
             </div>
           </form>
         </div>
       </section>
-
-      {% comment %} <?php
-        if (isset($_POST['edit'])) {
-          $email = $_POST['email'];
-          $phone = $_POST['phone'];
-          $name = $_POST['name'];
-          $pass = $_POST['pwd'];
-
-          $tbl_name = "admins";
-          $sql = "UPDATE `$tbl_name` SET `email`='$email', `name`='$name', `phone`='$phone' WHERE `password`=\"$pass\"";
-          $mysqli -> query($sql);
-          
-          if ($mysqli -> affected_rows > 0) {
-            echo '<script>alert("Credentials Updated Successfully!");</script>';
-            $_SESSION['email'] = $email;
-            $_SESSION['name'] = $name;
-            $_SESSION['phone'] = $phone;
-          } else {
-             echo '<script>alert("Could not change Credentials");</script>';
-          }
-          // header("Refresh:0;");  
-
-        }
-      ?> {% endcomment %}
-
-
+      <!-- profile section end -->
   </main>
+
+  <!-- Notify Model -->
+  <div class="modal fade" role="dialog" id="notify-modal">
+		<div class="modal-dialog modal-dialog-centered modal-md">
+		  <div class="modal-content justify-content-center">
+  
+			<div class="modal-header">
+			  <h5 class="modal-title" id="notifyTitle">Reserved</h5>
+			  <button type="button" class="close close-btn" data-dismiss="modal">&times;</button>
+			</div>
+  
+			<div class="modal-body"></div>
+  
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-danger close-btn" data-dismiss="modal">Close</button>
+			  <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+			</div>
+		  </div>
+		</div>
+	</div>
   <!--Main layout-->
     <script src="{% static 'js/jquery.min.js' %}"></script>
     
@@ -617,14 +730,15 @@
   <script type="text/javascript">
 		window.CSRF_TOKEN = "{{ csrf_token }}";
 
-    // $(document).on("click",".list-group-item", function () {
-    //   if($(this).attr('id') == "profile") {
-    //     $("#section-profile").toggle();
-    //   } else {
-    //     $("#section-profile").hide();
-    //   }
+    // function to show the profile details
+    $(".list-group-item").click(function () {
+      if($(this).attr('id') == "profile") {
+        $("#section-profile").show();
+      } else {
+        $("#section-profile").hide();
+      }
 
-    // });
+    });
 
     // ajax for showing item details in modal
     $('#section-menu table tbody tr').on('click', function () {
@@ -774,9 +888,337 @@
     })
 
 
-    function addMenuItem() {
-      document.getElementById("add_pid").value = Math.floor(Math.random() * (9999 - 1000 + 1) ) + 1000;
-    }
+    // toggle the save changes and reset btn
+		$("#username, #fname, #lname, #email, #phone").on('input', function () {
+			$("#update-btn").removeAttr('disabled');
+		});
+		$("#reset-btn").click(function () {
+			$("#update-btn").attr('disabled', 'disabled');
+		});
+
+    // ajax for updating profile
+    $("#profile-form").submit(function () {
+			$("#update-btn").html('<i class="fas fa-circle-notch fa-spin"></i> Updating ...').attr('disabled', 'disabled');
+			$.ajax({
+				type: "POST",
+				url: "/admin/save-changes/",
+				// change the url when updating in index from test......................................................
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					username: $("#profile-form #username").val(),
+          fname: $("#profile-form #fname").val(),
+          lname: $("#profile-form #lname").val(),
+          email: $("#profile-form #email").val(),
+					phone: $('#profile-form #phone').val(),
+					update_profile: true },
+				datatype: 'json',
+
+				success: function(response) {
+					if (response.status) {
+						$("#update-btn").html('Save Changes');
+						$("#notify-modal #notifyTitle").html("Profile Updated");
+						$("#notify-modal .modal-body").html("Profile Updated Successfully . . .");
+						$("#notify-modal").modal("show");
+					} else if (!response.status) {
+						$("#update-btn").html('Save Changes').removeAttr('disabled');
+						$("#notify-modal #notifyTitle").html("Error");
+						$("#notify-modal .modal-body").html("Cannot Update Profile . . .");
+						$("#notify-modal").modal("show");
+					}
+				},
+
+				error: function (jqXHR, exception) {
+
+				}
+			})
+      return false;
+    });
+
+    $(".close-btn").click(function () {
+      $(this).closest(".modal").modal("hide")
+    })
+  
+    // show details of reservation when clicked on the row
+		$("#table-reservation tbody tr").on('click', function () {
+			$.ajax({
+			type: "POST",
+			url: "/reservation/getReservationDetails/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+				reservation_id: $(this).attr('id'),
+				get_details: "True"},
+			datatype: 'json',
+
+			success: function(response) {
+				if (response.status) {
+					console.log(response.reservation.date_booked)
+					console.log(response.reservation.date_of_reservation)
+					d = new Date(response.reservation.date_booked);
+					$("#reserve-booking").val(d.toISOString().slice(0, 16));
+					d = new Date(response.reservation.date_of_reservation)
+					$("#reserve-date").val(d.toISOString().slice(0, 10));
+					$("#reserve-time").val(d.toISOString().slice(11, 16));
+
+					$("#reserve-num-persons").val(response.reservation.persons);
+
+					$("#reserve-name").val(response.reservation.name);
+					$("#reserve-phone").val(response.reservation.phone);
+					$("#reserve-email").val(response.reservation.email);
+					
+					if (response.reservation.status == "P") {
+						$("#reserve-status").html('<i class="fa fa-clock-o"></i> Pending').addClass('text-warning').removeClass('text-success').removeClass('text-danger');
+            $("#cancel-reservation-btn, #confirm-reservation-btn").show();
+					} else if (response.reservation.status == "R") {
+						$("#reserve-status").html('<i class="far fa-check-circle"></i> Reserved').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
+            $("#cancel-reservation-btn").show();
+            $("#confirm-reservation-btn").hide();
+					} else if (response.reservation.status == "C") {
+						$("#reserve-status").html('<i class="far fa-times-circle"></i> Cancelled').addClass('text-danger').removeClass('text-success').removeClass('text-warning');
+            $("#cancel-reservation-btn").hide();
+            $("#confirm-reservation-btn").show();
+					}
+
+					$("#cancel-reservation-btn, #confirm-reservation-btn").attr('reservation-id', response.reservation.id);
+          $("#reserveModal #r-id").text('(' + response.reservation.id + ')');
+					
+					$("#reserveModal").modal('show');
+
+				} else if (!response.status) {
+
+				}
+			},
+
+			error: function (jqXHR, exception) {
+
+				}
+			})
+		})
+
+    // cancel the reservation
+		$("#cancel-reservation-btn").click(function () {
+			$.ajax({
+			type: "POST",
+			url: "/reservation/cancelReservation/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+				reservation_id: $(this).attr('reservation-id'),
+				cancel_reservation: "True"},
+			datatype: 'json',
+
+			success: function(response) {
+				if (response.status) {
+					$("#reserveModal").modal('hide');
+					$("#table-reservation tbody tr#" + response.reservation_id + " td:last-child").html('<span><i class="far fa-times-circle"></i></span> Cancelled').removeClass('text-success').removeClass('text-warning').addClass('text-danger');
+					
+					// updating the counter
+					// $('.counters .reservation-count .count').text(parseInt($('.counters .reservation-count .count')[0].innerHTML) - 1);
+				} else if (!response.status) {
+					// showing notify modal
+					$("#notify-modal #notifyTitle").html("Cancellation Failed");
+					$("#notify-modal .modal-body").html("Cannot Cancel Reservation . . .<br>The reservation can only be cancelled if there is more than 1 hour remaining for the reservation time.<br>Sorry for the inconvenience");
+					$("#notify-modal").modal("show");
+				}
+			},
+
+			error: function (jqXHR, exception) {
+
+				}
+			})
+		});
+
+
+    // confirm the reservation
+		$("#confirm-reservation-btn").click(function () {
+			$.ajax({
+			type: "POST",
+			url: "/reservation/confirmReservation/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+				reservation_id: $(this).attr('reservation-id'),
+				confirm_reservation: "True"},
+			datatype: 'json',
+
+			success: function(response) {
+				if (response.status) {
+					$("#reserveModal").modal('hide');
+					$("#table-reservation tbody tr#" + response.reservation_id + " td:last-child").html('<span><i class="far fa-check-circle"></i></span> Reserved').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
+					
+					// updating the counter
+					// $('.counters .reservation-count .count').text(parseInt($('.counters .reservation-count .count')[0].innerHTML) - 1);
+				} else if (!response.status) {
+					// showing notify modal
+					$("#notify-modal #notifyTitle").html("Confirmation Failed");
+					$("#notify-modal .modal-body").html("Cannot Confirm Reservation . . .<br>Sorry for the inconvenience");
+					$("#notify-modal").modal("show");
+				}
+			},
+
+			error: function (jqXHR, exception) {
+
+				}
+			})
+		});
+
+
+    // show details of order when cicked on the row
+    $("#table-order tbody tr").on('click', function () {
+      $.ajax({
+				type: "POST",
+				url: "/order/get-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: $(this).attr('id'),
+					getOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						order = response.order;
+						if (order.status == "D") {
+							$('#confirm-order-btn, #cancel-order-btn, #deliver-order-btn', "#orderModal").hide();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-check-circle"></i></span> Delivered').addClass("text-success").removeClass('text-muted').removeClass('text-warning').removeClass('text-danger');
+						} else if (order.status == "N") {
+							$('#deliver-order-btn, #cancel-order-btn', '#orderModal').show();
+							$('#orderModal #confirm-order-btn').hide();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Confirmed, Not Yet Delivered').addClass("text-muted").removeClass('text-success').removeClass('text-warning').removeClass('text-danger');
+						} else if (order.status == "P") {
+							$('#confirm-order-btn, #cancel-order-btn', "#orderModal").show();
+							$('#orderModal #deliver-order-btn').hide();
+							$("#orderModal #delivery-status").html('<span><i class="fa fa-clock-o"></i></span> Pending').addClass("text-warning").removeClass('text-success').removeClass('text-muted').removeClass('text-danger');
+						} else if (order.status == "C") {
+							$('#deliver-order-btn, #cancel-order-btn', '#orderModal').hide();
+							$('#orderModal #confirm-order-btn').show();
+							$("#orderModal #delivery-status").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass('text-danger').removeClass("text-muted").removeClass('text-success').removeClass('text-warning');
+						}
+						
+						// order details section of order modal
+						$('#orderModal table tbody').html('');
+						order.items.forEach(item => {
+							var tr = '<tr align="center"> '+ 
+										'<td>' + item.name + '</td>' +
+										'<td><span>' + item.quantity + '</span></td>' +
+										'<td>' + item.quantity + ' &times; ' + item.price + '</td>' +
+										'<td>' + item.amount + '</td>' +
+									'</tr>'
+							$('#orderModal table tbody').prepend(tr);
+						});
+
+						$('#orderModal table tbody').append(
+							'<tr align="center">' + 
+								'<td colspan="3" align="right" class="pr-5" style="font-weight: bolder;">Total Amount :</td>' +
+								'<td>&#8377; ' + order.amount + '</td>' +
+							'</tr>'
+						);
+
+
+						// delivery details section of order modal
+						$('#orderModal #personName').val(response.order.name);
+						$('#orderModal #order-phone').val(response.order.contact);
+						$('#orderModal #order-email').val('{{ request.user.email }}');
+						$('#orderModal #order-address').val(response.order.address);
+
+
+						$("#cancel-order-btn, #confirm-order-btn, #deliver-order-btn", '#orderModal').attr('data', response.order.id);
+						$("#orderModal #o-id").text('(' + response.order.id + ')')
+						$("#orderModal").modal('show');
+					} else {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+    })
+
+
+    // ajax for cancelling order
+		$("#orderModal #cancel-order-btn").click(function () {
+			$.ajax({
+				type: "POST",
+				url: "/order/cancel-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: $(this).attr('data'),
+					cancelOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						$("#orderModal").modal('hide');
+						$("#table-order tbody tr#" + response.order_id + " td:last-child").html('<span><i class="far fa-times-circle"></i></span> Cancelled').addClass('text-danger').removeClass('text-warning').removeClass('text-success');
+						
+            // updating the counter
+						// $('.counters .order-count .count').text(parseInt($('.counters .order-count .count')[0].innerHTML) - 1);
+					} else if (!response.status) {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
+    
+    
+    // ajax for confirming order
+		$("#orderModal #confirm-order-btn").click(function () {
+			$.ajax({
+				type: "POST",
+				url: "/order/confirm-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: $(this).attr('data'),
+					confirmOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						$("#orderModal").modal('hide');
+						$("#table-order tbody tr#" + response.order_id + " td:last-child").html('<span><i class="far fa-check-circle"></i></span> Confirmed').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
+						
+            // updating the counter
+						// $('.counters .order-count .count').text(parseInt($('.counters .order-count .count')[0].innerHTML) - 1);
+					} else if (!response.status) {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
+    
+    // ajax for delivering order
+		$("#orderModal #deliver-order-btn").click(function () {
+			$.ajax({
+				type: "POST",
+				url: "/order/deliver-order/",
+				data: {
+					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					order_id: $(this).attr('data'),
+					deliverOrder: "True",
+				},
+				dataType: 'json',
+
+				success: function (response) {
+					if (response.status) {
+						$("#orderModal").modal('hide');
+						$("#table-order tbody tr#" + response.order_id + " td:last-child").html('<span><i class="far fa-check-circle"></i></span> Delivered').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
+						
+            // updating the counter
+						// $('.counters .order-count .count').text(parseInt($('.counters .order-count .count')[0].innerHTML) - 1);
+					} else if (!response.status) {
+					}
+				},
+
+				error: function (jqXHR, exception) {
+				}
+			});
+			return false;
+		});
 
 
   </script>

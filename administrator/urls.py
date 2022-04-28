@@ -6,4 +6,5 @@ urlpatterns = [
     # path('signup', views.handle_admin_signup, name='administrator_signup'),
     path('login', views.handle_admin_login, name='administrator_login'),
     path('logout', views.handle_admin_logout, name='administrator_logout'),
+    path('save-changes/', views.update_profile),
 ]
