@@ -2,6 +2,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
+from Menu.views import get_all_items
+
 # Create your views here.
 def index(request):
 
@@ -9,9 +11,7 @@ def index(request):
         return redirect("homepage")
 
     context = {
-        'user': {
-            'username': request.user.username
-        }
+        'menu': get_all_items(),
     }
     return render(request, "administrator/index.html", context)
 

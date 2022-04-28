@@ -18,7 +18,7 @@
 		}
 
 		body {
-			background-color: #f9f9fa;
+			background-color: #f7faff;
 		}
 
 		#notify-modal {
@@ -173,12 +173,31 @@
 			-moz-appearance: textfield;
 		}
 
+		a.back-to-home{
+			z-index: 100; 
+			width: inherit; 
+			position: fixed; 
+			cursor: pointer; 
+			font-size: larger; 
+			font-weight: 700; 
+			margin-left: -20px;
+			color: #212529;
+		}
+
+		a.back-to-home:hover {
+			color: whitesmoke;
+		}
+
 	</style>
 </head>
 <body>
 
 	<!-- The sidebar -->
 	<div class="sidebar">
+		<a href="/" class="back-to-home p-2 px-3" role="button">
+			<span><i class="fa fa-arrow-left"></i></span> &nbsp;
+			<p style="display: inline-block;">Back To Home</p>
+		</a>
 		<div class="container">
 			<div class="profile-pic">
 				<!-- ...... implement uploading profile pic from user and save to media ref google upload image in django models....... -->
