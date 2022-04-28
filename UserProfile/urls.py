@@ -12,6 +12,5 @@ urlpatterns = [
     path('checkout/', views.checkout),
     path('repeat-order/', views.checkout),
     path('changeItemQuantity/', views.change_item_quantity),
-    path('test/', views.test),
     # path('getCartItems/', views.get_cart_items, name='getCartItems'),
 ]

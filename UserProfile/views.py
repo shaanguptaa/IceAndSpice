@@ -10,23 +10,6 @@ from IceAndSpice import get_datetime
 
 # Create your views here.
 def index(request):
-    # show user details if logged in
-    if request.user.is_anonymous:
-        return redirect("login")
-
-    orders = get_orders(request)
-    # for i in range(len(orders)):
-    #     orders[i].items = orders[i].items.all()
-    context = {
-        'user': request.user,
-        'orders': orders,
-        'cart': get_cart(request),
-        'reservations': get_reservations(request),
-    }
-    # orders = get_orders(request)
-    return render(request, "UserProfile/index.html", context)
-
-def test(request):
     if request.user.is_anonymous:
         return redirect("login")
     context = {
@@ -39,7 +22,7 @@ def test(request):
         'reservations': get_reservations(request),
     }
 
-    return render(request, "UserProfile/test.html", context=context)
+    return render(request, "UserProfile/index.html", context=context)
 
 def update_profile(request):
     if request.method == 'POST':

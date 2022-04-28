@@ -101,7 +101,7 @@
                   <a class="dropdown-item" href="/authentication/signup"><span style="font-size: larger;"><i class="fa fa-user-plus"></i>&nbsp;</span>Signup</a>
                 {% else %}
                   <a class="dropdown-item" href="/user/"><span style="font-size: larger;"><i class="fa fa-user-circle-o"></i>&nbsp;</span>Account</a>
-                  <a class="dropdown-item" href="/user/test#cart"><span style="font-size: larger;"><i class="fa fa-shopping-cart"></i>&nbsp;</span>Cart</a>
+                  <a class="dropdown-item" href="/user/#cart"><span style="font-size: larger;"><i class="fa fa-shopping-cart"></i>&nbsp;</span>Cart</a>
                   <a class="dropdown-item" href="/authentication/logout"><span style="font-size: larger;"><i class="fa fa-sign-out"></i>&nbsp;</span>Logout</a>
                 {% endif %}
               </div>
@@ -613,11 +613,12 @@
             <ul type="none" style="padding-left: 0px;">
               <li class="list-inline-item p-2"><a href="#section-home"> Home </a></li>
               <li class="list-inline-item p-2"><a href="#section-menu"> Menu </a></li>
+              <li class="list-inline-item p-2"><a href="#section-reserve-table"> Reservation </a></li>
               <li class="list-inline-item p-2"><a href="#section-about"> About </a></li>
               <li class="list-inline-item p-2"><a href="#section-events"> Events </a></li>
               <li class="list-inline-item p-2"><a href="#section-gallery"> Gallery </a></li>
-              <li class="list-inline-item p-2"><a href="#section-reserve-table"> Reservation </a></li>
               <li class="list-inline-item p-2"><a href="#section-contact"> Contact </a></li>
+              <li class="list-inline-item p-2"><a href="/user/"> Account </a></li>
               <li class="list-inline-item p-2"><a href="/authentication/{% if user.is_anonymous %}login{% else %}logout{% endif %}"> {% if user.is_anonymous %}Login{% else %}Logout{% endif %} </a></li>
             </ul>
           </div>
