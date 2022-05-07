@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from IceAndSpice import get_datetime
+from IceAndSpice import get_date, get_datetime
 
 # Create your models here.
 class Feedback(models.Model):
@@ -13,3 +13,16 @@ class Feedback(models.Model):
 
     def __str__(self):
         return self.name + ' - ' + self.message[:10] + ' ...'
+
+
+class Offer(models.Model):
+    title = models.CharField(max_length=20, default="")
+    desc = models.TextField(default="")
+    coupon_code = models.CharField(primary_key=True,max_length=10, default="")
+    discount_percent = models.PositiveIntegerField(default=0)
+    expiry_date = models.DateField(default=get_date)
+
+    def __str__(self):
+        return self.title + ' : ' + str(self.discount_percent) + '%' + ' discount'
+    
+

@@ -8,7 +8,7 @@ from Order.models import Order
 from Order.views import get_all_orders
 from Reservation.models import Reservation
 from Reservation.views import get_all_reservations
-from administrator.models import Feedback
+from administrator.models import Feedback, Offer
 
 # Create your views here.
 def index(request):
@@ -114,3 +114,10 @@ def get_counts(request):
         'reservations_confirmed': reservations_confirmed,
         'tables_booked': tables_booked,
     })
+
+
+def get_offers(expired=True):
+    if expired:
+        return Offer.objects.all()
+    else:
+        return Offer.objects.filter(expiry_date__gte=date.today())
