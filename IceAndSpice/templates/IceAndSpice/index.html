@@ -73,6 +73,10 @@
           margin: 0 1em;
       }
 
+      .coupon-code {
+        cursor: pointer;
+      }
+
     </style>
 
   </head>
@@ -531,8 +535,7 @@
                 <small class="text-uppercase  ">Expires &ndash; {{offer.expiry_date|naturalday}}</small>
                 <h4 class="card-title"><a href="#" class="text-danger">{{offer.title}}</a></h4>
                 <p class="card-text">{{offer.desc}}</p>
-                <p class="card-text">Coupon Code : <span class="coupon-code" data-toggle="tooltip" data-placement="right" title="Tooltip on right">{{offer.coupon_code}}</span></p>
-                <!-- tooltip pending -->
+                <p class="card-text">Coupon Code : <span class="coupon-code">{{offer.coupon_code}}</span></p>
               </div>
             </div>
           {% endfor %}
@@ -1145,7 +1148,11 @@
         document.execCommand("copy");
         $temp.remove();
 
-        
+        $(this).addClass('text-success').attr('title', "Copied to Clipboard").tooltip("show");
+        var code = this;
+        setTimeout(() => {
+          $(code).tooltip("dispose").removeAttr('title').removeClass('text-success');
+        }, 2000);       
 
       });
 

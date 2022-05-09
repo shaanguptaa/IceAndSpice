@@ -1070,13 +1070,15 @@
 					
 					if (response.reservation.status == "P") {
 						$("#reserve-status").html('<i class="fa fa-clock-o"></i> Pending').addClass('text-warning').removeClass('text-success').removeClass('text-danger');
+						$("#cancel-reservation-btn").attr('reservation-id', response.reservation.id).show();
 					} else if (response.reservation.status == "R") {
 						$("#reserve-status").html('<i class="far fa-check-circle"></i> Reserved').addClass('text-success').removeClass('text-warning').removeClass('text-danger');
+						$("#cancel-reservation-btn").attr('reservation-id', response.reservation.id).show();
 					} else if (response.reservation.status == "C") {
 						$("#reserve-status").html('<i class="far fa-times-circle"></i> Cancelled').addClass('text-danger').removeClass('text-success').removeClass('text-warning');
+						$("#cancel-reservation-btn").attr('reservation-id', response.reservation.id).hide();
 					}
 
-					$("#cancel-reservation-btn").attr('reservation-id', response.reservation.id);
 					
 					$("#reserveModal").modal('show');
 

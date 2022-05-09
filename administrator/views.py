@@ -1,9 +1,10 @@
 from datetime import date, datetime, timedelta
+from json import loads
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 
-from Menu.views import get_all_items
+from Menu.views import get_all_items, getmenu
 from Order.models import Order
 from Order.views import get_all_orders
 from Reservation.models import Reservation
@@ -21,6 +22,8 @@ def index(request):
         'feedbacks': get_feedbacks(),
         'reservations': get_all_reservations(),
         'orders': get_all_orders(),
+        'offers': get_offers(),
+        'menu_items': getmenu(),
     }
     return render(request, "administrator/index.html", context)
 
@@ -118,6 +121,70 @@ def get_counts(request):
 
 def get_offers(expired=True):
     if expired:
-        return Offer.objects.all()
+        offers = Offer.objects.all()
     else:
-        return Offer.objects.filter(expiry_date__gte=date.today())
+        offers = Offer.objects.filter(expiry_date__gte=date.today())
+
+    return [{
+        'title': offer.title,
+        'desc': offer.desc,
+        'discount_percent': offer.discount_percent,
+        'coupon_code': offer.coupon_code,
+        'expiry_date': offer.expiry_date,
+        'is_expired': True if offer.expiry_date < date.today() else False,
+        'items': ', '.join([item.item_name for item in offer.items.all()]),
+    } for offer in offers.all()]
+
+def get_offer(request):
+    if request.method == 'POST' and request.POST['get_offer']:
+        offer = Offer.objects.get(coupon_code=request.POST['id'])
+
+        offer = {
+            'title': offer.title,
+            'desc': offer.desc,
+            'discount_percent': offer.discount_percent,
+            'coupon_code': offer.coupon_code,
+            'expiry_date': offer.expiry_date,
+            'is_expired': True if offer.expiry_date < date.today() else False,
+            'items': [item.id for item in offer.items.all()]
+        }
+        return JsonResponse({'status': True, 'offer': offer})
+
+    return JsonResponse({'status': False})
+
+def update_offer(request):
+    if request.method == 'POST' and request.POST['update_offer']:
+        offer = Offer.objects.get(coupon_code=request.POST['prev_code'])
+        
+        offer.coupon_code = request.POST['new_code']
+        offer.title = request.POST['title']
+        offer.desc = request.POST['desc']
+        offer.expiry_date = datetime.strptime(request.POST['expiry_date'], "%Y-%m-%d").date()
+        offer.discount_percent = request.POST['discount']
+        offer.save()
+        offer.items.set(loads(request.POST['items']))
+
+        offer = {
+            'title': offer.title,
+            'desc': offer.desc,
+            'discount_percent': offer.discount_percent,
+            'coupon_code': offer.coupon_code,
+            'expiry_date': offer.expiry_date.strftime("%B %d, %Y"),
+            'is_expired': True if offer.expiry_date < date.today() else False,
+            'items': ', '.join([item.item_name for item in offer.items.all()]),
+        }
+
+        if request.POST['new_code'] != request.POST['prev_code']:
+            Offer.objects.get(coupon_code=request.POST['prev_code']).delete()
+
+        return JsonResponse({'status': True, 'offer': offer})
+
+    return JsonResponse({'status': False})
+
+def delete_offer(request):
+    if request.method == 'POST' and request.POST['delete_offer']:
+        Offer.objects.get(coupon_code=request.POST['coupon_code']).delete()
+
+        return JsonResponse({'status': True, 'code': request.POST['coupon_code']})
+
+    return JsonResponse({'status': False})

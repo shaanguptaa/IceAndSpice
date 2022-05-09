@@ -7,4 +7,5 @@ urlpatterns = [
     path('addItem/', views.add_item),
     path('updateItem/', views.update_item),
     path('deleteItem/', views.delete_item),
+    path('getItems/', views.get_items),
 ]

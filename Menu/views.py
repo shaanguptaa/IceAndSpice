@@ -13,6 +13,22 @@ def getmenu():
 def get_all_items():
     return [item for item in Menu.objects.all().order_by('-category')]
 
+def get_items(request):
+    if request.method == 'POST' and request.POST['get_items']:
+        if request.POST['category'] == 'All':
+            items = [{
+                'id': item.id,
+                'name': item.item_name,
+            } for item in Menu.objects.all().order_by('-category')]
+        else:
+            items = [{
+                'id': item.id,
+                'name': item.item_name,
+            } for item in Menu.objects.filter(category=request.POST['category']).all()]
+        
+        return JsonResponse({'status': True, 'items': items})
+    
+    return JsonResponse({'status': False})
 
 def get_item(request):
     if request.method == 'POST' and request.POST['get_item']:

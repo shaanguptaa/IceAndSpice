@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from IceAndSpice import get_date, get_datetime
+from Menu.models import Menu
 
 # Create your models here.
 class Feedback(models.Model):
@@ -21,6 +22,7 @@ class Offer(models.Model):
     coupon_code = models.CharField(primary_key=True,max_length=10, default="")
     discount_percent = models.PositiveIntegerField(default=0)
     expiry_date = models.DateField(default=get_date)
+    items = models.ManyToManyField(Menu, blank=True)
 
     def __str__(self):
         return self.title + ' : ' + str(self.discount_percent) + '%' + ' discount'
