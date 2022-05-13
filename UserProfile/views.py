@@ -53,7 +53,13 @@ def change_item_quantity(request):
     if request.method == "POST" and request.POST['changeQuantity']:
         item = request.POST['item']
         item = request.user.cart.items.all().get(id=item)
-        item.quantity += int(request.POST['changeBy'])
+        q = int(request.POST['changeBy'])
+        if q == 1:
+            item.quantity += 1
+        elif q == -1 and item.quantity > 1:
+            item.quantity -= 1
+        else:
+            item.quantity = 1
         item.amount = item.quantity * item.item.price
         item.save()
         total = update_cart_total(request.user.cart)

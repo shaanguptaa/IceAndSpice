@@ -273,13 +273,13 @@
                   </div>
                   <div class="col-lg-4">
                     <b>Price: </b>
-                    <label class="pl-3">&#x20B9;  <input type="number" name="price" id="price" class="pl-0" style="outline: none; border: none; width: 23px;" readonly> /-</label>
+                    <label class="pl-3">&#x20B9;  <input type="number" name="price" id="price" class="pl-0" style="outline: none; border: none; width: 5ch;" readonly> /-</label>
                   </div>
                 </div>
     
                 <div class="row">
                   <div class="col-lg-7 pb-2">
-                    <label for="quantity-modal" class="pl-5">Quantity: </label>
+                    <label for="quantity-modal" class="pl-5"><b>Quantity: </b></label>
                     <a type="button" onclick="decrementModalQuantity()" class="btn pb_outline-dark ml-5">-</a>&nbsp;
                    
                     <input id="quantity-modal" name="quantity-modal" class="pb_outline-dark text-center" type="number" min=1 max=20 style="height: 38px; width: 36px;">&nbsp;
@@ -289,18 +289,42 @@
                     <script>
                         function incrementModalQuantity() {
                             document.getElementById('quantity-modal').stepUp();
-                            document.getElementById('total').innerHTML = document.getElementById('quantity-modal').value * parseInt(document.getElementById('price').value);
+                            document.getElementById('total-p').innerHTML = document.getElementById('quantity-modal').value * parseInt(document.getElementById('price').value);
+                            updateDiscount();
                         }
                         function decrementModalQuantity() {
                             document.getElementById('quantity-modal').stepDown();
-                            document.getElementById('total').innerHTML = document.getElementById('quantity-modal').value * parseInt(document.getElementById('price').value);
+                            document.getElementById('total-p').innerHTML = document.getElementById('quantity-modal').value * parseInt(document.getElementById('price').value);
+                            updateDiscount();
                         }
                     </script>
                   </div>
     
                   <div class="col-lg-5 pb-2">
                     <b class="pl-4">Total Price: </b>
-                    <label class="pl-3">&#x20B9; <span id="total"></span> /-</label>
+                    <label class="pl-3">&#x20B9; <span id="total-p"></span> /-</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-7">
+                    <b class="pl-5">Coupon Code: </b>
+                    <input type="text" name="coupon-code" id="coupon-code" class="pl-3 form-control pb_outline-dark" style="text-transform: uppercase; padding-left: 10px; width: 50%; display: inline-block;">
+                  </div>
+                  <div class="col-lg-4">
+                    <b style="padding-left: 35px;">Discount: </b>
+                    <label class="pl-2">- &#x20B9; <span id="discount-amount">0</span> /-</label>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-2"></div>
+                  <div class="col-lg-5">
+                    <b class="pl-5 applied-coupon" style="visibility: hidden; font-size: small; text-align: center; width: 100%;"></b>
+                  </div>
+                  <div class="col-lg-5">
+                    <b style="padding-left: 19px;">Order Total: </b>
+                    <b><label class="pl-3">&#x20B9; <span id="total"></span> /-</label></b>
                   </div>
                 </div>
     
@@ -333,8 +357,8 @@
               </div>
               <div class="modal-footer">
                 <div class="container form-group">
-                  <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill">
-                  <input style="float: right;" type="submit" name="orderFood" id="orderFood" class="btn pb-3 pb_outline-dark rounded-0 mr-5" value="Confirm Order">
+                  <!-- <input style="float: left;" type="button" name="viewBill" id="viewBill" class="btn pb-3 btn-primary ml-5" value="View Bill"> -->
+                  <input style="float: right;" type="submit" name="orderFood" id="orderFood" class="btn pb-3 btn-success mr-5" value="Confirm Order">
                 </div>
               </div>
             </div>
@@ -828,7 +852,11 @@
           document.getElementById("itemName").value = name;
           document.getElementById("price").value = price;
           document.getElementById("quantity-modal").value = document.getElementById("quantity-" + id).value;
+          document.getElementById("total-p").innerHTML = price * document.getElementById("quantity-" + id).value;
           document.getElementById("total").innerHTML = price * document.getElementById("quantity-" + id).value;
+          document.getElementById("discount-amount").innerHTML = 0;
+          $("#coupon-code").val("");
+          $(".applied-coupon").css("visibility", "hidden");
           $("#orderModal").modal('show');
         {% endif %}
       };
@@ -931,6 +959,7 @@
               total: document.getElementById("total").innerHTML,
               location: $('#order-form #location').val(),
               quantity: $('#order-form #quantity-modal').val(),
+              coupon_code: $("#coupon-code").val(),
               order: "True"},
             datatype: 'json',
 
@@ -1152,9 +1181,53 @@
         var code = this;
         setTimeout(() => {
           $(code).tooltip("dispose").removeAttr('title').removeClass('text-success');
-        }, 2000);       
+        }, 2000);
 
       });
+
+
+      let discount = 0;
+
+      $("#coupon-code").on("input", function () {
+        $.ajax({
+          type: "POST",
+          url: "admin/check-coupon/",
+          data: {
+            csrfmiddlewaretoken: window.CSRF_TOKEN,
+            coupon_code: this.value,
+            itemName: $('#order-form #itemName').val(),
+            check_coupon: "True"},
+          datatype: 'json',
+
+          success: function(response) {
+            if (response.status) {
+              // valid coupon code
+              discount = response.offer.discount;
+              updateDiscount();
+            } else if (!response.status) {
+              // invalid coupon code
+              discount = 0;
+              $("#discount-amount").text("0");
+              $(".applied-coupon").html("&excl; " + response.msg).css('visibility', "visible").addClass("text-danger").removeClass("text-success");
+            }
+          },
+
+          error: function (jqXHR, exception) {
+            
+          }
+        })
+      });
+
+      function updateDiscount() {
+        var price = parseInt($("#total-p").text());
+        var discount_price = (price * discount / 100);
+        $("#discount-amount").text(discount_price);
+        if (discount > 0) {
+          $(".applied-coupon").html("Coupon Applied - " + discount + "% Discount").css('visibility', "visible").addClass("text-success").removeClass("text-danger");
+        }
+        $("#total").text(price - discount_price);
+      }
+
 
     </script>
 

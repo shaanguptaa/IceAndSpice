@@ -4,6 +4,7 @@ from Menu.models import Menu
 from django.contrib.auth.models import User
 
 from Order import generate_order_id
+from administrator.models import Offer
 
 # Create your models here.
 class OrderItem(models.Model):
@@ -26,6 +27,7 @@ class Order(models.Model):
     delivery_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=1, choices=[("D", "Delivered"), ("N", "Confirmed, Not Yet Delivered"), ('C', 'Cancelled'), ('P', 'Pending')], default="P")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    offer_applied = models.ForeignKey(Offer,  null=True, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "Order - " + str(self.id)

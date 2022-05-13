@@ -3,6 +3,7 @@ from json import loads
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
+from Menu.models import Menu
 
 from Menu.views import get_all_items, getmenu
 from Order.models import Order
@@ -188,3 +189,23 @@ def delete_offer(request):
         return JsonResponse({'status': True, 'code': request.POST['coupon_code']})
 
     return JsonResponse({'status': False})
+
+def check_coupon(request):
+    if request.method == 'POST' and request.POST['check_coupon']:
+        msg = "Invalid Coupon Code"
+        try:
+            offer = Offer.objects.get(coupon_code=request.POST['coupon_code'].upper())
+            item = Menu.objects.get(item_name=request.POST['itemName'])
+            if item not in offer.items.all():
+                msg = "Coupon Unavailable"
+                raise Exception
+            offer = {
+                'code': offer.coupon_code,
+                'discount': offer.discount_percent,
+            }
+            return JsonResponse({'status': True, 'offer': offer})
+        except Exception as e:
+            return JsonResponse({'status': False, 'msg': msg})
+
+    return JsonResponse({'status': False})
+
