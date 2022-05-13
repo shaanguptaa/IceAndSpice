@@ -15,7 +15,7 @@ def index(request):
     context = {
         'user': request.user,
         'orders': get_orders(request),
-        'order_count': Order.objects.filter(user=request.user, status="N").count(),
+        'order_count': Order.objects.filter(user=request.user, status="P").count(),
         'reservations_count': Reservation.objects.filter(user=request.user, date_of_reservation__gt=get_datetime()).count(),
         'cart_count': request.user.cart.items.all().count(),
         'cart': get_cart(request),
