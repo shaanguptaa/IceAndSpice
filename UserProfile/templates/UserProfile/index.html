@@ -97,7 +97,7 @@
 			border: 1px solid black;
 			width: 100px;
 			height: 100px;
-			margin: 50px auto;
+			margin: 30px auto;
 			margin-top: 0;
 			padding: 0;
 		}
@@ -206,10 +206,9 @@
 			<div class="username">
 				<h3>{% if user.first_name %} {{user.first_name}} {{user.last_name}} {% else %} {{user.username}} {% endif %}</h3>
 			</div>
-			<div class="cng-pass">
+			<!-- <div class="cng-pass">
 				<a href="#" target="_blank">Change Password</a>
-				<!-- .......implement later ......... -->
-			</div>
+			</div> -->
 			<div class="logout">
 				<a role="button" href="/authentication/logout" class="btn btn-dark">Logout</a>
 			</div>
@@ -223,6 +222,20 @@
 			<form id="user-details-form" method="POST">
 				{% csrf_token %}
 				<div class="form-group">
+					<label for="username">Username : </label>
+					<input type="text" class="form-control" name="username" id="username" value="{{user.username}}" placeholder="First Name">
+				</div>
+				<div class="row">
+					<div class="form-group col">
+						<label for="fname">First Name : </label>
+						<input type="text" class="form-control" name="fname" id="fname" value="{{user.first_name}}" placeholder="First Name">
+					</div>
+					<div class="form-group col">
+						<label for="lname">Last Name : </label>
+						<input type="text" class="form-control" name="lname" id="lname" value="{{user.last_name}}" placeholder="First Name">
+					</div>
+				</div>
+				<div class="form-group">
 					<label for="email">Email : </label>
 					<input type="email" class="form-control" name="email" id="email" value="{{user.email}}" placeholder="Email Address">
 				</div>
@@ -235,7 +248,7 @@
 					<textarea name="address" class="form-control" id="address" cols="30" rows="5" placeholder="Address" >{{user.profile.address}}</textarea>
 				</div>
 				<div class="form-group">
-					<input type="button" name="save" id="save-btn" value="Save Changes" class="btn btn-success">
+					<input type="button" name="save" id="save-btn" value="Save Changes" class="btn btn-success" data-toggle="modal" data-target="#password-modal">
 					<input type="reset" value="Reset" class="btn btn-secondary" id="reset-btn">
 					<!-- only enable if changes are made -->
 				</div>
@@ -389,6 +402,34 @@
 		</div>
 
 	</div>
+
+	<!-- password modal -->
+	<div class="modal fade" role="dialog" id="password-modal">
+		<div class="modal-dialog modal-dialog-centered modal-md">
+			<div class="modal-content justify-content-center">
+				<form id="update-profile-form" method="post">
+					{% csrf_token %}
+					<div class="modal-header">
+						<h4 class="modal-title pl-1">Enter Password</h4>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+
+					<div class="modal-body">
+						<div class="form-group">
+							<label for="password">Enter Password to update details : </label>
+							<input type="password" name="password" id="password" placeholder="Password" class="form-control" required>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" style="float: right;" id="update-btn" class="btn btn-success">Update Details</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- END Password modal -->
+
 
 	<!-- order model -->
 	<div id="orderModal" class="modal fade" role="dialog">
@@ -661,21 +702,26 @@
 			$('#orderConfirmModal #total-amount-order').html('&#8377; ' + total.toFixed(2));
 		};
 		// toggle the save changes and reset btn
-		$("#email, #contact, #address").change(function () {
+		$("#email, #contact, #address, #username, #fname, #lname").change(function () {
 			$("#save-btn, #reset-btn").css('visibility', 'visible');
 		});
 		$("#reset-btn").click(function () {
 			$("#save-btn, #reset-btn").css('visibility', 'hidden');
 		});
 
+
 		// ajax for updating profile
-		$("#save-btn").click(function () {
-			$("#save-btn").html('<i class="fas fa-circle-notch fa-spin"></i> Updating ...').attr('disabled', 'disabled');
+		$("#update-profile-form").submit(function () {
+			$("#update-btn").html('<i class="fas fa-circle-notch fa-spin"></i> Updating ...').attr('disabled', 'disabled');
 			$.ajax({
 				type: "POST",
 				url: "/user/save-changes/",
 				data: {
 					csrfmiddlewaretoken: window.CSRF_TOKEN,
+					username: $("#username").val(),
+					password: $("#password").val(),
+					fname: $("#fname").val(),
+					lname: $("#lname").val(),
 					email: $("#email").val(),
 					phone: $('#contact').val(),
 					address: $("#address").val(),
@@ -685,14 +731,20 @@
 				success: function(response) {
 					console.log(response)
 					if (response.status) {
-						$("#save-btn").html('Save Changes').removeAttr('disabled').css('visibility', 'hidden');
+						$("#password-modal #update-btn").html('Update Details').removeAttr('disabled');
+						$("#password-modal").modal("hide");
+						$("#save-btn").removeAttr('disabled').css('visibility', 'hidden');
+						$("#reset-btn").removeAttr('disabled').css('visibility', 'hidden');
 						$("#notify-modal #notifyTitle").html("Profile Updated");
 						$("#notify-modal .modal-body").html("Profile Updated Successfully . . .");
 						$("#notify-modal").modal("show");
 					} else if (!response.status) {
+						$("#password-modal #update-btn").html('Update Details').removeAttr('disabled');
+						$("#password-modal").modal("hide");
 						$("#save-btn").html('Save Changes').removeAttr('disabled').css('visibility', 'hidden');
+						$("#reset-btn").removeAttr('disabled').css('visibility', 'hidden');
 						$("#notify-modal #notifyTitle").html("Error");
-						$("#notify-modal .modal-body").html("Cannot Update Profile . . .");
+						$("#notify-modal .modal-body").html("Cannot Update Profile . . .<br>" + response.msg);
 						$("#notify-modal").modal("show");
 					}
 				},
@@ -701,6 +753,7 @@
 
 				}
 			})
+			return false;
      	});
 
 		// ajax for removing from cart
