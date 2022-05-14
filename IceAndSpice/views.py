@@ -5,6 +5,7 @@ from UserProfile.views import get_cart_for_homepage
 from django.contrib.auth.models import User
 from UserProfile.models import Cart
 from administrator.models import Feedback
+from administrator.views import get_offers
 
 # Create your views here.
 def index(request):
@@ -12,6 +13,7 @@ def index(request):
     context = {
         'menu': getmenu(),
         'cartItems': get_cart_for_homepage(request.user) if not request.user.is_anonymous else None,
+        'offers': get_offers(expired=False),
     }
     return render(request, 'IceAndSpice/index.html', context=context)
 

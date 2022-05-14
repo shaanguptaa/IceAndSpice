@@ -3,6 +3,7 @@ import json
 from django.http import JsonResponse
 from Menu.models import Menu
 from Order.models import Order, OrderItem
+from administrator.models import Offer
 
 # Create your views here.
 def order(request):
@@ -12,17 +13,18 @@ def order(request):
     itemName = request.POST['itemName']
     quantity = int(request.POST['quantity'])
     total = request.POST['total']
+    coupon = Offer.objects.get(coupon_code=request.POST['coupon_code'].upper()) if request.POST['coupon_code'] != "" else None
     item = Menu.objects.get(item_name=itemName)
 
     orderItem = OrderItem.objects.create(item=item, quantity=quantity, amount=item.price * quantity)
 
-    order = Order.objects.create(name=name, contact=contact, total_amount=total, address=address, user=request.user)
+    order = Order.objects.create(name=name, contact=contact, total_amount=total, total=total, address=address, user=request.user, offer_applied=coupon)
     try:
         order.items.set([orderItem])
         update_order_total(order)
     except Exception as e:
-        order.delete()
         # deleting order if any error occurs
+        order.delete()
 
     return JsonResponse({"status": True})
 
@@ -99,10 +101,11 @@ def get_order(request):
             'name': order.name,
             'address': order.address,
             'contact': order.contact,
-            'total_amount': order.total_amount,
+            'total': order.total,
             'order_date': order.order_date,
             'status': order.status,
             'amount': order.total_amount,
+            'offer_applied': True if order.offer_applied else False,
             'items': [{
                 'quantity': item.quantity,
                 'amount': item.amount,
@@ -152,5 +155,8 @@ def deliver_order(request):
 def update_order_total(order):
     total = sum([item.quantity * item.item.price for item in order.items.all()])
     order.total = total
+    if order.offer_applied:
+        total -= total * order.offer_applied.discount_percent / 100
+    order.total_amount = total
     order.save()
     return total

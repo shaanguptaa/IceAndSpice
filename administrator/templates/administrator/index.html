@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="{% static 'admin/css/mdb.min.css' %}" />
   <!-- Custom styles -->
   <link rel="stylesheet" href="{% static 'admin/css/admin.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/bootstrap-multiselect.min.css' %}" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
     crossorigin="anonymous"></script>
 
@@ -63,7 +64,7 @@
       -moz-appearance: textfield !important;
     }
 
-    .add-item {
+    .add-item, .add-offer {
       color: black;
       float: right;
       margin-right: 20px;
@@ -113,7 +114,7 @@
       color: black;
     }
 
-    #table-reservation tbody tr, #table-order tbody tr {
+    #table-reservation tbody tr, #table-order tbody tr, #table-offers tbody tr {
       cursor: pointer;
     }
 
@@ -135,6 +136,26 @@
 
     .denominator {
       vertical-align: bottom;
+    }
+
+    .multiselect-filter, .multiselect-all {
+      margin: 5px 0;
+    }
+
+    .multiselect-group {
+      text-transform: capitalize;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .form-check-label {
+      padding-left: 0px;
+    }
+
+    #table-offers tbody td.items {
+      text-overflow: ellipsis ellipsis;
+      overflow: hidden;
+      white-space: no-wrap;
     }
 
   </style>
@@ -163,6 +184,9 @@
 
           <a href="#section-orders" class="list-group-item list-group-item-action py-2 ripple"><i
               class="fas fa-clipboard-list fa-fw me-3"></i><span>Orders</span></a>
+          
+          <a href="#section-offers" class="list-group-item list-group-item-action py-2 ripple"><i
+            class="fas fa-clipboard-list fa-fw me-3"></i><span>Offers</span></a>
 
           <a href="#section-feedback" class="list-group-item list-group-item-action py-2 ripple"><i
               class="fas fa-user-friends fa-fw me-3"></i><span>Customer Reviews</span></a>
@@ -644,6 +668,215 @@
       <!-- END Order Modal -->
 
       
+      <!-- Offers Section -->
+      <section class="mb-4 " id="section-offers" style="padding-top: 30px;">
+        <div class="card">
+          <div class="card-header text-center py-3">
+            <h5 class="mt-3 text-center">
+              <strong>Offers & Discounts</strong>
+              <button class="add-offer btn btn-success" style="margin-top: -7px;" id="add-offer" data-toggle="modal" data-target="#add-offer-modal">
+                <i class="far fa-plus-square"></i>&nbsp; Add Offer</button>
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover text-nowrap" id="table-offers" style="margin-top: -20px;">
+                <thead>
+                  <tr>
+                    <th scope="col">Coupon Code</th>  
+                    <th scope="col">Discount</th>
+                    <th scope="col">Available on</th>
+                    <th scope="col">Valid Upto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for offer in offers %}
+                    <tr id="{{offer.coupon_code}}">
+                      <td class="code">{{offer.coupon_code}}</td>
+                      <td class="discount">{{offer.discount_percent}} %</td>
+                      <td class="items">{{offer.items}}</td>
+                      {% if offer.is_expired %}
+                        <td class="text-danger expiry_date"><span><i class="fa fa-times"></i></span> Expired</td>
+                      {% else %}
+                        <td class="text-success expiry_date"><span><i class="fa fa-check"></i></span> {{offer.expiry_date}}</td>
+                      {% endif %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- END Offers Section -->
+
+
+      <!-- edit offer modal -->
+      <div id="edit-offer-modal" class="modal fade" role="popup">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+
+          <!-- Modal content-->
+          <div class="modal-content justify-content-center">
+            <div class="modal-header">
+              <h4 class="modal-title">Offer Details:</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form method="POST" id="edit-offer-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="code">Coupon Code: </label>
+                      <input type="text" name="code" id="code" class="form-control" style="text-transform: uppercase;" required>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label for="title">Title: </label>
+                      <input type="text" name="title" id="title" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md">
+                    <div class="form-group">
+                      <label for="desc">Description: </label>
+                      <textarea name="desc" id="desc" cols="30" rows="3" class="form-control"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="offer-items">Available for:</label><br>
+                      <select id="offer-items" name="offer-items" class="form-control" multiple="multiple" >
+                        {% for category, items in menu_items.items %}
+                          <optgroup label="{{category}}" style="text-transform: capitalize;">
+                            {% for item in items %}
+                              <option value="{{item.id}}">{{item.item_name}}</option>
+                            {% endfor %}
+                          </optgroup>
+                        {% endfor %}
+                        </select>
+                    </div>
+                  </div>
+                  {% comment %} <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="offer-image">Upload Image:</label>
+                      {{form.as_p}}
+                      <!-- <input type="file" name="offer-image" class="form-control" id="offer-image" accept=".jpg,.jpeg,.png" value=""> -->
+                    </div>
+                  </div> {% endcomment %}
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="discount">Discount: </label>
+                      <input type="number" name="discount" id="discount" min="1" max="100" class="form-control" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="expiry_date">Valid Upto: </label>
+                      <input type="date" name="expiry_date" id="expiry_date" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group" style="float: right; padding-top: 10px;">
+                  <input type="button" name="delete" id="delete" value="Delete" class="btn btn-danger" style=" margin-right: 20px;">
+                  <input type="submit" name="save" id="save" value="Save" class="btn btn-success" style=" margin-right: 20px;">
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- add offer modal -->
+      <div id="add-offer-modal" class="modal fade" role="popup">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+
+          <!-- Modal content-->
+          <div class="modal-content justify-content-center">
+            <div class="modal-header">
+              <h4 class="modal-title">Offer Details:</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form method="POST" id="add-offer-form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="code">Coupon Code: </label>
+                      <input type="text" name="code" id="code" class="form-control" style="text-transform: uppercase;" required>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label for="title">Title: </label>
+                      <input type="text" name="title" id="title" class="form-control" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md">
+                    <div class="form-group">
+                      <label for="desc">Description: </label>
+                      <textarea name="desc" id="desc" cols="30" rows="3" class="form-control"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="offer-items">Available for:</label><br>
+                      <select id="offer-items" name="offer-items" class="form-control offer-items" multiple="multiple" >
+                        {% for category, items in menu_items.items %}
+                          <optgroup label="{{category}}" style="text-transform: capitalize;">
+                            {% for item in items %}
+                              <option value="{{item.id}}">{{item.item_name}}</option>
+                            {% endfor %}
+                          </optgroup>
+                        {% endfor %}
+                        </select>
+                    </div>
+                  </div>
+                  {% comment %} <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="offer-image">Upload Image:</label>
+                      <input type="file" name="offer-image" class="form-control" id="offer-image" accept=".jpg,.jpeg,.png" value="">
+                    </div>
+                  </div> {% endcomment %}
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="discount">Discount: </label>
+                      <input type="number" name="discount" id="discount" min="1" max="100" class="form-control" placeholder="Discount Percentage" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="expiry_date">Valid Upto: </label>
+                      <input type="date" name="expiry_date" id="expiry_date" class="form-control" placeholder="Expiry Date" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group" style="float: right; padding-top: 10px;">
+                  <input type="button" value="Cancel" class="btn btn-danger" style=" margin-right: 20px;" data-dismiss="modal">
+                  <input type="submit" name="save" id="save" value="Save" class="btn btn-success" style=" margin-right: 20px;">
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
 
       <!-- Feedbacks section -->
       <section class="mb-4" id="section-feedback" style="padding-top: 30px;">
@@ -701,11 +934,11 @@
                 <input type="number" class="form-control" name="phone" id="phone" value="{{request.user.profile.phone}}">
               </div>
             </div>
-            <div class="row py-3">
+            <!-- <div class="row py-3">
               <div class="col-md-4 form-group">
                 <a href="">Change Password</a>
               </div>
-            </div>
+            </div> -->
             
             <div class="row py-3">
               <div class="col-8">
@@ -743,6 +976,8 @@
     
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-multiselect.min.js' %}"></script>
+
 
     <script src="{% static 'js/slick.min.js' %}"></script>
     <script src="{% static 'js/jquery.mb.YTPlayer.min.js' %}"></script>
@@ -752,6 +987,7 @@
     
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script src="{% static 'js/magnific-popup-options.js' %}"></script>
+
   <!-- MDB -->
   <script type="text/javascript" src="{% static 'admin/js/mdb.min.js' %}"></script>
   <!-- Custom scripts -->
@@ -759,6 +995,14 @@
 
   <script type="text/javascript">
 		window.CSRF_TOKEN = "{{ csrf_token }}";
+
+    $(".offer-items").multiselect({
+      includeSelectAllOption: true,
+      enableFiltering: true,
+      enableCaseInsensitiveFiltering: true,
+      // enableClickableOptGroups: true,
+
+    });
 
     // function to show the profile details
     $(".list-group-item").click(function () {
@@ -890,7 +1134,7 @@
 			success: function(response) {
 				if (response.status) {
           var tr = '<tr id="' + response.item.id + '">' +
-                      '<td class="item-name">' + response.item.item_name + '</td>';
+                      '<td class="item-name">' + response.item.item_name + '</td>' +
                       '<td class="item-cat">' + response.item.category + '</td>';
           if (response.item.status == "IN") {
             tr += '<td class="item-cat">In Stock</td>';
@@ -1251,6 +1495,7 @@
 		});
 
 
+    // updating overview section
     function updateOverview() {
       $.ajax({
 				type: "POST",
@@ -1277,10 +1522,213 @@
 				}
 			});
     }
-
     $(document).ready(updateOverview());
 
+    
+    // show offer details in modal
+    $("#table-offers tbody tr").on('click', function () {
+      $.ajax({
+			type: "POST",
+			url: "getOffer/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+        id: $(this).attr('id'),
+				get_offer: "True"},
+			datatype: 'json',
 
+			success: function(response) {
+				if (response.status) {
+          var element = $("#edit-offer-modal #edit-offer-form");
+          // console.log(response.offer.image)
+          $(element).attr("coupon-code", response.offer.coupon_code);
+          $('#code', element).val(response.offer.coupon_code);
+          $('#title', element).val(response.offer.title);
+          $('#desc', element).val(response.offer.desc);
+          $('#discount', element).val(response.offer.discount_percent);
+          $('#expiry_date', element).val(response.offer.expiry_date);
+          $('#offer-cat', element).val("Main");
+          $('#offer-items', element).multiselect('deselectAll', false).multiselect('select', response.offer.items);
+          
+          // $('#offer-image', element).get(0).files = response.offer.image;
+          
+          $("#edit-offer-modal").modal("show")
+
+				} else if (!response.status) {
+
+				}
+			},
+
+			error: function (jqXHR, exception) {
+
+				}
+			});
+      return false;
+    });
+
+
+    // Update offer details
+    $("#edit-offer-form").submit(function () {
+      var prev_code = $(this).attr("coupon-code");
+      // var formData = new FormData();
+      // formData.append('csrfmiddlewaretoken', window.CSRF_TOKEN);
+      // formData.append('prev_code', prev_code);
+      // formData.append('new_code', $('#code', this).val());
+      // formData.append('title', $('#title', this).val());
+      // formData.append('desc', $('#desc', this).val());
+      // formData.append('items', JSON.stringify($('#offer-items', this).val()));
+      // formData.append('discount', $('#discount', this).val());
+      // formData.append('expiry_date', $('#expiry_date', this).val());
+      // formData.append('image', $("#offer-image", this).get(0).files[0]);
+      // formData.append('update_offer', "True");
+      // var request = new XMLHttpRequest();
+      // request.open("POST", "http://127.0.0.1:8000/admin/updateOffer/");
+      // request.send(formData);
+      // if (request.DONE) {
+      //   console.log("DONE")
+      // }
+      // console.log(formData.get('image'))
+      $.ajax({
+        type: "POST",
+        url: "updateOffer/",
+        data: {
+          csrfmiddlewaretoken: window.CSRF_TOKEN,
+          prev_code: prev_code,
+          new_code: $('#code', this).val(),
+          title: $('#title', this).val(),
+          desc: $('#desc', this).val(),
+          items: JSON.stringify($('#offer-items', this).val()),
+          discount: $('#discount', this).val(),
+          expiry_date: $('#expiry_date', this).val(),
+          update_offer: "True",
+        },
+        datatype: 'json',
+       
+
+        success: function(response) {
+          if (response.status) {
+            var tr = $("#table-offers tbody tr#" + prev_code);
+            $(tr).attr('id', response.offer.coupon_code);
+            $('.code', tr).text(response.offer.coupon_code);
+            $('.discount', tr).text(response.offer.discount_percent + ' %');
+            $('.items', tr).text(response.offer.items);
+            if (response.offer.is_expired) {
+              $('.expiry_date', tr).html('<span><i class="fa fa-times"></i></span> Expired').addClass('text-danger').removeClass('text-success');
+            } else {
+              $('.expiry_date', tr).html('<span><i class="fa fa-check"></i></span> ' + response.offer.expiry_date).addClass('text-success').removeClass('text-danger');
+            }
+            $("#edit-offer-modal").modal("hide")
+
+          } else if (!response.status) {
+
+          }
+        },
+
+        error: function (jqXHR, exception) {
+
+        }
+      });
+      return false;
+    });
+
+
+
+    // Delete offer
+    $("#edit-offer-form #delete").click(function () {
+      var code = $('#edit-offer-form').attr("coupon-code");
+      $.ajax({
+			type: "POST",
+			url: "deleteOffer/",
+			data: {
+				csrfmiddlewaretoken: window.CSRF_TOKEN,
+        coupon_code: code,
+				delete_offer: "True"},
+			datatype: 'json',
+
+			success: function(response) {
+				if (response.status) {
+          console.log(response.code)
+          $("#table-offers tbody tr#" + response.code).remove();
+          $("#edit-offer-modal").modal("hide")
+
+				} else if (!response.status) {
+
+				}
+			},
+
+			error: function (jqXHR, exception) {
+
+				}
+			});
+      return false;
+    });
+
+
+    $("#add-offer-form").submit(function () {
+      // var prev_code = $(this).attr("coupon-code");
+      // var formData = new FormData();
+      // formData.append('csrfmiddlewaretoken', window.CSRF_TOKEN);
+      // formData.append('prev_code', prev_code);
+      // formData.append('new_code', $('#code', this).val());
+      // formData.append('title', $('#title', this).val());
+      // formData.append('desc', $('#desc', this).val());
+      // formData.append('items', JSON.stringify($('#offer-items', this).val()));
+      // formData.append('discount', $('#discount', this).val());
+      // formData.append('expiry_date', $('#expiry_date', this).val());
+      // formData.append('image', $("#offer-image", this).get(0).files[0]);
+      // formData.append('update_offer', "True");
+      // var request = new XMLHttpRequest();
+      // request.open("POST", "http://127.0.0.1:8000/admin/updateOffer/");
+      // request.send(formData);
+      // if (request.DONE) {
+      //   console.log("DONE")
+      // }
+      // console.log(formData.get('image'))
+      $.ajax({
+        type: "POST",
+        url: "addOffer/",
+        data: {
+          csrfmiddlewaretoken: window.CSRF_TOKEN,
+          // prev_code: prev_code,
+          code: $('#code', this).val(),
+          title: $('#title', this).val(),
+          desc: $('#desc', this).val(),
+          items: JSON.stringify($('#offer-items', this).val()),
+          discount: $('#discount', this).val(),
+          expiry_date: $('#expiry_date', this).val(),
+          add_offer: "True",
+        },
+        datatype: 'json',
+       
+
+        success: function(response) {
+          if (response.status) {
+            console.log(response.offer.items)
+            var tr = '<tr id="' + response.offer.coupon_code + '">' + 
+              '<td class="code">' +  response.offer.coupon_code + '</td>' +
+              '<td class="discount">' +  response.offer.discount_percent + ' %</td>' +
+              '<td class="items">' +  response.offer.items + '</td>';
+              if (response.offer.is_expired) {
+                tr += '<td class="text-danger expiry_date"><span><i class="fa fa-times"></i></span> Expired</td>'
+              } else {
+                tr += '<td class="text-success expiry_date"><span><i class="fa fa-check"></i></span> ' + response.offer.expiry_date + '</td>'
+              }
+
+            tr += '</tr>'
+
+            $("#table-offers tbody").append(tr);
+            $("#add-offer-modal").modal("hide")
+
+          } else if (!response.status) {
+            $("#add-offer-modal").modal("hide")
+          }
+        },
+
+        error: function (jqXHR, exception) {
+
+        }
+      });
+      return false;
+    });
   </script>
 
 </body>

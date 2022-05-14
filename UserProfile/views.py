@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from Authentication.views import authenticate_user
 from Menu.models import Menu
 from Order.models import Order, OrderItem
 from Order.views import get_orders, update_order_total
@@ -15,7 +16,7 @@ def index(request):
     context = {
         'user': request.user,
         'orders': get_orders(request),
-        'order_count': Order.objects.filter(user=request.user, status="N").count(),
+        'order_count': Order.objects.filter(user=request.user, status="P").count(),
         'reservations_count': Reservation.objects.filter(user=request.user, date_of_reservation__gt=get_datetime()).count(),
         'cart_count': request.user.cart.items.all().count(),
         'cart': get_cart(request),
@@ -26,34 +27,60 @@ def index(request):
 
 def update_profile(request):
     if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        fname = request.POST['fname']
+        lname = request.POST['lname']
         email = request.POST['email']
         phone = request.POST['phone']
         address = request.POST['address'].strip()
 
-        updated_items = []
-        if email != request.user.email:
-            request.user.email = email
-            request.user.save()
-            updated_items.append('email')
-        if phone != request.user.profile.phone:
-            request.user.profile.phone = phone
-            request.user.profile.save()
-            updated_items.append('phone')
-        if address != request.user.profile.address:
-            request.user.profile.address = address
-            request.user.profile.save()
-            updated_items.append('address')
+        user = authenticate_user(username=username, password=password)
+        if user is not None:
+            updated_items = []
+            if username != request.user.username:
+                request.user.username = username
+                request.user.save()
+                updated_items.append('username')
+            if fname != request.user.first_name:
+                request.user.first_name = fname
+                request.user.save()
+                updated_items.append('fname')
+            if lname != request.user.last_name:
+                request.user.last_name = lname
+                request.user.save()
+                updated_items.append('lname')
+            if email != request.user.email:
+                request.user.email = email
+                request.user.save()
+                updated_items.append('email')
+            if phone != request.user.profile.phone:
+                request.user.profile.phone = phone
+                request.user.profile.save()
+                updated_items.append('phone')
+            if address != request.user.profile.address:
+                request.user.profile.address = address
+                request.user.profile.save()
+                updated_items.append('address')
 
-        if len(updated_items) > 0:
-            return JsonResponse({'status': True})
+            if len(updated_items) > 0:
+                return JsonResponse({'status': True})
+        else:
+            return JsonResponse({'status': False, 'msg': 'Incorrect Password'})
 
-    return JsonResponse({})
+    return JsonResponse({'status': False, "msg": ''})
 
 def change_item_quantity(request):
     if request.method == "POST" and request.POST['changeQuantity']:
         item = request.POST['item']
         item = request.user.cart.items.all().get(id=item)
-        item.quantity += int(request.POST['changeBy'])
+        q = int(request.POST['changeBy'])
+        if q == 1:
+            item.quantity += 1
+        elif q == -1 and item.quantity > 1:
+            item.quantity -= 1
+        else:
+            item.quantity = 1
         item.amount = item.quantity * item.item.price
         item.save()
         total = update_cart_total(request.user.cart)

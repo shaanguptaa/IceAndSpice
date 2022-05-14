@@ -1,14 +1,18 @@
 from datetime import date, datetime, timedelta
+from json import loads
+import os
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
+from Menu.models import Menu
 
-from Menu.views import get_all_items
+from Menu.views import get_all_items, getmenu
 from Order.models import Order
 from Order.views import get_all_orders
 from Reservation.models import Reservation
 from Reservation.views import get_all_reservations
-from administrator.models import Feedback
+# from administrator.forms import ImageForm
+from administrator.models import Feedback, Offer
 
 # Create your views here.
 def index(request):
@@ -21,6 +25,9 @@ def index(request):
         'feedbacks': get_feedbacks(),
         'reservations': get_all_reservations(),
         'orders': get_all_orders(),
+        'offers': get_offers(),
+        'menu_items': getmenu(),
+        # 'form': ImageForm(),
     }
     return render(request, "administrator/index.html", context)
 
@@ -114,3 +121,141 @@ def get_counts(request):
         'reservations_confirmed': reservations_confirmed,
         'tables_booked': tables_booked,
     })
+
+
+def get_offers(expired=True):
+    if expired:
+        offers = Offer.objects.all()
+    else:
+        offers = Offer.objects.filter(expiry_date__gte=date.today())
+
+    return [{
+        'title': offer.title,
+        'desc': offer.desc,
+        'discount_percent': offer.discount_percent,
+        'coupon_code': offer.coupon_code,
+        'expiry_date': offer.expiry_date,
+        'is_expired': True if offer.expiry_date < date.today() else False,
+        'items': ', '.join([item.item_name for item in offer.items.all()]),
+        'image': offer.image.url,
+    } for offer in offers.all()]
+
+def get_offer(request):
+    if request.method == 'POST' and request.POST['get_offer']:
+        offer = Offer.objects.get(coupon_code=request.POST['id'])
+        image = offer.image
+        offer = {
+            'title': offer.title,
+            'desc': offer.desc,
+            'discount_percent': offer.discount_percent,
+            'coupon_code': offer.coupon_code,
+            'expiry_date': offer.expiry_date,
+            'is_expired': True if offer.expiry_date < date.today() else False,
+            'items': [item.id for item in offer.items.all()],
+            'image': offer.image.url,
+        }
+        return JsonResponse({'status': True, 'offer': offer})
+
+    return JsonResponse({'status': False})
+
+def update_offer(request):
+    if request.method == 'POST' and request.POST['update_offer']:
+        offer = Offer.objects.get(coupon_code=request.POST['prev_code'])
+        # form = ImageForm(request.POST, request.FILES, instance=offer)
+        # if form.is_valid():
+        #     imagePath = form.instance.image.url
+        #     # newImage = form.fields['image']
+        #     print(form.data)
+        #     if os.path.exists(imagePath):
+        #         os.remove(imagePath)
+        #     form.save()
+        
+        offer.coupon_code = request.POST['new_code'].upper()
+        offer.title = request.POST['title']
+        offer.desc = request.POST['desc']
+        offer.expiry_date = datetime.strptime(request.POST['expiry_date'], "%Y-%m-%d").date()
+        offer.discount_percent = request.POST['discount']
+        offer.save()
+        offer.items.set(loads(request.POST['items']))
+        
+        offer = {
+            'title': offer.title,
+            'desc': offer.desc,
+            'discount_percent': offer.discount_percent,
+            'coupon_code': offer.coupon_code,
+            'expiry_date': offer.expiry_date.strftime("%B %d, %Y"),
+            'is_expired': True if offer.expiry_date < date.today() else False,
+            'items': ', '.join([item.item_name for item in offer.items.all()]),
+            'image': offer.image.url,
+        }
+
+        if request.POST['new_code'] != request.POST['prev_code']:
+            Offer.objects.get(coupon_code=request.POST['prev_code']).delete()
+
+        return JsonResponse({'status': True, 'offer': offer})
+
+    return JsonResponse({'status': False})
+
+def add_offer(request):
+    if request.method == 'POST' and request.POST['add_offer']:
+        # form = ImageForm(request.POST, request.FILES, instance=offer)
+        # if form.is_valid():
+        #     imagePath = form.instance.image.url
+        #     # newImage = form.fields['image']
+        #     print(form.data)
+        #     if os.path.exists(imagePath):
+        #         os.remove(imagePath)
+        #     form.save()
+        
+        coupon_code = request.POST['code'].upper()
+        title = request.POST['title']
+        desc = request.POST['desc']
+        expiry_date = datetime.strptime(request.POST['expiry_date'], "%Y-%m-%d").date()
+        discount_percent = request.POST['discount']
+        
+        offer = Offer.objects.create(coupon_code=coupon_code, title=title, desc=desc, expiry_date=expiry_date, discount_percent=discount_percent)
+        offer.items.set(loads(request.POST['items']))
+
+
+        offer = {
+            'title': offer.title,
+            'desc': offer.desc,
+            'discount_percent': offer.discount_percent,
+            'coupon_code': offer.coupon_code,
+            'expiry_date': offer.expiry_date.strftime("%B %d, %Y"),
+            'is_expired': True if offer.expiry_date < date.today() else False,
+            'items': ', '.join([item.item_name for item in offer.items.all()]),
+            'image': offer.image.url,
+        }
+
+        return JsonResponse({'status': True, 'offer': offer})
+
+    return JsonResponse({'status': False})
+
+def delete_offer(request):
+    if request.method == 'POST' and request.POST['delete_offer']:
+        Offer.objects.get(coupon_code=request.POST['coupon_code']).delete()
+
+        return JsonResponse({'status': True, 'code': request.POST['coupon_code']})
+
+    return JsonResponse({'status': False})
+
+def check_coupon(request):
+    if request.method == 'POST' and request.POST['check_coupon']:
+        msg = "Invalid Coupon Code"
+        try:
+            offer = Offer.objects.get(coupon_code=request.POST['coupon_code'].upper())
+            item = Menu.objects.get(item_name=request.POST['itemName'])
+            if item not in offer.items.all():
+                msg = "Coupon Unavailable"
+                raise Exception
+            offer = {
+                'code': offer.coupon_code,
+                'discount': offer.discount_percent,
+            }
+            return JsonResponse({'status': True, 'offer': offer})
+        except Exception as e:
+            return JsonResponse({'status': False, 'msg': msg})
+
+    return JsonResponse({'status': False})
+

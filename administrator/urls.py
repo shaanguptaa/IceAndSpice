@@ -8,4 +8,10 @@ urlpatterns = [
     path('logout', views.handle_admin_logout, name='administrator_logout'),
     path('save-changes/', views.update_profile),
     path('get-counts/', views.get_counts),
+    path('getOffer/', views.get_offer),
+    path('updateOffer/', views.update_offer),
+    path('deleteOffer/', views.delete_offer),
+    path('addOffer/', views.add_offer),
+    path('check-coupon/', views.check_coupon),
+
 ]

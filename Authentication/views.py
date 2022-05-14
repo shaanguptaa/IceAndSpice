@@ -68,3 +68,6 @@ def handle_login(request):
 def handle_logout(request):
     logout(request)
     return redirect("login")
+
+def authenticate_user(username, password):
+    return authenticate(username=username, password=password)
