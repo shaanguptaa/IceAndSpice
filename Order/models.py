@@ -28,7 +28,7 @@ class Order(models.Model):
     delivery_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=1, choices=[("D", "Delivered"), ("N", "Confirmed, Not Yet Delivered"), ('C', 'Cancelled'), ('P', 'Pending')], default="P")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    offer_applied = models.ForeignKey(Offer,  null=True, on_delete=models.DO_NOTHING)
+    offer_applied = models.ForeignKey(Offer, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return "Order - " + str(self.id)

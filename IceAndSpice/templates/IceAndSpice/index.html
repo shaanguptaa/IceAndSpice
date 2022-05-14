@@ -554,7 +554,7 @@
         <div id="offersCarousel" class="slider">
           {% for offer in offers %}
             <div class="card border-0">
-              <img class="card-img-top" src="{% static 'images/restaurant/1900x1200/img_10.jpg' %}" alt="{{offer.title}}">
+              <img class="card-img-top" height="213px" src="{{ offer.image }}" alt="{{offer.title}}">
               <div class="card-body pb_p-40">
                 <small class="text-uppercase  ">Expires &ndash; {{offer.expiry_date|naturalday}}</small>
                 <h4 class="card-title"><a href="#" class="text-danger">{{offer.title}}</a></h4>

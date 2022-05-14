@@ -11,6 +11,7 @@ urlpatterns = [
     path('getOffer/', views.get_offer),
     path('updateOffer/', views.update_offer),
     path('deleteOffer/', views.delete_offer),
+    path('addOffer/', views.add_offer),
     path('check-coupon/', views.check_coupon),
 
 ]

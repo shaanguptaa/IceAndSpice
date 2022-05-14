@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from IceAndSpice import get_date, get_datetime
+from IceAndSpice import get_date, get_datetime, get_offer_image
 from Menu.models import Menu
 
 # Create your models here.
@@ -23,6 +23,7 @@ class Offer(models.Model):
     discount_percent = models.PositiveIntegerField(default=0)
     expiry_date = models.DateField(default=get_date)
     items = models.ManyToManyField(Menu, blank=True)
+    image = models.ImageField(upload_to='offers/', default=get_offer_image)
 
     def __str__(self):
         return self.title + ' : ' + str(self.discount_percent) + '%' + ' discount'
