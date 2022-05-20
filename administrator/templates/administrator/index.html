@@ -931,7 +931,7 @@
               </div>
               <div class="col-md-4 form-group">
                 <label for="phone" style="font-size: larger;">Phone : </label>
-                <input type="text" pattern="^[0-9]{10}" title="Enter Valid Phone Number" class="form-control" name="phone" id="phone" value="{{request.user.profile.phone}}">
+                <input type="text" pattern="^[0-9]{10}" title="Enter Valid Phone Number" class="form-control phone-validate" name="phone" id="phone" value="{{request.user.profile.phone}}">
               </div>
             </div>
             <!-- <div class="row py-3">
@@ -1729,6 +1729,16 @@
       });
       return false;
     });
+
+
+    // only accept number in phone number
+    $(".phone-validate").on("input", function () {
+      let val = this.value;
+      // if not a number remove the alphabet
+      if (isNaN(val)) {
+        this.value = val.replaceAll(/\D/ig, '');
+      }
+    })
   </script>
 
 </body>
