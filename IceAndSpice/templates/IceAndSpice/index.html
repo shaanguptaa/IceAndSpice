@@ -340,7 +340,7 @@
                   </div>
                   <div class="col-lg-6 justify-content-center form-group" style="float: right;">
                     <label for="phone">Phone: &nbsp;</label>
-                    <input type="number" name="phone" id="phone" class="pl-3 form-control pb_outline-dark" style="text-transform: none;" value="{{request.user.profile.phone}}" required>
+                    <input type="text" pattern="^[0-9]{10}" title="Enter Valid Phone Number" name="phone" id="phone" class="pl-3 form-control pb_outline-dark" style="text-transform: none;" value="{{request.user.profile.phone}}" required>
                   </div>
                 </div>
     
@@ -404,7 +404,7 @@
                   <div class="col-md">
                     <div class="form-group">
                       <label for="phone">Phone</label>
-                      <input type="number" name="phone" class="form-control p-3 pb_outline-r-light rounded-0" id="phone" pattern="^\d{10}$" value="{{request.user.profile.phone}}" required>
+                      <input type="text" name="phone" class="form-control p-3 pb_outline-r-light rounded-0" id="phone" pattern="^[0-9]{10}" title="Enter Valid Phone Number" value="{{request.user.profile.phone}}" required>
                     </div>
                   </div>
 
