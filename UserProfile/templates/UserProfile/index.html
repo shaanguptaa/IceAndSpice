@@ -206,7 +206,7 @@
 				<img src="{% static 'images/user/user.png' %}" alt="profile picture" height="150%" width="150%">
 			</div>
 			<div class="username">
-				<h3>{% if user.first_name %} {{user.first_name}} {{user.last_name}} {% else %} {{user.username}} {% endif %}</h3>
+				<h3 style="overflow-wrap: break-word;">{% if user.first_name %} {{user.first_name}} {{user.last_name}} {% else %} {{user.username}} {% endif %}</h3>
 			</div>
 			<!-- <div class="cng-pass">
 				<a href="#" target="_blank">Change Password</a>
@@ -225,29 +225,29 @@
 				{% csrf_token %}
 				<div class="form-group">
 					<label for="username">Username : </label>
-					<input type="text" class="form-control" name="username" id="username" value="{{user.username}}" placeholder="User Name">
+					<input type="text" class="form-control" autocomplete="username" name="username" id="username" value="{{user.username}}" placeholder="User Name">
 				</div>
 				<div class="row">
 					<div class="form-group col">
 						<label for="fname">First Name : </label>
-						<input type="text" class="form-control" name="fname" id="fname" value="{{user.first_name}}" placeholder="First Name">
+						<input type="text" class="form-control" autocomplete="name" name="fname" id="fname" value="{{user.first_name}}" placeholder="First Name">
 					</div>
 					<div class="form-group col">
 						<label for="lname">Last Name : </label>
-						<input type="text" class="form-control" name="lname" id="lname" value="{{user.last_name}}" placeholder="Last Name">
+						<input type="text" class="form-control" name="lname" autocomplete="family-name" id="lname" value="{{user.last_name}}" placeholder="Last Name">
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="email">Email : </label>
-					<input type="email" class="form-control" name="email" id="email" value="{{user.email}}" placeholder="Email Address">
+					<input type="email" class="form-control" name="email" autocomplete="email" id="email" value="{{user.email}}" placeholder="Email Address">
 				</div>
 				<div class="form-group">
 					<label for="contact">Contact : </label>
-					<input type="text" pattern="^[0-9]{10}" title="Enter Valid Phone Number" class="form-control phone-validate" name="contact" id="contact" placeholder="Contact Number" value="{{user.profile.phone}}">
+					<input type="text" pattern="^[0-9]{10}" title="Enter Valid Phone Number" autocomplete="mobile" class="form-control phone-validate" name="contact" id="contact" placeholder="Contact Number" value="{{user.profile.phone}}">
 				</div>
 				<div class="form-group">
 					<label for="address">Address : </label>
-					<textarea name="address" class="form-control" id="address" cols="30" rows="5" placeholder="Address" >{{user.profile.address}}</textarea>
+					<textarea name="address" class="form-control" id="address" cols="30" rows="5" autocomplete="address-level1" placeholder="Address" >{{user.profile.address}}</textarea>
 				</div>
 				<div class="form-group">
 					<input type="button" name="save" id="save-btn" value="Save Changes" class="btn btn-success" data-toggle="modal" data-target="#password-modal">
@@ -310,7 +310,7 @@
 			<div class="card-body">
 				<h5 class="card-title mb-3">Reservations</h5>
 
-				<div class="container-fluid">
+				<div class="container-fluid" style="overflow-x: scroll;">
 					<table class="table table-hover table-sm " id="table-reservation" style="width: 100%;">
 						<thead>
 						<tr>
@@ -403,6 +403,11 @@
 			</div>
 		</div>
 
+		<footer class="my-0">
+			<div class="row text-center">
+			  <p style="width: 100%;">Copyright &copy; 2022 &nbsp;<a href="https://github.com/shaanguptaa">SAHIL GUPTA</a>&nbsp; | &nbsp;<span style="display: inline-block;"> All Rights Reserved </span><br> Designed and Developed by <a href="https://github.com/shaanguptaa">SAHIL GUPTA</a></p>
+			</div>
+		</footer>
 	</div>
 
 	<!-- password modal -->
@@ -416,10 +421,12 @@
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
+					<input type="text" name="uname" id="uname" class="d-none" value="{{user.username}}" autocomplete="username" />
+
 					<div class="modal-body">
 						<div class="form-group">
 							<label for="password">Enter Password to update details : </label>
-							<input type="password" name="password" id="password" placeholder="Password" class="form-control" required>
+							<input type="password" name="password" id="password" autocomplete="current-password" placeholder="Password" class="form-control" required>
 						</div>
 					</div>
 

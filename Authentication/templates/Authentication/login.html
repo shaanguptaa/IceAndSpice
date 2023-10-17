@@ -110,7 +110,7 @@
           <div
             class="login100-form-title"
             style="
-              background-image: url({%static'auth/login/images/bg-03.jpg'%});
+              background-image: url({% static 'auth/login/images/bg-03.jpg' %});
             "
           >
             <span class="login100-form-title-1"> Sign In </span>
@@ -131,6 +131,7 @@
                 class="input100"
                 type="text"
                 name="username"
+                autocomplete="username"
                 id="username"
                 placeholder="Enter username"
               />
@@ -147,6 +148,7 @@
                 type="password"
                 name="password"
                 id="password"
+                autocomplete="current-password"
                 placeholder="Enter password"
               />
               <span class="focus-input100"></span>

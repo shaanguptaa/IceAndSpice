@@ -36,7 +36,7 @@
         <div class="form-left">
           <img src="{% static 'auth/signup/images/bg-4.jpg' %}" alt="form" />
           <p class="text-1">Sign Up</p>
-          <p class="text-2">Privacy Policy & Terms of Service</p>
+          <p class="text-2"><a href="" style="text-decoration: none; color: white;">Privacy Policy & Terms of Service</a></p>
         </div>
         <form class="form-detail" action="signup" method="post" id="myform">
           {% csrf_token %}
@@ -47,6 +47,7 @@
               name="username"
               id="username"
               class="input-text"
+              autocomplete="username"
               required
             />
           </div>
@@ -57,6 +58,7 @@
               name="email"
               id="email"
               class="input-text"
+              autocomplete="email"
               required
               pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}"
             />
@@ -68,6 +70,7 @@
               name="password"
               id="password"
               class="input-text"
+              autocomplete="new-password"
               required
             />
           </div>
@@ -78,13 +81,14 @@
               name="comfirm_password"
               id="comfirm_password"
               class="input-text"
+              autocomplete="new-password"
               required
             />
           </div>
           <div class="form-row-last">
             {% comment %}
-            <button type="submit" name="signup-btn">Register</button> {%
-            endcomment %}
+            <button type="submit" name="signup-btn">Register</button> 
+            {% endcomment %}
             <input
               type="submit"
               style="margin-bottom: 0"
