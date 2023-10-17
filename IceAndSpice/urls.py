@@ -29,6 +29,6 @@ urlpatterns = [
     path('order/', include('Order.urls'), name='Order'),
     path('menu/', include('Menu.urls'), name='Menu'),
     path('feedback/', views.add_feedback),
-    path('temp/', views.temp),
+    # path('temp/', views.temp),
     # path('menu/', include('Menu.urls'), name='menu'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -15,21 +15,6 @@ def index(request):
     else:
         return redirect("homepage")
 
-    # orders = get_orders(request)
-    # # for i in range(len(orders)):
-    # #     orders[i].items = orders[i].items.all()
-    # context = {
-    #     'user': {
-    #         'username': request.user.username,
-    #         # add other details
-    #     },
-    #     'orders': orders,
-    #     'cart': get_cart(request),
-    #     'reservations': get_reservations(request),
-    # }
-    # # orders = get_orders(request)
-    # return render(request, "authentication/index.html", context)
-
 def handle_signup(request):
     if request.method == 'POST' and request.POST['signup-btn']:
         username = request.POST['username']
@@ -44,7 +29,7 @@ def handle_signup(request):
             cart.save()
             profile = Profile.objects.create(user=user)
             profile.save()
-            return redirect("user-profile") # later change it to user profile page .................................
+            return redirect("user-profile")
         except IntegrityError:
             return render(request, "Authentication/signup.html", context={'error': True})
     else:

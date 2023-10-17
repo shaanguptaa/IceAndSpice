@@ -1,114 +1,215 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<title>User Login - IceAndSpice</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="{% static 'auth/login/images/icons/favicon.ico' %}"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/vendor/bootstrap/css/bootstrap.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/vendor/animate/animate.css' %}">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/vendor/css-hamburgers/hamburgers.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/vendor/animsition/css/animsition.min.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/vendor/select2/select2.min.css' %}">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/vendor/daterangepicker/daterangepicker.css' %}">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/css/util.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'auth/login/css/main.css' %}">
-<!--===============================================================================================-->
-</head>
-<body>
+  <head>
+    <title>User Login - IceAndSpice</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link
+      rel="icon"
+      type="image/png"
+      href="{% static 'auth/login/images/icons/favicon.ico' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/vendor/bootstrap/css/bootstrap.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/vendor/animate/animate.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/vendor/css-hamburgers/hamburgers.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/vendor/animsition/css/animsition.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/vendor/select2/select2.min.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/vendor/daterangepicker/daterangepicker.css' %}"
+    />
+    <!--===============================================================================================-->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/css/util.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'auth/login/css/main.css' %}"
+    />
+    <!--===============================================================================================-->
+  </head>
+  <body>
+    {% comment %} {% if error %}
+    <div
+      style="
+        width: 97vw;
+        margin: 10px 20px;
+        z-index: 10;
+        position: absolute;
+        top: 0px;
+        right: 0;
+      "
+    >
+      <div
+        class="alert alert-danger alert-dismissible fade show"
+        id="error"
+        style="width: 100%; letter-spacing: 1px"
+        role="alert"
+      >
+        <strong class="">INVALID CREDENTIALS!!!</strong> Please Login With Valid
+        Credentials . . .
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+    {% endif %} {% endcomment %}
 
-	{% comment %} {% if error %}
-		<div style="width: 97vw; margin: 10px 20px; z-index: 10; position: absolute; top: 0px; right: 0;">
-			<div class="alert alert-danger alert-dismissible fade show" id="error" style="width: 100%; letter-spacing: 1px;" role="alert">
-				<strong class="">INVALID CREDENTIALS!!!</strong> Please Login With Valid Credentials . . .
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-		</div>
-	{% endif %} {% endcomment %}
+    <div class="limiter">
+      <div class="container-login100">
+        <div class="wrap-login100">
+          <div
+            class="login100-form-title"
+            style="
+              background-image: url({%static'auth/login/images/bg-03.jpg'%});
+            "
+          >
+            <span class="login100-form-title-1"> Sign In </span>
+          </div>
 
-	
+          <form
+            class="login100-form validate-form"
+            method="post"
+            action="login"
+          >
+            {% csrf_token %}
+            <div
+              class="wrap-input100 validate-input m-b-26"
+              data-validate="Username is required"
+            >
+              <span class="label-input100">Username</span>
+              <input
+                class="input100"
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Enter username"
+              />
+              <span class="focus-input100"></span>
+            </div>
 
-	<div class="limiter">
-		
-		<div class="container-login100">
-			<div class="wrap-login100">
-				<div class="login100-form-title" style="background-image: url({% static 'auth/login/images/bg-03.jpg' %});">
-					<span class="login100-form-title-1">
-						Sign In
-					</span>
-				</div>
+            <div
+              class="wrap-input100 validate-input m-b-18"
+              data-validate="Password is required"
+            >
+              <span class="label-input100">Password</span>
+              <input
+                class="input100"
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter password"
+              />
+              <span class="focus-input100"></span>
+            </div>
 
-				<form class="login100-form validate-form" method="post" action="login">
-					{% csrf_token %}
-					<div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
-						<span class="label-input100">Username</span>
-						<input class="input100" type="text" name="username" id="username" placeholder="Enter username">
-						<span class="focus-input100"></span>
-					</div>
-
-					<div class="wrap-input100 validate-input m-b-18" data-validate = "Password is required">
-						<span class="label-input100">Password</span>
-						<input class="input100" type="password" name="password" id="password" placeholder="Enter password">
-						<span class="focus-input100"></span>
-					</div>
-
-					<div class="container-login100-form-btn mt-3 mb-3">
-						<input type="submit" class="login100-form-btn" style="margin-left: 20%;" name="login-btn" id="login-btn" value="Login">
-						<!-- <a href="signup" class="ml-5">
+            <div class="container-login100-form-btn mt-3 mb-3">
+              <input
+                type="submit"
+                class="login100-form-btn"
+                style="margin-left: 20%"
+                name="login-btn"
+                id="login-btn"
+                value="Login"
+              />
+              <!-- <a href="signup" class="ml-5">
 							<button type="button" class="login100-form-btn">Sign Up</button>
 						</a> -->
-					</div>
+            </div>
 
-					<div class="flex-sb-m w-full mt-3">
-						<p class="txt1" style="font-size: 14px; margin-left: 14%;">Not a customer yet? &nbsp;
-							<a href="signup" class="txt1"  style="font-size: 14px;">
-								Sign Up!
-							</a>
-						</p>
-					</div>
-				</form>
-				
-				{% if error %}
-					<div class="flex-sb-m w-full">
-						<p class="text-danger" style="margin-top: -15%; letter-spacing: 1px; width: inherit; text-align: center;"><strong>Invalid Credentials!!!</strong> Please Try Again . . .</p>
-					</div>
-				{% endif %}
-				
-			</div>
-		</div>
-	</div> 
-	
-<!--===============================================================================================-->
-	<script src="{% static 'auth/login/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'auth/login/vendor/animsition/js/animsition.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'auth/login/vendor/bootstrap/js/popper.js' %}"></script>
-	<script src="{% static 'auth/login/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'auth/login/vendor/select2/select2.min.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'auth/login/vendor/daterangepicker/moment.min.js' %}"></script>
-	<script src="{% static 'auth/login/vendor/daterangepicker/daterangepicker.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'auth/login/vendor/countdowntime/countdowntime.js' %}"></script>
-<!--===============================================================================================-->
-	<script src="{% static 'auth/login/js/main.js' %}"></script>
+            <div class="flex-sb-m w-full mt-3">
+              <p class="txt1" style="font-size: 14px; margin-left: 14%">
+                Not a customer yet? &nbsp;
+                <a href="signup" class="txt1" style="font-size: 14px">
+                  Sign Up!
+                </a>
+              </p>
+            </div>
+          </form>
 
-</body>
+          {% if error %}
+          <div class="flex-sb-m w-full">
+            <p
+              class="text-danger"
+              style="
+                margin-top: -15%;
+                letter-spacing: 1px;
+                width: inherit;
+                text-align: center;
+              "
+            >
+              <strong>Invalid Credentials!!!</strong> Please Try Again . . .
+            </p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!--===============================================================================================-->
+    <script src="{% static 'auth/login/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'auth/login/vendor/animsition/js/animsition.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'auth/login/vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'auth/login/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'auth/login/vendor/select2/select2.min.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'auth/login/vendor/daterangepicker/moment.min.js' %}"></script>
+    <script src="{% static 'auth/login/vendor/daterangepicker/daterangepicker.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'auth/login/vendor/countdowntime/countdowntime.js' %}"></script>
+    <!--===============================================================================================-->
+    <script src="{% static 'auth/login/js/main.js' %}"></script>
+  </body>
 </html>

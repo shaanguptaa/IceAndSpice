@@ -143,7 +143,7 @@ def get_offers(expired=True):
 def get_offer(request):
     if request.method == 'POST' and request.POST['get_offer']:
         offer = Offer.objects.get(coupon_code=request.POST['id'])
-        image = offer.image
+        # image = offer.image
         offer = {
             'title': offer.title,
             'desc': offer.desc,
@@ -246,7 +246,7 @@ def check_coupon(request):
         try:
             offer = Offer.objects.get(coupon_code=request.POST['coupon_code'].upper())
             item = Menu.objects.get(item_name=request.POST['itemName'])
-            if item not in offer.items.all():
+            if (offer.expiry_date >= date.today()) and (item not in offer.items.all()):
                 msg = "Coupon Unavailable"
                 raise Exception
             offer = {

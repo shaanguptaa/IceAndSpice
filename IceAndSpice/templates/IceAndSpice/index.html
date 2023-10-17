@@ -309,7 +309,7 @@
                 <div class="row">
                   <div class="col-lg-7">
                     <b class="pl-5">Coupon Code: </b>
-                    <input type="text" name="coupon-code" id="coupon-code" class="pl-3 form-control pb_outline-dark" style="text-transform: uppercase; padding-left: 10px; width: 50%; display: inline-block;">
+                    <input type="text" name="coupon-code" id="coupon-code" class="pl-3 form-control pb_outline-dark" style="text-transform: uppercase; padding-left: 10px; width: 50%; display: inline-block;" autocomplete="off">
                   </div>
                   <div class="col-lg-4">
                     <b style="padding-left: 35px;">Discount: </b>
@@ -336,22 +336,22 @@
                 <div class="row">
                   <div class="col-lg-6 justify-content-center form-group" style="float: left;">
                     <label for="personName">Name: &nbsp;</label>
-                    <input type="text" id="personName" name="personName" class="pl-3 form-control pb_outline-dark" style="text-transform: none;" value="{% if request.user.first_name %} {{ request.user.first_name }} {{request.user.last_name}} {% else %} {{request.user.username}} {% endif %}" required>
+                    <input type="text" id="personName" name="personName" class="pl-3 form-control pb_outline-dark" style="text-transform: none;" autocomplete="name" value="{% if request.user.first_name %} {{ request.user.first_name }} {{request.user.last_name}} {% else %} {{request.user.username}} {% endif %}" required>
                   </div>
                   <div class="col-lg-6 justify-content-center form-group" style="float: right;">
                     <label for="phone">Phone: &nbsp;</label>
-                    <input type="text" pattern="^[0-9]{10}" title="Enter Valid Phone Number" name="phone" id="phone" class="pl-3 form-control pb_outline-dark phone-validate" style="text-transform: none;" value="{{request.user.profile.phone}}" required>
+                    <input type="text" pattern="^[0-9]{10}" title="Enter Valid Phone Number" name="phone" id="phone" autocomplete="mobile" class="pl-3 form-control pb_outline-dark phone-validate" style="text-transform: none;" value="{{request.user.profile.phone}}" required>
                   </div>
                 </div>
     
                 <div class="row">
                   <div class="col-lg-6 justify-content-center form-group" style="float: left;">
                     <label for="email">Email: &nbsp;</label>
-                    <input type="text" id="email" name="email" class="pl-3 form-control pb_outline-dark" style="text-transform: none;" value="{{request.user.email}}">
+                    <input type="text" id="email" name="email" class="pl-3 form-control pb_outline-dark" autocomplete="email" style="text-transform: none;" value="{{request.user.email}}">
                   </div>
                   <div class="col-lg-6 justify-content-center form-group" style="float: right;">
                     <label for="location">Address: &nbsp;</label>
-                    <input type="text" name="location" id="location" class="pl-3 form-control pb_outline-dark" style="text-transform: none;" value="{{request.user.profile.address}}" required>
+                    <input type="text" name="location" id="location" class="pl-3 form-control pb_outline-dark" autocomplete="address-level1" style="text-transform: none;" value="{{request.user.profile.address}}" required>
                   </div>
                 </div>
               </div>
@@ -389,13 +389,13 @@
                   <div class="col-md">
                     <div class="form-group">
                       <label for="name">Name</label>
-                      <input type="text" name="name" class="form-control p-3 pb_outline-r-light rounded-0" id="name" value="{% if request.user.first_name %} {{ request.user.first_name }} {{request.user.last_name}} {% else %} {{request.user.username}} {% endif %}" required>
+                      <input type="text" name="name" class="form-control p-3 pb_outline-r-light rounded-0" id="name" autocomplete="name" value="{% if request.user.first_name %} {{ request.user.first_name }} {{request.user.last_name}} {% else %} {{request.user.username}} {% endif %}" required>
                     </div>
                   </div>
                   <div class="col-md">
                     <div class="form-group">
                       <label for="email">Email</label>
-                      <input type="text" name="email" class="form-control p-3 pb_outline-r-light rounded-0" id="email" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[.][a-zA-Z0-9+_.-]+$" title="Enter Valid Email" value="{{request.user.email}}" required>
+                      <input type="text" name="email" class="form-control p-3 pb_outline-r-light rounded-0" id="email" autocomplete="email" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[.][a-zA-Z0-9+_.-]+$" title="Enter Valid Email" value="{{request.user.email}}" required>
                     </div>
                   </div>
                 </div>
@@ -404,7 +404,7 @@
                   <div class="col-md">
                     <div class="form-group">
                       <label for="phone">Phone</label>
-                      <input type="text" name="phone" class="form-control p-3 pb_outline-r-light rounded-0 phone-validate" id="phone" pattern="^[0-9]{10}" title="Enter Valid Phone Number" value="{{request.user.profile.phone}}" required>
+                      <input type="text" name="phone" class="form-control p-3 pb_outline-r-light rounded-0 phone-validate" id="phone" autocomplete="mobile" pattern="^[0-9]{10}" title="Enter Valid Phone Number" value="{{request.user.profile.phone}}" required>
                     </div>
                   </div>
 
@@ -551,52 +551,24 @@
             <h2 class="mb-4 text-uppercase pb_letter-spacing-2">Events & Offers</h2>
           </div>
         </div>
-        <div id="offersCarousel" class="slider">
-          {% for offer in offers %}
-            <div class="card border-0">
-              <img class="card-img-top" height="213px" src="{{ offer.image }}" alt="{{offer.title}}">
-              <div class="card-body pb_p-40">
-                <small class="text-uppercase  ">Expires &ndash; {{offer.expiry_date|naturalday}}</small>
-                <h4 class="card-title"><a href="#" class="text-danger">{{offer.title}}</a></h4>
-                <p class="card-text">{{offer.desc}}</p>
-                <p class="card-text">Coupon Code : <span class="coupon-code">{{offer.coupon_code}}</span></p>
-              </div>
+        {% if not offers %}
+          <h3 class="text-danger text-center"><span style="scale: 1.5; display: inline-block;">&times; &nbsp;</span> Sorry, Currently no offers are available ...</h3>
+        {% else %}
+          <div id="offersCarousel" class="slider">
+            {% for offer in offers %}
+              <div class="card border-0">
+                <img class="card-img-top" height="213px" src="{{ offer.image }}" alt="{{offer.title}}">
+                  <div class="card-body pb_p-40">
+                    <small class="text-uppercase  ">Expires &ndash; {{offer.expiry_date|naturalday}}</small>
+                    <h4 class="card-title"><a href="#" class="text-danger">{{offer.title}}</a></h4>
+                    <p class="card-text">{{offer.desc}}</p>
+                    <p class="card-text">Coupon Code : <span class="coupon-code">{{offer.coupon_code}}</span></p>
+                  </div>
+                </div>
+              {% endfor %}
             </div>
-          {% endfor %}
-          <!-- <div class="card border-0">
-            <img class="card-img-top" src="{% static 'images/restaurant/1900x1200/img_10.jpg' %}" alt="Image caption here">
-            <div class="card-body pb_p-40">
-              <small class="text-uppercase  ">Expires &ndash; April&nbsp; 30<sup>th</sup>,&nbsp; 2021</small>
-              <h4 class="card-title"><a href="#" class="text-danger">Start of Season Offer</a></h4>
-              <p class="card-text">Cheer for you favourite team this season while drinking a chilled drink with your friends and family</p>
-            </div>
-          </div>
-          <div class="card border-0">
-            <img class="card-img-top" src="{% static 'images/restaurant/1900x1200/img_10.jpg' %}" alt="Image caption here">
-            <div class="card-body pb_p-40">
-              <small class="text-uppercase  ">Expires &ndash; April&nbsp; 30<sup>th</sup>,&nbsp; 2021</small>
-              <h4 class="card-title"><a href="#" class="text-danger">Start of Season Offer</a></h4>
-              <p class="card-text">Cheer for you favourite team this season while drinking a chilled drink with your friends and family</p>
-            </div>
-          </div>
-          <div class="card border-0">
-            <img class="card-img-top" src="{% static 'images/restaurant/1900x1200/img_10.jpg' %}" alt="Image caption here">
-            <div class="card-body pb_p-40">
-              <small class="text-uppercase  ">Expires &ndash; April&nbsp; 30<sup>th</sup>,&nbsp; 2021</small>
-              <h4 class="card-title"><a href="#" class="text-danger">Start of Season Offer</a></h4>
-              <p class="card-text">Cheer for you favourite team this season while drinking a chilled drink with your friends and family</p>
-            </div>
-          </div> -->
-          <!-- <a class="carousel-control-prev" href="#offersCarousel" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" href="#offersCarousel" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-          </a> -->
-        </div>
-        <!-- <br><br>
+          {% endif %}
+          <!-- <br><br>
         <div class="row">
           <div class="card-deck">
             <div class="card border-0">
@@ -645,13 +617,13 @@
                   <div class="col-md">
                     <div class="form-group">
                       <label for="name">Name</label>
-                      <input type="text" name="name" class="form-control p-3 rounded-0" id="name" required>
+                      <input type="text" name="name" class="form-control p-3 rounded-0" id="name" autocomplete="name" required>
                     </div>
                   </div>
                   <div class="col-md">
                     <div class="form-group">
                       <label for="email">Email</label>
-                      <input type="text" name="email" class="form-control p-3 rounded-0" id="email" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[.][a-zA-Z0-9+_.-]+$" title="Enter Valid Email" required>
+                      <input type="text" name="email" class="form-control p-3 rounded-0" id="email" autocomplete="email" pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+[.][a-zA-Z0-9+_.-]+$" title="Enter Valid Email" required>
                     </div>
                   </div>
                 </div>

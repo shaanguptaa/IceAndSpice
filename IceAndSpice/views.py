@@ -22,8 +22,8 @@ def init_carts():
         cart = Cart.objects.get_or_create(user=user)
         print(cart)
 
-def temp(request):
-    return render(request, 'IceAndSpice/temp.html', context=getmenu())
+# def temp(request):
+#     return render(request, 'IceAndSpice/temp.html', context=getmenu())
 
 def add_feedback(request):
     if not request.user.is_authenticated:
