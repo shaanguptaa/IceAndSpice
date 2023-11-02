@@ -65,7 +65,10 @@ $ python manage.py runserver
 ```
 
 ## Screenshots
-![IceAndSpice Screenshot Gif](https://github.com/shaanguptaa/IceAndSpice/assets/84842443/95bb1b2c-a566-4c05-9897-1c836cf0eb41)
+<div align="center">
+ 
+ ![IceAndSpice Screenshot Gif](https://github.com/shaanguptaa/IceAndSpice/assets/84842443/95bb1b2c-a566-4c05-9897-1c836cf0eb41)
+</div>
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
