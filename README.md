@@ -42,26 +42,22 @@ Live Demo : [IceAndSpice](https://iceandspice.pythonanywhere.com)
 #### Installation
 Clone this repository
 ```sh
-$ git clone https://github.com/shaanguptaa/IceAndSpice.git
- 
+git clone https://github.com/shaanguptaa/IceAndSpice.git
 ```
 Navigate to the project directory
 ```sh
-$ cd IceAndSpice
- 
+cd IceAndSpice
 ```
 Install the requirements
 ```sh
-$ pip install -r requirements.txt
- 
+pip install -r requirements.txt
 ```
 
 #### Usage
 
 Run the Django server
 ```sh
-$ python manage.py runserver
- 
+python manage.py runserver
 ```
 
 ## Screenshots
