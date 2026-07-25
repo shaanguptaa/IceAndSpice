@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 
 import dj_database_url
+import cloudinary
+
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -51,6 +53,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+
+    # 'cloudinary',
+
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
@@ -120,6 +125,16 @@ if DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql":
 
 
 # -------------------------------------------------------------------
+# MEDIA FILES STORAGE
+# -------------------------------------------------------------------
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+)
+
+# -------------------------------------------------------------------
 # PASSWORD VALIDATION
 # -------------------------------------------------------------------
 
@@ -166,11 +181,37 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# if DEBUG:
+#     STORAGES = {
+#         "default": {
+#             "BACKEND": "django.core.files.storage.FileSystemStorage",
+#         },
+#         "staticfiles": {
+#             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+#         },
+#     }
+# else:
+#     STORAGES = {
+#         "default": {
+#             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+#         },
+#         "staticfiles": {
+#             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#         },
+#     }
+
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # -------------------------------------------------------------------
 # DEFAULT PRIMARY KEY

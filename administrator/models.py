@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from IceAndSpice import get_date, get_datetime, get_offer_image
 from Menu.models import Menu
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 class Feedback(models.Model):
@@ -23,7 +24,8 @@ class Offer(models.Model):
     discount_percent = models.PositiveIntegerField(default=0)
     expiry_date = models.DateField(default=get_date)
     items = models.ManyToManyField(Menu, blank=True)
-    image = models.ImageField(upload_to='offers/', default=get_offer_image)
+    # image = models.ImageField(upload_to='offers/', default=get_offer_image)
+    image = CloudinaryField('image', folder='offers', default='sample/cld-sample-4.jpg', resource_type='image')
 
     def __str__(self):
         return self.title + ' : ' + str(self.discount_percent) + '%' + ' discount'
