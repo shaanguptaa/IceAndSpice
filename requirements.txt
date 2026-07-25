@@ -2,3 +2,4 @@ django
 pytz
 pillow
 gunicorn
+whitenoise
