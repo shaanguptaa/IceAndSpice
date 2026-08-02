@@ -6,8 +6,17 @@ from django.contrib.auth.models import User
 from UserProfile.models import Cart
 from administrator.models import Feedback
 from administrator.views import get_offers
+from django.http import JsonResponse
 
 # Create your views here.
+def health_check(request):
+    return JsonResponse(
+        {
+            "status": "healthy"
+        },
+        status=200,
+    )
+
 def index(request):
     # init_carts()
     context = {
