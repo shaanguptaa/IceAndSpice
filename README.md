@@ -1,73 +1,257 @@
 <div align="center">
 
-![IceAndSpice Banner](https://github.com/shaanguptaa/IceAndSpice/assets/84842443/0e5986fb-0486-4b57-b1c1-1bce2f32541d)
+# ![IceAndSpice Banner](https://github.com/shaanguptaa/IceAndSpice/assets/84842443/0e5986fb-0486-4b57-b1c1-1bce2f32541d)
 
+A full-stack restaurant management web application built with **Django**, featuring online ordering, table reservations, user authentication, and an admin dashboard.
 
-![License: MIT](https://img.shields.io/github/license/shaanguptaa/IceAndSpice?style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/shaanguptaa/IceAndSpice?style=for-the-badge)
-![Python Version](https://img.shields.io/badge/python-3.12-yellow?style=for-the-badge&logo=python&color=%23F7CB3F)
-![Website Status](https://img.shields.io/website.svg?up_message=Live&url=https%3A%2F%2Ficeandspice.pythonanywhere.com&style=for-the-badge)
-![Python Version](https://img.shields.io/badge/Framework-Django-green?style=for-the-badge&logo=django&color=%23F7CB3F)
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-iceandspice.onrender.com-success?style=for-the-badge)](https://iceandspice.onrender.com)
+
+![License](https://img.shields.io/github/license/shaanguptaa/IceAndSpice?style=for-the-badge)
+![GitHub Stars](https://img.shields.io/github/stars/shaanguptaa/IceAndSpice?style=for-the-badge)
+![GitHub Forks](https://img.shields.io/github/forks/shaanguptaa/IceAndSpice?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/shaanguptaa/IceAndSpice?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
+![Django](https://img.shields.io/badge/Django-3.2-092E20?style=for-the-badge&logo=django)
 
 </div>
 
-<!-- ![GitHub repo size](https://img.shields.io/github/repo-size/shaanguptaa/IceAndSpice?style=for-the-badge) -->
+---
 
+# 📖 About
 
+**IceAndSpice** is a full-stack restaurant management system built with **Django** that enables customers to browse menus, place orders, reserve tables, and manage their profiles. The application also provides an administrative dashboard for efficiently managing menu items, reservations, customer orders, events, and promotional offers.
 
-# IceAndSpice
+---
 
-A Restaurant Website built using [Django](https://www.djangoproject.com/) Framework.
+# ✨ Features
 
-Live Demo : [IceAndSpice](https://iceandspice.pythonanywhere.com)
+## 👤 Customer Features
 
-### Features (User)
-- [x] User Profile and Authentication
-- [x] Menu with Categories
-- [x] Cart
-- [x] Order Items
-- [x] Table Reservations
-- [x] Events and Offers
-- [x] Feedback
+- 🔐 User Registration & Authentication
+- 👤 User Profile Management
+- 🍽 Browse Menu by Categories
+- 🛒 Shopping Cart
+- 🧾 Place Food Orders
+- 📅 Table Reservation System
+- 🎉 Events & Special Offers
+- ⭐ Customer Feedback
 
-### Features (Admin)
-- [x] Admin Dashboard
-- [x] Menu Management
-- [x] Order Management
-- [x] Table Reservation Management
-- [x] Events and Offers Management
+---
 
-## Getting Started
+## 👨‍💼 Admin Features
 
-#### Installation
-Clone this repository
-```sh
-git clone https://github.com/shaanguptaa/IceAndSpice.git
+- 📊 Admin Dashboard
+- 🍕 Menu Management
+- 📦 Order Management
+- 🪑 Reservation Management
+- 🎊 Events & Offers Management
+- 👥 User Management (Django Admin)
+
+---
+
+# 🛠 Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| Backend | Django |
+| Language | Python |
+| Frontend | HTML, CSS, JavaScript, Bootstrap |
+| Database | SQLite |
+| Authentication | Django Authentication |
+| Deployment | Render |
+| Server | Gunicorn |
+| Static Files | WhiteNoise |
+
+---
+
+# 🚀 Live Demo
+
+### https://iceandspice.onrender.com/
+
+---
+
+# 📂 Project Structure
+
+```text
+IceAndSpice/
+│
+├── accounts/          # Authentication & profiles
+├── menu/              # Menu management
+├── orders/            # Cart & ordering
+├── reservation/       # Table reservations
+├── feedback/          # Customer feedback
+├── events/            # Events & offers
+├── static/
+├── templates/
+├── manage.py
+└── requirements.txt
 ```
-Navigate to the project directory
-```sh
+
+---
+
+# ⚙️ Getting Started
+
+## Clone the Repository
+
+```bash
+git clone https://github.com/shaanguptaa/IceAndSpice.git
+
 cd IceAndSpice
 ```
-Install the requirements
-```sh
+
+---
+
+## Create a Virtual Environment
+
+### Windows
+
+```bash
+python -m venv venv
+
+venv\Scripts\activate
+```
+
+### Linux/macOS
+
+```bash
+python3 -m venv venv
+
+source venv/bin/activate
+```
+
+---
+
+## Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-#### Usage
+---
 
-Run the Django server
-```sh
+## Configure Environment Variables
+
+Create a `.env` file in the project root.
+
+```env
+SECRET_KEY=your-secret-key
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost
+```
+
+---
+
+## Apply Database Migrations
+
+```bash
+python manage.py migrate
+```
+
+---
+
+## Create an Admin User
+
+```bash
+python manage.py createsuperuser
+```
+
+---
+
+## Start the Development Server
+
+```bash
 python manage.py runserver
 ```
 
-## Screenshots
+Visit:
+
+```
+http://127.0.0.1:8000/
+```
+
+---
+
+# 📸 Preview
+
 <div align="center">
- 
- ![IceAndSpice Screenshot Gif](https://github.com/shaanguptaa/IceAndSpice/assets/84842443/95bb1b2c-a566-4c05-9897-1c836cf0eb41)
+
+![IceAndSpice Demo](https://github.com/shaanguptaa/IceAndSpice/assets/84842443/95bb1b2c-a566-4c05-9897-1c836cf0eb41)
+
 </div>
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+---
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# 🎯 Key Functionalities
+
+- User Authentication & Authorization
+- CRUD Operations
+- Shopping Cart
+- Order Processing
+- Reservation Booking
+- Feedback Management
+- Event & Offer Management
+- Django Admin Dashboard
+- Responsive UI
+
+---
+
+# 🗺 Roadmap
+
+- [x] Authentication
+- [x] Shopping Cart
+- [x] Order Management
+- [x] Reservations
+- [x] Events & Offers
+- [x] Feedback System
+- [ ] Online Payment Integration
+- [ ] Email Notifications
+- [ ] Order Tracking
+- [ ] Wishlist
+- [ ] Customer Reviews & Ratings
+- [ ] REST API
+- [ ] Docker Support
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository
+2. Create a feature branch
+
+```bash
+git checkout -b feature/my-feature
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add my feature"
+```
+
+4. Push the branch
+
+```bash
+git push origin feature/my-feature
+```
+
+5. Open a Pull Request
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+See the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+### ⭐ If you found this project useful, consider giving it a star!
+
+Made with ❤️ using Django
+
+</div>
